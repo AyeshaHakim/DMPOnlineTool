@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dmpOnlineTool">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <title>DMPOnlineTool</title>
+
+    <!-- Angular Material CSS -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
+    <!-- Local CSS -->
+    <link href="css/DMPOnlineTool.css" rel="stylesheet" type="text/css">
+
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+
+    <!-- Angular Material Dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+
+    <!-- Angular Material -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+
+</head>
+
+<body>
+
+    <div ng-controller="sideNavCtrl" ng-cloak="" layout="row">
+
+        <!-- Sidenav -->
+        <md-sidenav class="md-sidenav-left" layout="column" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
+
+            <md-toolbar class="md-theme-indigo">
+                <div layout="row">
+                    <h1 class="md-toolbar-tools">DMP Online Tool
+
+                    </h1>
+                    <md-button ng-click="toggleLeft()" class="sidenav-close md-fab md-primary" hide-gt-md="" flex="25">
+                        <md-icon md-font-library="material-icons">close</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <md-content layout-padding="" ng-controller="LeftCtrl">
+                <md-button ng-click="" class="sidenav-btn md-primary">Project</md-button>
+                <br>
+                <md-button ng-click="" class="sidenav-btn md-primary">Contributors</md-button>
+                <br>
+                <md-button ng-click="" class="sidenav-btn md-primary">Policies and Guidance</md-button>
+                <br>
+                <md-button ng-click="" class="sidenav-btn md-primary">Funding</md-button>
+                <br>
+                <md-button ng-click="" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
+            </md-content>
+
+        </md-sidenav>
+
+        <div layout-align="top left">
+            <md-button ng-click="toggleLeft()" class="md-fab md-primary" hide-gt-md="">
+                <md-icon md-font-library="material-icons">reorder</md-icon>
+            </md-button>
+        </div>
+
+        <!-- Form -->
+        <div ng-controller="formCtrl" layout="column" layout-margin="" layout-padding="" layout-align="center stretch" flex="60">
+            <form novalidate>
+                <br>
+                <br>
+                <md-input-container layout="row">
+                    <label>Project title</label>
+                    <input ng-model="dmp.project.title">
+                </md-input-container>
+                <br>
+
+                <md-input-container layout="row">
+                    <label>Description</label>
+                    <textarea ng-model="dmp.project.description" rows="3"></textarea>
+                </md-input-container>
+                <br>
+
+                <md-input-container layout="row">
+                    <label>Field of Research</label>
+                    <input ng-model="dmp.project.fieldOfResearch">
+                </md-input-container>
+                <br>
+
+
+                <!-- Dates -->
+                <div layout="row" layout-align="space-around center">
+                    <div>
+                        <md-input-container>
+                            <label>Start date</label>
+                            <md-datepicker ng-model="dmp.project.startDate"></md-datepicker>
+                        </md-input-container>
+                    </div>
+                    <div id="endDate">
+                        <md-input-container>
+                            <label>End date</label>
+                            <md-datepicker ng-model="dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
+                        </md-input-container>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Add/remove users -->
+                <div layout="row" ng-repeat="contributor in dmp.contributors track by $index">
+                    <div layout="column">
+                        <div layout="row">
+                            <md-input-container>
+                                <label>Name</label>
+                                <input ng-model="contributor.firstname">
+                            </md-input-container>
+
+                            <md-input-container>
+                                <label>Affiliation</label>
+                                <input ng-model="contributor.affiliation">
+                            </md-input-container>
+
+                            <md-input-container>
+                                <label>Email</label>
+                                <input ng-model="contributor.email">
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-input-container>
+                                <label>Username</label>
+                                <input ng-model="contributor.username">
+                            </md-input-container>
+
+                            <md-input-container>
+                                <label>orcid</label>
+                                <input ng-model="contributor.orcid">
+                            </md-input-container>
+
+                            <md-button class="md-fab md-primary" ng-click="deleteContributor(contributor.id)">
+                                <md-icon md-font-library="material-icons">close</md-icon>
+                            </md-button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <md-button class="md-fab md-primary" ng-click="addContributor()" layout-align="bottom end">
+                    <md-icon md-font-library="material-icons">close</md-icon>
+                </md-button>
+                <!-- <md-grid-list flex md-cols="3" md-gutter="3em" md-row-height="2em" ng-repeat="user in dmp.users">
+                    <md-grid-tile>
+                        <md-input-container>
+                            <label>Name</label>
+                            <input ng-model="user.name">
+                        </md-input-container>
+                    </md-grid-tile>
+
+                    <md-grid-tile>
+                        <md-input-container>
+                            <label>Affiliation</label>
+                            <input ng-model="user.affiliation">
+                        </md-input-container>
+                    </md-grid-tile>
+
+                    <md-grid-tile>
+                        <md-input-container>
+                            <label>Email</label>
+                            <input ng-model="user.email">
+                        </md-input-container>
+                    </md-grid-tile>
+
+                    <md-grid-tile>
+                        <md-input-container>
+                            <label>Username</label>
+                            <input ng-model="user.username">
+                        </md-input-container>
+                    </md-grid-tile>
+
+                    <md-grid-tile>
+                        <md-input-container>
+                            <label>orcid</label>
+                            <input ng-model="user.orcid">
+                        </md-input-container>
+                    </md-grid-tile>
+
+                    <md-grid-tile>
+                        <md-button class="md-raised md-primary" ng-click="deleteUser(user.id)">
+                            <md-icon md-font-library="material-icons">close</md-icon>
+                        </md-button>
+                    </md-grid-tile>
+                </md-grid-list> -->
+            </form>
+
+            <!-- Buttons -->
+            <div layout-align="end end">
+                <md-button class="md-raised md-primary" ng-click="save()">
+                    Save
+                </md-button>
+                <md-button class="md-raised md-primary" ng-click="load()">
+                    Load
+                </md-button>
+                <!-- <button class="btn-large waves-effect waves-light" >
+                                    <i class="material-icons right">save</i>
+                                </button>
+                                <button class="btn-large waves-effect waves-light" ng-click="load()">Load
+                                    <i class="material-icons right">launch</i>
+                                </button> -->
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
+    <script src="js/init.js"></script>
+    <!-- <script src="js/field-of-research-calculator.js"></script> -->
+    <script src="js/DMPOnlineTool.js"></script>
+    <script src="js/sideNav.js"></script>
+</body>
+
+</html>

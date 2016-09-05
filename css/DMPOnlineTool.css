@@ -1,0 +1,13 @@
+.md-fab.sidenav-close {
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+.md-button.sidenav-btn {
+  text-align:left;
+  height: 100%;
+    width: 95%;
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
