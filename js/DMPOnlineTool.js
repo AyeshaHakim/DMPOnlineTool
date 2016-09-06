@@ -1,7 +1,9 @@
+/*jshint esversion: 6 */
+
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
 
-app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageService) {
+app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageService, $mdDialog) {
 
     $scope.appPageService = appPageService;
     $scope.dmp = {
@@ -19,7 +21,15 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
             startDate: new Date(),
             endDate: ""
         },
-        contributors: [new Contributor(0)]
+        contributors: [new Contributor(0)],
+        policies: {
+            relatedPolicies: ""
+        },
+        funding: {
+            funder: "",
+            funderID: "",
+            researchOfficeID: ""
+        }
     };
 
     //Will need to be changed to support loading.
@@ -65,6 +75,44 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
                 $scope.dmp.contributors.splice(i, 1);
             }
         }
+    };
+
+    //ev is the dom click event to control the animation.
+    // func is the function to call on okay
+    $scope.confirmDeleteContributor = function(ev, id) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+            .title('Delete contributor?')
+            // .textContent('Delete contributor: ' + )
+            .targetEvent(ev)
+            .ok('Okay')
+            .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function() {
+            $scope.deleteContributor(id);
+            $scope.status = true;
+        }, function() {
+            $scope.status = false;
+        });
+    };
+
+    //TODO: make this work
+    //ev is the dom click event to control the animation.
+    // func is the function to call on okay
+    $scope.showConfirm = function(ev, func) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+            .title('Delete contributor?')
+            .textContent('All of the banks have agreed to forgive you your debts.')
+            .targetEvent(ev)
+            .ok('Okay')
+            .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function() {
+            $scope.status = true;
+        }, function() {
+            $scope.status = false;
+        });
     };
 
     //Loads the data from the server

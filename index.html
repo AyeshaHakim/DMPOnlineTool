@@ -58,6 +58,16 @@
                 <br>
                 <md-button ng-click="appPageService.pageID='ethics'" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
             </md-content>
+            <!-- Buttons -->
+            <div layout-align="end end">
+                <md-button class="md-raised md-primary" ng-click="save()">
+                    Save
+                </md-button>
+                <md-button class="md-raised md-primary" ng-click="load()">
+                    Load
+                </md-button>
+
+            </div>
 
         </md-sidenav>
 
@@ -68,14 +78,15 @@
         </div>
 
         <!-- Form -->
-        <div ng-controller="formCtrl" layout="column" layout-margin="" layout-padding="" layout-align="center stretch" flex="60">
+        <div ng-controller="formCtrl" layout="column" layout-margin="" layout-padding="" layout-align="top left">
 
             <form novalidate>
-                <br>
-                <br>
                 <!-- Controls the in-page switching -->
-                <div class="animate-switch-container" ng-switch on="appPageService.pageID">
-                    <div id="project" class="animate-switch" ng-switch-when="project">
+                <div ng-switch on="appPageService.pageID">
+
+                    <div id="project" class="formContent" ng-switch-when="project">
+                        <h2 class="md-display-2">Project details</h2>
+
                         <md-input-container layout="row">
                             <label>Project title</label>
                             <input ng-model="dmp.project.title">
@@ -114,8 +125,14 @@
                     </div>
 
                     <!-- Add/remove users -->
-                    <div id="contributors" class="animate-switch" ng-switch-when="contributors">
-                        <div layout="row" ng-repeat="contributor in dmp.contributors">
+                    <div id="contributors" class="formContent" ng-switch-when="contributors">
+                        <h2 class="md-display-2">Contributors
+
+                        <md-button class="md-raised md-primary" ng-click="addContributor()" >
+                            <md-icon md-font-library="material-icons">add</md-icon>Add contributor
+                        </md-button>
+                        </h2>
+                        <div layout="row" ng-repeat="contributor in dmp.contributors" class="fade">
                             <div layout="column">
                                 <div layout="row">
                                     <md-input-container>
@@ -144,7 +161,7 @@
                                         <input ng-model="contributor.orcid">
                                     </md-input-container>
 
-                                    <md-button class="md-fab md-primary" ng-click="deleteContributor(contributor.id)">
+                                    <md-button class="md-fab md-primary" ng-click="confirmDeleteContributor($event,contributor.id)">
                                         <md-icon md-font-library="material-icons">close</md-icon>
                                     </md-button>
                                 </div>
@@ -152,83 +169,66 @@
 
                         </div>
 
-                        <md-button class="md-raised md-primary" ng-click="addContributor()" layout-align="bottom end">
-                            <md-icon md-font-library="material-icons">add</md-icon>Add contributor
-                        </md-button>
+                    </div>
+
+                    <!-- Policies and guidance -->
+                    <div id="policies" class="formContent" ng-switch-when="policies">
+                        <h2 class="md-display-2">Policies and Guidance</h2>
+
+                        <md-input-container layout="row">
+                            <label>Related policies</label>
+                            <textarea ng-model="dmp.policies.relatedPolicies" rows="3"></textarea>
+                        </md-input-container>
+                        <br>
+                    </div>
+
+                    <!-- Funding -->
+                    <div id="funding" class="formContent" ng-switch-when="funding">
+                        <h2 class="md-display-2">Funding</h2>
+
+                        <md-input-container>
+                            <label>Funding agency</label>
+                            <input ng-model="dmp.funding.funder">
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Funding ID</label>
+                            <input ng-model="dmp.funding.funderID">
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Research Office ID</label>
+                            <input ng-model="dmp.funding.researchOfficeID">
+                        </md-input-container>
+                        <br>
+                    </div>
+
+                    <!-- Ethics -->
+                    <div id="ethics" class="formContent" ng-switch-when="ethics">
+                        <h2 class="md-display-2">Ethics and Privacy</h2>
+
+                        <md-input-container>
+                            <label>Ethics Requirements</label>
+                            <input ng-model="dmp.ethics.required">
+                        </md-input-container>
+
+                        <md-input-container layout="row">
+                            <label>How will you manage any ethical issues?</label>
+                            <textarea ng-model="dmp.ethics.manageEthics" rows="3"></textarea>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Are there other privacy and/or security requirements?</label>
+                            <textarea ng-model="dmp.ethics.managePrivacy" rows="3"></textarea>
+                        </md-input-container>
+                        <br>
                     </div>
                 </div>
-                <!-- <md-grid-list flex md-cols="3" md-gutter="3em" md-row-height="2em" ng-repeat="user in dmp.users">
-                    <md-grid-tile>
-                        <md-input-container>
-                            <label>Name</label>
-                            <input ng-model="user.name">
-                        </md-input-container>
-                    </md-grid-tile>
-
-                    <md-grid-tile>
-                        <md-input-container>
-                            <label>Affiliation</label>
-                            <input ng-model="user.affiliation">
-                        </md-input-container>
-                    </md-grid-tile>
-
-                    <md-grid-tile>
-                        <md-input-container>
-                            <label>Email</label>
-                            <input ng-model="user.email">
-                        </md-input-container>
-                    </md-grid-tile>
-
-                    <md-grid-tile>
-                        <md-input-container>
-                            <label>Username</label>
-                            <input ng-model="user.username">
-                        </md-input-container>
-                    </md-grid-tile>
-
-                    <md-grid-tile>
-                        <md-input-container>
-                            <label>orcid</label>
-                            <input ng-model="user.orcid">
-                        </md-input-container>
-                    </md-grid-tile>
-
-                    <md-grid-tile>
-                        <md-button class="md-raised md-primary" ng-click="deleteUser(user.id)">
-                            <md-icon md-font-library="material-icons">close</md-icon>
-                        </md-button>
-                    </md-grid-tile>
-                </md-grid-list> -->
             </form>
 
-            <!-- Buttons -->
-            <div layout-align="end end">
-                <md-button class="md-raised md-primary" ng-click="save()">
-                    Save
-                </md-button>
-                <md-button class="md-raised md-primary" ng-click="load()">
-                    Load
-                </md-button>
-                <!-- <button class="btn-large waves-effect waves-light" >
-                                    <i class="material-icons right">save</i>
-                                </button>
-                                <button class="btn-large waves-effect waves-light" ng-click="load()">Load
-                                    <i class="material-icons right">launch</i>
-                                </button> -->
 
-            </div>
         </div>
-
     </div>
-
-
-
-
-
-
-
-
-
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
