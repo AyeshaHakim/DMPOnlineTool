@@ -48,15 +48,15 @@
                 </div>
             </md-toolbar>
             <md-content layout-padding="" ng-controller="LeftCtrl">
-                <md-button ng-click="" class="sidenav-btn md-primary">Project</md-button>
+                <md-button ng-click="appPageService.pageID='project'" class="sidenav-btn md-primary">Project</md-button>
                 <br>
-                <md-button ng-click="" class="sidenav-btn md-primary">Contributors</md-button>
+                <md-button ng-click="appPageService.pageID='contributors'" class="sidenav-btn md-primary">Contributors</md-button>
                 <br>
-                <md-button ng-click="" class="sidenav-btn md-primary">Policies and Guidance</md-button>
+                <md-button ng-click="appPageService.pageID='policies'" class="sidenav-btn md-primary">Policies and Guidance</md-button>
                 <br>
-                <md-button ng-click="" class="sidenav-btn md-primary">Funding</md-button>
+                <md-button ng-click="appPageService.pageID='funding'" class="sidenav-btn md-primary">Funding</md-button>
                 <br>
-                <md-button ng-click="" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
+                <md-button ng-click="appPageService.pageID='ethics'" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
             </md-content>
 
         </md-sidenav>
@@ -69,86 +69,94 @@
 
         <!-- Form -->
         <div ng-controller="formCtrl" layout="column" layout-margin="" layout-padding="" layout-align="center stretch" flex="60">
+
             <form novalidate>
                 <br>
                 <br>
-                <md-input-container layout="row">
-                    <label>Project title</label>
-                    <input ng-model="dmp.project.title">
-                </md-input-container>
-                <br>
-
-                <md-input-container layout="row">
-                    <label>Description</label>
-                    <textarea ng-model="dmp.project.description" rows="3"></textarea>
-                </md-input-container>
-                <br>
-
-                <md-input-container layout="row">
-                    <label>Field of Research</label>
-                    <input ng-model="dmp.project.fieldOfResearch">
-                </md-input-container>
-                <br>
-
-
-                <!-- Dates -->
-                <div layout="row" layout-align="space-around center">
-                    <div>
-                        <md-input-container>
-                            <label>Start date</label>
-                            <md-datepicker ng-model="dmp.project.startDate"></md-datepicker>
+                <!-- Controls the in-page switching -->
+                <div class="animate-switch-container" ng-switch on="appPageService.pageID">
+                    <div id="project" class="animate-switch" ng-switch-when="project">
+                        <md-input-container layout="row">
+                            <label>Project title</label>
+                            <input ng-model="dmp.project.title">
                         </md-input-container>
+                        <br>
+
+                        <md-input-container layout="row">
+                            <label>Description</label>
+                            <textarea ng-model="dmp.project.description" rows="3"></textarea>
+                        </md-input-container>
+                        <br>
+
+                        <md-input-container layout="row">
+                            <label>Field of Research</label>
+                            <input ng-model="dmp.project.fieldOfResearch">
+                        </md-input-container>
+                        <br>
+
+
+                        <!-- Dates -->
+                        <div layout="row" layout-align="space-around center">
+                            <div>
+                                <md-input-container>
+                                    <label>Start date</label>
+                                    <md-datepicker ng-model="dmp.project.startDate"></md-datepicker>
+                                </md-input-container>
+                            </div>
+                            <div id="endDate">
+                                <md-input-container>
+                                    <label>End date</label>
+                                    <md-datepicker ng-model="dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <br>
                     </div>
-                    <div id="endDate">
-                        <md-input-container>
-                            <label>End date</label>
-                            <md-datepicker ng-model="dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
-                        </md-input-container>
+
+                    <!-- Add/remove users -->
+                    <div id="contributors" class="animate-switch" ng-switch-when="contributors">
+                        <div layout="row" ng-repeat="contributor in dmp.contributors">
+                            <div layout="column">
+                                <div layout="row">
+                                    <md-input-container>
+                                        <label>Name</label>
+                                        <input ng-model="contributor.firstname">
+                                    </md-input-container>
+
+                                    <md-input-container>
+                                        <label>Affiliation</label>
+                                        <input ng-model="contributor.affiliation">
+                                    </md-input-container>
+
+                                    <md-input-container>
+                                        <label>Email</label>
+                                        <input ng-model="contributor.email">
+                                    </md-input-container>
+                                </div>
+                                <div layout="row">
+                                    <md-input-container>
+                                        <label>Username</label>
+                                        <input ng-model="contributor.username">
+                                    </md-input-container>
+
+                                    <md-input-container>
+                                        <label>orcid</label>
+                                        <input ng-model="contributor.orcid">
+                                    </md-input-container>
+
+                                    <md-button class="md-fab md-primary" ng-click="deleteContributor(contributor.id)">
+                                        <md-icon md-font-library="material-icons">close</md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <md-button class="md-raised md-primary" ng-click="addContributor()" layout-align="bottom end">
+                            <md-icon md-font-library="material-icons">add</md-icon>Add contributor
+                        </md-button>
                     </div>
                 </div>
-                <br>
-
-                <!-- Add/remove users -->
-                <div layout="row" ng-repeat="contributor in dmp.contributors track by $index">
-                    <div layout="column">
-                        <div layout="row">
-                            <md-input-container>
-                                <label>Name</label>
-                                <input ng-model="contributor.firstname">
-                            </md-input-container>
-
-                            <md-input-container>
-                                <label>Affiliation</label>
-                                <input ng-model="contributor.affiliation">
-                            </md-input-container>
-
-                            <md-input-container>
-                                <label>Email</label>
-                                <input ng-model="contributor.email">
-                            </md-input-container>
-                        </div>
-                        <div layout="row">
-                            <md-input-container>
-                                <label>Username</label>
-                                <input ng-model="contributor.username">
-                            </md-input-container>
-
-                            <md-input-container>
-                                <label>orcid</label>
-                                <input ng-model="contributor.orcid">
-                            </md-input-container>
-
-                            <md-button class="md-fab md-primary" ng-click="deleteContributor(contributor.id)">
-                                <md-icon md-font-library="material-icons">close</md-icon>
-                            </md-button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <md-button class="md-fab md-primary" ng-click="addContributor()" layout-align="bottom end">
-                    <md-icon md-font-library="material-icons">close</md-icon>
-                </md-button>
                 <!-- <md-grid-list flex md-cols="3" md-gutter="3em" md-row-height="2em" ng-repeat="user in dmp.users">
                     <md-grid-tile>
                         <md-input-container>
@@ -224,10 +232,10 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
-    <script src="js/init.js"></script>
+    <!-- <script src="js/init.js"></script> -->
     <!-- <script src="js/field-of-research-calculator.js"></script> -->
     <script src="js/DMPOnlineTool.js"></script>
-    <script src="js/sideNav.js"></script>
+    <!-- <script src="js/sideNav.js"></script> -->
 </body>
 
 </html>

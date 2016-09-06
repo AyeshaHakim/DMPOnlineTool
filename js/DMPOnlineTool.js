@@ -1,5 +1,9 @@
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
-app.controller('formCtrl', function($scope, $http, $log) {
+
+
+app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageService) {
+
+    $scope.appPageService = appPageService;
     $scope.dmp = {
         //Define project
         //dmpCreatedDate should be populated automatically
@@ -15,31 +19,20 @@ app.controller('formCtrl', function($scope, $http, $log) {
             startDate: new Date(),
             endDate: ""
         },
-        contributors: [{
-            id: 0,
-            firstname: "Sofia Arnold",
-            affiliation: "dept",
-            email: "name@invalid.invalid",
-            username: "name002",
-            orcid: "0000-0000-0000-0001"
-        }, {
-            id: 1,
-            firstname: "Francesca Kirby",
-            affiliation: "dept",
-            email: "name2@invalid.invalid",
-            username: "name002",
-            orcid: "0000-0000-0000-0001"
-        }, new Contributor(2)]
+        contributors: [new Contributor(0)]
     };
 
+    //Will need to be changed to support loading.
+    $scope.nextContributorID = 1;
+
     //A class for contributors
-    function Contributor(id, firstname = "", affiliation = "", email = "", username = "", orcid = "") {
+    function Contributor(id) {
         this.id = id;
-        this.firstname = firstname;
-        this.affiliation = affiliation;
-        this.email = email;
-        this.username = username;
-        this.orcid = orcid;
+        this.firstname = id;
+        this.affiliation = "";
+        this.email = "";
+        this.username = "";
+        this.orcid = "";
     }
 
     $scope.postStatus = "";
@@ -58,12 +51,10 @@ app.controller('formCtrl', function($scope, $http, $log) {
         });
     };
 
-
     //Adds a contributor to the DMP
     $scope.addContributor = function() {
-
-
-        var newContributor = new Contributor($scope.dmp.contributors.length);
+        var newContributor = new Contributor($scope.nextContributorID);
+        $scope.nextContributorID++;
         $scope.dmp.contributors.push(newContributor);
     };
 
@@ -94,117 +85,80 @@ app.controller('formCtrl', function($scope, $http, $log) {
             });
     };
 });
-app.controller('sideNavCtrl', function($scope, $timeout, $mdSidenav, $log) {
-        $scope.toggleLeft = buildDelayedToggler('left');
+app.controller('sideNavCtrl', function($scope, $timeout, $mdSidenav, $log, $rootScope, appPageService) {
 
-        /**
-         * Supplies a function that will continue to operate until the
-         * time is up.
-         */
-        function debounce(func, wait, context) {
-            var timer;
+    $scope.appPageService = appPageService;
 
-            return function debounced() {
-                var context = $scope,
-                    args = Array.prototype.slice.call(arguments);
-                $timeout.cancel(timer);
-                timer = $timeout(function() {
-                    timer = undefined;
-                    func.apply(context, args);
-                }, wait || 10);
-            };
-        }
+    $scope.toggleLeft = buildDelayedToggler('left');
 
-        /**
-         * Build handler to open/close a SideNav; when animation finishes
-         * report completion in console
-         */
-        function buildDelayedToggler(navID) {
-            return debounce(function() {
-                // Component lookup should always be available since we are not using `ng-if`
-                $mdSidenav(navID)
-                    .toggle()
-                    .then(function() {
-                        $log.debug("toggle " + navID + " is done");
-                    });
-            }, 200);
-        }
+    /**
+     * Supplies a function that will continue to operate until the
+     * time is up.
+     */
+    function debounce(func, wait, context) {
+        var timer;
 
-        function buildToggler(navID) {
-            return function() {
-                // Component lookup should always be available since we are not using `ng-if`
-                $mdSidenav(navID)
-                    .toggle()
-                    .then(function() {
-                        $log.debug("toggle " + navID + " is done");
-                    });
-            };
-        }
-    })
-    .controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
-        $scope.close = function() {
-            // Component lookup should always be available since we are not using `ng-if`
-            $mdSidenav('left').close()
-                .then(function() {
-                    $log.debug("close LEFT is done");
-                });
-
+        return function debounced() {
+            var context = $scope,
+                args = Array.prototype.slice.call(arguments);
+            $timeout.cancel(timer);
+            timer = $timeout(function() {
+                timer = undefined;
+                func.apply(context, args);
+            }, wait || 10);
         };
-    });
-
-function addContributor(divName) {
-    var counter = 1;
-
-    var upperlimit = 10;
-    var lowerlimit = 1;
-    var count = document.getElementById(divName).childElementCount + 1;
-    if (count == upperlimit) {
-
-        alert("You have reached the limit of adding " + counter + " inputs");
-
-    } else {
-
-        var newdiv = document.createElement('div');
-
-
-
-        newdiv.innerHTML = "<div class='col s12' id='contributor" + count + "'>" +
-            "<div class='col s11'>" +
-            "<label>Contributor " + count + "</label>" +
-            "<input type='text' name='myInputs[]'>" +
-            "</div>" +
-            "<div class='col s1'>" +
-            "<a class='btn-floating waves-effect waves-light red' onclick=\"removeInput('contributor" + count + "');\"><i class='material-icons'>remove</i></a>" +
-            "</div>" +
-            "</div>";
-
-
-        //"<label>Contributor " + nExisting + " </label><input type='text' name='myInputs[]' id=contributor>";
-
-        document.getElementById(divName).appendChild(newdiv);
-
-        counter++;
-
     }
 
-}
-
-//Need to update, remove is inconsistent apparently
-function removeInput(divName) {
-    //var child=document.getElementById(divName);
-    //document.getElementById('contributors').removeChild(child);
-    $("#" + divName).remove();
-
-    //counter--;
-}
-
-function toggleElementEnable(checkBoxID, targetElementID) {
-
-    if (document.getElementById(checkBoxID).checked) {
-        document.getElementById(targetElementID).style.visibility = "hidden";
-        document.getElementById(targetElementID).disabled = true;
-    } else {
-        document.getElementById(targetElementID).style.visibility = "visible";
-        document.getElementById(targetElementID).disabled = false;
+    /**
+     * Build handler to open/close a SideNav; when animation finishes
+     * report completion in console
+     */
+    function buildDelayedToggler(navID) {
+        return debounce(function() {
+            // Component lookup should always be available since we are not using `ng-if`
+            $mdSidenav(navID)
+                .toggle()
+                .then(function() {
+                    $log.debug("toggle " + navID + " is done");
+                });
+        }, 200);
     }
-}
+
+    function buildToggler(navID) {
+        return function() {
+            // Component lookup should always be available since we are not using `ng-if`
+            $mdSidenav(navID)
+                .toggle()
+                .then(function() {
+                    $log.debug("toggle " + navID + " is done");
+                });
+        };
+    }
+});
+app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
+    $scope.close = function() {
+        // Component lookup should always be available since we are not using `ng-if`
+        $mdSidenav('left').close()
+            .then(function() {
+                $log.debug("close LEFT is done");
+            });
+
+    };
+});
+
+
+//Passes view information around the place
+app.service('appPageService', function() {
+    var appPage = this;
+
+    this.pageID = 'project';
+
+    // return {
+    //     getAppPage: function() {
+    //         return appPage;
+    //     },
+    //     setAppPage: function(value) {
+    //         appPage = value;
+    //     },
+    // };
+});
