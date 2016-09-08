@@ -12,6 +12,17 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
 
     $scope.postStatus = "";
 
+    // For loading the JSON file containing fields of research
+    $scope.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                $scope.fieldOfResearchArray = response.data;
+            }, function myError(response) {
+                $scope.fieldOfResearchArray = null;
+            });
+    };
+    $scope.loadFieldOfResearchArray();
+
     //ev is the dom click event to control the animation.
     //id is the contributor to delete on okay
     $scope.confirmDeleteContributor = function(ev, id) {
@@ -25,8 +36,7 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
 
         $mdDialog.show(confirm).then(function() {
             $scope.userDataService.deleteContributor(id);
-        }, function() {
-        });
+        }, function() {});
     };
 
     //ev is the dom click event to control the animation.
@@ -150,8 +160,9 @@ app.service('userDataService', function($http) {
 
     this.dmp = {
         //Define project
-        //dmpCreatedDate should be populated automatically
-        //lastUpdateDate should be populated automatically
+        //dmpCreatedDate should be populated automagically
+        //lastUpdateDate should be populated automagically
+        //lastAccessDate should be populated automagically
         //If endDate is empty, project is ongoing
         project: {
             title: "",
@@ -179,7 +190,7 @@ app.service('userDataService', function($http) {
         }
     };
 
-    //Will need to be changed to support loading.
+    //TODO: Will need to be changed to support loading.
     this.nextContributorID = 1;
 
     //A class for contributors
@@ -208,7 +219,7 @@ app.service('userDataService', function($http) {
         }
     };
 
-    //Saves the data to the server
+    //Saves DMP data to the server
     this.save = function() {
         this.dmp.project.lastUpdateDate = new Date();
         $http({
@@ -222,7 +233,7 @@ app.service('userDataService', function($http) {
         });
     };
 
-    //Loads the data from the server
+    //Loads DMP data from the server
     this.load = function() {
         $http.get('php/dmp.json')
             .then(function mySuccess(response) {
@@ -242,3 +253,10 @@ app.service('userDataService', function($http) {
 
 
 });
+
+//ORCID stuff
+var oauthWindow;
+
+function openORCID() {
+    var oauthWindow = window.open("https://sandbox.orcid.org/oauth   /authorize?client_id=0000-0002-1223-3173&response_type=code&scope=/authenticate&redirect_uri=http://localhost:8080/oauth-redirect.html", "_blank", "toolbar=no, scrollbars=yes, width=500, height=600, top=500, left=500");
+}

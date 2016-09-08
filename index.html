@@ -32,10 +32,10 @@
 
 <body>
 
-    <div ng-controller="sideNavCtrl" ng-cloak="" layout="row">
+    <div ng-controller="sideNavCtrl" ng-cloak="" layout="row" flex>
 
         <!-- Sidenav -->
-        <md-sidenav class="md-sidenav-left" layout="column" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
+        <md-sidenav class="md-sidenav-left" flex md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
 
             <md-toolbar class="md-theme-indigo">
                 <div layout="row">
@@ -58,6 +58,7 @@
                 <br>
                 <md-button ng-click="appPageService.pageID='ethics';toggleLeft()" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
             </md-content>
+
             <!-- Buttons -->
             <div layout-align="end end">
                 <md-button class="md-raised md-primary" ng-click="userDataService.save()">
@@ -78,7 +79,7 @@
         </div>
 
         <!-- Form -->
-        <div ng-controller="formCtrl" layout="column" layout-margin="" layout-padding="" layout-align="top left">
+        <md-content flex ng-controller="formCtrl" layout-margin="" layout-padding="" layout-align="top left">
 
             <form novalidate>
                 <!-- Controls the in-page switching -->
@@ -113,6 +114,19 @@
                             <label>Field of Research</label>
                             <input ng-model="dmp.project.fieldOfResearch">
                         </md-input-container>
+                        <br>
+
+                        <md-chips ng-model="dmp.project.fieldOfResearch" md-autocomplete-snap="" md-transform-chip="ctrl.transformChip($chip)">
+                            <md-autocomplete md-selected-item="ctrl.selectedItem" md-search-text="ctrl.searchText" md-items="item in ctrl.querySearch(ctrl.searchText)" md-item-text="item.name" placeholder="Search for a vegetable">
+                                <span md-highlight-text="ctrl.searchText">{{item.name}} :: {{item.type}}</span>
+                            </md-autocomplete>
+                            <md-chip-template>
+                                <span>
+                                  <strong>{{$chip.name}}</strong>
+                                  <em>({{$chip.type}})</em>
+                                  </span>
+                            </md-chip-template>
+                        </md-chips>
                         <br>
 
 
@@ -170,8 +184,10 @@
                                         <label>orcid</label>
                                         <input ng-model="contributor.orcid">
                                     </md-input-container>
-
-                                    <md-button class="md-fab md-primary" ng-click="confirmDeleteContributor($event,contributor.id)">
+                                    <!-- <button id="connect-orcid-button" onclick="openORCID()">
+                                        <img id="orcid-id-logo" src="http://orcid.org/sites/default/files/images/orcid_24x24.png" width="24" height="24" alt="ORCID logo" /> Create or Connect your ORCID iD
+                                    </button> -->
+                                    <md-button class="md-fab md-mini md-primary" ng-click="confirmDeleteContributor($event,contributor.id)">
                                         <md-icon md-font-library="material-icons">close</md-icon>
                                     </md-button>
                                 </div>
@@ -236,7 +252,7 @@
                 </div>
             </form>
 
-        </div>
+        </md-content>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

@@ -3,6 +3,7 @@
     -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 }
+
 .md-button.sidenav-btn {
     text-align: left;
     height: 100%;
@@ -11,6 +12,7 @@
     -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 }
+
 .fade {
     transition: 0.1s linear all;
     -webkit-transition: 0.1s linear all;
@@ -32,4 +34,31 @@
     min-width: 36px;
     max-height: 36px;
     min-height: 36px;
+}
+
+/*ORCID stuff*/
+#connect-orcid-button{
+	border: 1px solid #D3D3D3;
+	padding: .3em;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 1px 1px 3px #999;
+	cursor: pointer;
+	color: #999;
+	font-weight: bold;
+	font-size: .8em;
+	line-height: 24px;
+	vertical-align: middle;
+}
+
+#connect-orcid-button:hover{
+	border: 1px solid #338caf;
+	color: #338caf;
+}
+
+#orcid-id-logo{
+	display: block;
+	margin: 0 .5em 0 0;
+	padding: 0;
+	float: left;
 }
