@@ -12,16 +12,16 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
 
     $scope.postStatus = "";
 
-    // For loading the JSON file containing fields of research
-    $scope.loadFieldOfResearchArray = function() {
-        $http.get('text\\fieldOfResearch_flat.json')
-            .then(function mySuccess(response) {
-                $scope.fieldOfResearchArray = response.data;
-            }, function myError(response) {
-                $scope.fieldOfResearchArray = null;
-            });
-    };
-    $scope.loadFieldOfResearchArray();
+    // // For loading the JSON file containing fields of research
+    // $scope.loadFieldOfResearchArray = function() {
+    //     $http.get('text\\fieldOfResearch_flat.json')
+    //         .then(function mySuccess(response) {
+    //             $scope.fieldOfResearchArray = response.data;
+    //         }, function myError(response) {
+    //             $scope.fieldOfResearchArray = null;
+    //         });
+    // };
+    // $scope.loadFieldOfResearchArray();
 
     //ev is the dom click event to control the animation.
     //id is the contributor to delete on okay
@@ -134,6 +134,7 @@ app.controller('sideNavCtrl', function($scope, $timeout, $mdSidenav, $log, $root
 
 
 });
+
 app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
     $scope.close = function() {
         // Component lookup should always be available since we are not using `ng-if`
@@ -144,6 +145,68 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
 
     };
 });
+
+app.controller('CustomInputDemoCtrl', function DemoCtrl($scope, $timeout, $q, $http) {
+
+    $scope.selectedItem = null;
+    $scope.searchText = null;
+    $scope.selectedFORs = [];
+
+    /**
+     * Return the proper object when the append is called.
+     */
+    $scope.transformChip = function(chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+            return chip;
+        }
+
+        // Otherwise, create a new one
+        return {
+            name: chip,
+            code: 'new'
+        };
+    }
+
+    /**
+     * Search for fieldOfResearchs.
+     */
+    $scope.querySearch = function(query) {
+        var results = query ? $scope.fieldOfResearchArray.filter($scope.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    $scope.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(fieldOfResearch) {
+            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+    $scope.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                $scope.fieldOfResearchArray = response.data;
+                $scope.fieldOfResearchArray.map(function(fieldOfResearch) {
+                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
+                    return fieldOfResearch;
+                });
+            }, function myError(response) {
+                $scope.fieldOfResearchArray = null;
+            });
+    };
+
+    $scope.loadFieldOfResearchArray();
+
+
+});
+
 
 
 //Passes view information around the place

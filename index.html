@@ -116,17 +116,26 @@
                         </md-input-container>
                         <br>
 
-                        <md-chips ng-model="dmp.project.fieldOfResearch" md-autocomplete-snap="" md-transform-chip="ctrl.transformChip($chip)">
-                            <md-autocomplete md-selected-item="ctrl.selectedItem" md-search-text="ctrl.searchText" md-items="item in ctrl.querySearch(ctrl.searchText)" md-item-text="item.name" placeholder="Search for a vegetable">
-                                <span md-highlight-text="ctrl.searchText">{{item.name}} :: {{item.type}}</span>
-                            </md-autocomplete>
-                            <md-chip-template>
-                                <span>
+                        <div ng-controller="CustomInputDemoCtrl as ctrl" layout="column" ng-cloak="">
+
+
+                            <br>
+                            <md-chips ng-model="selectedFORs" md-autocomplete-snap="" md-transform-chip="transformChip($chip)">
+                                <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" placeholder="Search for research field">
+                                    <span md-highlight-text="searchText">{{item.name}}</span>
+                                </md-autocomplete>
+                                <md-chip-template>
+                                    <span>
                                   <strong>{{$chip.name}}</strong>
-                                  <em>({{$chip.type}})</em>
-                                  </span>
-                            </md-chip-template>
-                        </md-chips>
+                                  <!-- <em>({{$chip.code}})</em> -->
+                                </span>
+                                </md-chip-template>
+                            </md-chips>
+
+                            <br>
+
+
+                        </div>
                         <br>
 
 
