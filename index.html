@@ -93,7 +93,7 @@
                                 <label>Project title</label>
                                 <input ng-model="dmp.project.title">
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" aria-label="Use Android" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                            <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>
@@ -104,38 +104,32 @@
                                 <label>Description</label>
                                 <textarea ng-model="dmp.project.description" rows="3"></textarea>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" aria-label="Use Android" ng-click="helpBox($event,'Project description','Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.')">
+                            <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project description','Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>
                         <br>
 
-                        <md-input-container layout="row">
-                            <label>Field of Research</label>
-                            <input ng-model="dmp.project.fieldOfResearch">
-                        </md-input-container>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Field of Research</label>
+
+                                <md-chips ng-model="dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
+                                    <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" placeholder="Input field and hit enter">
+                                        <span md-highlight-text="searchText">{{item.name}}</span>
+                                    </md-autocomplete>
+                                    <md-chip-template>
+                                        <span>
+                                      <strong>{{$chip.name}}</strong>
+                                      <!-- <em>({{$chip.code}})</em> -->
+                                    </span>
+                                    </md-chip-template>
+                                </md-chips>
+
+                            </md-input-container>
+                        </div>
                         <br>
 
-                        <div ng-controller="CustomInputDemoCtrl as ctrl" layout="column" ng-cloak="">
-
-
-                            <br>
-                            <md-chips ng-model="selectedFORs" md-autocomplete-snap="" md-transform-chip="transformChip($chip)">
-                                <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" placeholder="Search for research field">
-                                    <span md-highlight-text="searchText">{{item.name}}</span>
-                                </md-autocomplete>
-                                <md-chip-template>
-                                    <span>
-                                  <strong>{{$chip.name}}</strong>
-                                  <!-- <em>({{$chip.code}})</em> -->
-                                </span>
-                                </md-chip-template>
-                            </md-chips>
-
-                            <br>
-
-
-                        </div>
                         <br>
 
 

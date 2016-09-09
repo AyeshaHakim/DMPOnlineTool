@@ -3,25 +3,18 @@
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
 
-app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageService, $mdDialog, userDataService) {
+app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, appPageService, userDataService, helpTextService) {
 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
+    helpTextService.loadHelpText().then(function(response) {
+
+        $scope.helpTextService = response.data;
+    });
 
     $scope.dmp = $scope.userDataService.dmp;
 
     $scope.postStatus = "";
-
-    // // For loading the JSON file containing fields of research
-    // $scope.loadFieldOfResearchArray = function() {
-    //     $http.get('text\\fieldOfResearch_flat.json')
-    //         .then(function mySuccess(response) {
-    //             $scope.fieldOfResearchArray = response.data;
-    //         }, function myError(response) {
-    //             $scope.fieldOfResearchArray = null;
-    //         });
-    // };
-    // $scope.loadFieldOfResearchArray();
 
     //ev is the dom click event to control the animation.
     //id is the contributor to delete on okay
@@ -75,6 +68,65 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, appPageServ
             $scope.status = false;
         });
     };
+
+
+    //Field of research search thingy.
+    $scope.selectedItem = null;
+    $scope.searchText = null;
+    $scope.selectedFORs = [];
+
+    /**
+     * Return the proper object when the append is called.
+     */
+    $scope.transformChip = function(chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+            return chip;
+        }
+
+        // Otherwise, create a new one
+        return {
+            name: chip,
+            code: 'new'
+        };
+    };
+
+    /**
+     * Search for fieldOfResearchs.
+     */
+    $scope.querySearch = function(query) {
+        var results = query ? $scope.fieldOfResearchArray.filter($scope.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    $scope.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(fieldOfResearch) {
+            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+    //Load fields of research from json
+    $scope.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                $scope.fieldOfResearchArray = response.data;
+                $scope.fieldOfResearchArray.map(function(fieldOfResearch) {
+                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
+                    return fieldOfResearch;
+                });
+            }, function myError(response) {
+                $scope.fieldOfResearchArray = null;
+            });
+    };
+
+    $scope.loadFieldOfResearchArray();
 
 
 });
@@ -146,68 +198,6 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
     };
 });
 
-app.controller('CustomInputDemoCtrl', function DemoCtrl($scope, $timeout, $q, $http) {
-
-    $scope.selectedItem = null;
-    $scope.searchText = null;
-    $scope.selectedFORs = [];
-
-    /**
-     * Return the proper object when the append is called.
-     */
-    $scope.transformChip = function(chip) {
-        // If it is an object, it's already a known chip
-        if (angular.isObject(chip)) {
-            return chip;
-        }
-
-        // Otherwise, create a new one
-        return {
-            name: chip,
-            code: 'new'
-        };
-    }
-
-    /**
-     * Search for fieldOfResearchs.
-     */
-    $scope.querySearch = function(query) {
-        var results = query ? $scope.fieldOfResearchArray.filter($scope.createFilterFor(query)) : [];
-        return results;
-    };
-
-    /**
-     * Create filter function for a query string
-     */
-    $scope.createFilterFor = function(query) {
-        var lowercaseQuery = angular.lowercase(query);
-
-        return function filterFn(fieldOfResearch) {
-            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
-                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
-        };
-
-    };
-
-    $scope.loadFieldOfResearchArray = function() {
-        $http.get('text\\fieldOfResearch_flat.json')
-            .then(function mySuccess(response) {
-                $scope.fieldOfResearchArray = response.data;
-                $scope.fieldOfResearchArray.map(function(fieldOfResearch) {
-                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
-                    return fieldOfResearch;
-                });
-            }, function myError(response) {
-                $scope.fieldOfResearchArray = null;
-            });
-    };
-
-    $scope.loadFieldOfResearchArray();
-
-
-});
-
-
 
 //Passes view information around the place
 app.service('appPageService', function() {
@@ -230,12 +220,12 @@ app.service('userDataService', function($http) {
         project: {
             title: "",
             description: "",
-            fieldOfResearch: "",
+            fieldOfResearch: [],
             dmpCreatedDate: new Date(),
             lastUpdateDate: new Date(),
             lastAccessDate: new Date(),
             startDate: new Date(),
-            endDate: ""
+            endDate: null
         },
         contributors: [new Contributor(0)],
         policies: {
@@ -314,6 +304,30 @@ app.service('userDataService', function($http) {
             });
     };
 
+
+});
+
+//Loads help text and labels etc.
+app.service('helpTextService', function($http) {
+
+    var helpTextService = {};
+    helpTextService.loadHelpText = function() {
+        return $http.get('text/dmpHelpText.json');
+    };
+
+    return helpTextService;
+
+});
+
+//Loads field of research data from JSON
+app.service('fieldOfResearchService', function($http) {
+
+    var fieldOfResearchService = {};
+    helpTextService.loadHelpText = function() {
+        return $http.get('text/dmpHelpText.json');
+    };
+
+    return helpTextService;
 
 });
 

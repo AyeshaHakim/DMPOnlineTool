@@ -1,0 +1,37 @@
+{
+    "dmpHelpText": {
+        "project": {
+            "title": {
+                "label": "Project title",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "description": {
+                "label": "Description",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "fieldOfResearch": {
+                "label": "Project title",
+                "defaultText": "Input field and hit enter",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "startDate": {
+                "label": "Start date",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "endDate": {
+                "label": "End date",
+                "defaultText": "Ongoing",
+                "helpBoxText": "",
+                "tooltip": ""
+            }
+        }
+
+    }
+}
