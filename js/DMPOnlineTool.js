@@ -8,13 +8,9 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
     helpTextService.loadHelpText().then(function(response) {
-
         $scope.helpTextService = response.data;
     });
 
-    $scope.dmp = $scope.userDataService.dmp;
-
-    $scope.postStatus = "";
 
     //ev is the dom click event to control the animation.
     //id is the contributor to delete on okay
@@ -134,9 +130,7 @@ app.controller('sideNavCtrl', function($scope, $timeout, $mdSidenav, $log, $root
 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
-
-    $scope.dmp = $scope.userDataService.dmp;
-
+    
     $scope.toggleLeft = buildDelayedToggler('left');
 
     /**
@@ -201,17 +195,17 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
 
 //Passes view information around the place
 app.service('appPageService', function() {
-    var appPage = this;
 
     this.pageID = 'project';
 
 });
 
 //Passes user data around the place
-app.service('userDataService', function($http) {
-    var userData = this;
+app.service('userDataService', function($http, $log) {
 
-    this.dmp = {
+    var userDataService = {};
+
+    userDataService.dmp = {
         //Define project
         //dmpCreatedDate should be populated automagically
         //lastUpdateDate should be populated automagically
@@ -244,7 +238,7 @@ app.service('userDataService', function($http) {
     };
 
     //TODO: Will need to be changed to support loading.
-    this.nextContributorID = 1;
+    userDataService.nextContributorID = 1;
 
     //A class for contributors
     function Contributor(id) {
@@ -257,53 +251,53 @@ app.service('userDataService', function($http) {
     }
 
     //Adds a contributor to the DMP
-    this.addContributor = function() {
-        var newContributor = new Contributor(this.nextContributorID);
-        this.nextContributorID++;
-        this.dmp.contributors.push(newContributor);
+    userDataService.addContributor = function() {
+        var newContributor = new Contributor(userDataService.nextContributorID);
+        userDataService.nextContributorID++;
+        userDataService.dmp.contributors.push(newContributor);
     };
 
     //Deletes a contributor by id.
-    this.deleteContributor = function(id) {
-        for (i = this.dmp.contributors.length - 1; i >= 0; i--) {
-            if (this.dmp.contributors[i].id == id) {
-                this.dmp.contributors.splice(i, 1);
+    userDataService.deleteContributor = function(id) {
+        for (i = userDataService.dmp.contributors.length - 1; i >= 0; i--) {
+            if (userDataService.dmp.contributors[i].id == id) {
+                userDataService.dmp.contributors.splice(i, 1);
             }
         }
     };
 
     //Saves DMP data to the server
-    this.save = function() {
-        this.dmp.project.lastUpdateDate = new Date();
+    userDataService.save = function() {
+        userDataService.dmp.project.lastUpdateDate = new Date();
         $http({
             method: "POST",
             url: "php/receiver.php",
-            data: this.dmp
+            data: userDataService.dmp
         }).then(function mySuccess(response) {
-            this.postStatus = response.data;
+            userDataService.postStatus = response.data;
         }, function myError(response) {
-            this.postStatus = response.statusText;
+            userDataService.postStatus = response.statusText;
         });
     };
 
     //Loads DMP data from the server
-    this.load = function() {
-        $http.get('php/dmp.json')
+    userDataService.load = function() {
+        return $http.get('php/dmp.json')
             .then(function mySuccess(response) {
-                this.getStatus = response.data;
-                this.dmp = this.getStatus;
-                this.dmp.project.dmpCreatedDate = new Date(this.dmp.project.dmpCreatedDate);
-                this.dmp.project.lastUpdateDate = new Date(this.dmp.project.lastUpdateDate);
-                this.dmp.project.lastAccessDate = new Date();
-                this.dmp.project.startDate = new Date(this.dmp.project.startDate);
-                if ((this.dmp.project.endDate !== '')) {
-                    this.dmp.project.endDate = new Date(this.dmp.project.endDate);
+                userDataService.getStatus = response.data;
+                userDataService.dmp = userDataService.getStatus;
+                userDataService.dmp.project.dmpCreatedDate = new Date(userDataService.dmp.project.dmpCreatedDate);
+                userDataService.dmp.project.lastUpdateDate = new Date(userDataService.dmp.project.lastUpdateDate);
+                userDataService.dmp.project.lastAccessDate = new Date();
+                userDataService.dmp.project.startDate = new Date(userDataService.dmp.project.startDate);
+                if ((userDataService.dmp.project.endDate !== '')) {
+                    userDataService.dmp.project.endDate = new Date(userDataService.dmp.project.endDate);
                 }
             }, function myError(response) {
-                this.getStatus = response.statusText;
+                userDataService.getStatus = response.statusText;
             });
     };
-
+    return userDataService;
 
 });
 

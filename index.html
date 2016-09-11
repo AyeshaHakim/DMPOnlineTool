@@ -91,7 +91,7 @@
                         <div layout="row">
                             <md-input-container flex>
                                 <label>Project title</label>
-                                <input ng-model="dmp.project.title">
+                                <input ng-model="userDataService.dmp.project.title">
                             </md-input-container>
                             <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
@@ -102,7 +102,7 @@
                         <div layout="row">
                             <md-input-container flex>
                                 <label>Description</label>
-                                <textarea ng-model="dmp.project.description" rows="3"></textarea>
+                                <textarea ng-model="userDataService.dmp.project.description" rows="3"></textarea>
                             </md-input-container>
                             <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project description','Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
@@ -114,7 +114,7 @@
                             <md-input-container flex>
                                 <label>Field of Research</label>
 
-                                <md-chips ng-model="dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
+                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
                                     <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" placeholder="Input field and hit enter">
                                         <span md-highlight-text="searchText">{{item.name}}</span>
                                     </md-autocomplete>
@@ -138,13 +138,13 @@
                             <div>
                                 <md-input-container>
                                     <label>Start date</label>
-                                    <md-datepicker ng-model="dmp.project.startDate"></md-datepicker>
+                                    <md-datepicker ng-model="userDataService.dmp.project.startDate"></md-datepicker>
                                 </md-input-container>
                             </div>
                             <div id="endDate">
                                 <md-input-container>
                                     <label>End date</label>
-                                    <md-datepicker ng-model="dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
+                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
                                 </md-input-container>
                             </div>
                         </div>
@@ -159,7 +159,7 @@
                             <md-icon md-font-library="material-icons">add</md-icon>Add contributor
                         </md-button>
                         </h2>
-                        <div layout="row" ng-repeat="contributor in dmp.contributors" class="fade">
+                        <div layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade">
                             <div layout="column">
                                 <div layout="row">
                                     <md-input-container>
@@ -206,7 +206,7 @@
 
                         <md-input-container layout="row">
                             <label>Related policies</label>
-                            <textarea ng-model="dmp.policies.relatedPolicies" rows="3"></textarea>
+                            <textarea ng-model="userDataService.dmp.policies.relatedPolicies" rows="3"></textarea>
                         </md-input-container>
                         <br>
                     </div>
@@ -217,17 +217,17 @@
 
                         <md-input-container>
                             <label>Funding agency</label>
-                            <input ng-model="dmp.funding.funder">
+                            <input ng-model="userDataService.dmp.funding.funder">
                         </md-input-container>
 
                         <md-input-container>
                             <label>Funding ID</label>
-                            <input ng-model="dmp.funding.funderID">
+                            <input ng-model="userDataService.dmp.funding.funderID">
                         </md-input-container>
 
                         <md-input-container>
                             <label>Research Office ID</label>
-                            <input ng-model="dmp.funding.researchOfficeID">
+                            <input ng-model="userDataService.dmp.funding.researchOfficeID">
                         </md-input-container>
                         <br>
                     </div>
@@ -238,17 +238,17 @@
 
                         <md-input-container>
                             <label>Ethics Requirements</label>
-                            <input ng-model="dmp.ethics.required">
+                            <input ng-model="userDataService.dmp.ethics.required">
                         </md-input-container>
 
                         <md-input-container layout="row">
                             <label>How will you manage any ethical issues?</label>
-                            <textarea ng-model="dmp.ethics.manageEthics" rows="3"></textarea>
+                            <textarea ng-model="userDataService.dmp.ethics.manageEthics" rows="3"></textarea>
                         </md-input-container>
 
                         <md-input-container>
                             <label>Are there other privacy and/or security requirements?</label>
-                            <textarea ng-model="dmp.ethics.managePrivacy" rows="3"></textarea>
+                            <textarea ng-model="userDataService.dmp.ethics.managePrivacy" rows="3"></textarea>
                         </md-input-container>
                         <br>
                     </div>
