@@ -87,13 +87,13 @@
 
                     <div id="project" class="formContent" ng-switch-when="project">
                         <h2 class="md-display-2">Project details</h2>
-
+                        /{{helpTextService.dmpHelpText}}/
                         <div ng-controller="helpCtrl" layout="row">
                             <md-input-container flex>
                                 <label>Project title</label>
                                 <input ng-model="userDataService.dmp.project.title" ng-focus="showHelpButton()" ng-blur="hideHelpButtonDelayed()">
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpButtonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpTextService.dmpHelpText.project.title.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>

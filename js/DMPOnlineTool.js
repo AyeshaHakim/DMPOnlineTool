@@ -7,9 +7,11 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, 
 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
-    helpTextService.loadHelpText().then(function(response) {
-        $scope.helpTextService = response.data;
-    });
+
+    $scope.helpTextService = helpTextService;
+    $scope.helpTextService.loadHelpText();
+
+
     $scope.fieldOfResearchService = fieldOfResearchService;
     fieldOfResearchService.loadFieldOfResearchArray();
 
@@ -268,17 +270,35 @@ app.service('userDataService', function($http, $log) {
 });
 
 //Loads help text and labels etc.
-app.service('helpTextService', function($http) {
+//I might try and get this to control visibility of help buttons. Seems inordinate,
+//but I'm not very good at this.
+app.service('helpTextService', function($http,$log) {
+
+    var helpLocation='text/dmpHelpText.json';
 
     var helpTextService = {};
+    helpTextService.dmpHelpText ={};
 
     helpTextService.loadHelpText = function() {
-        return $http.get('text/dmpHelpText.json');
+        $http.get(helpLocation).then(function(response) {
+            helpTextService.dmpHelpText = response.data.dmpHelpText;
+            helpTextService.initialise();
+          });
+    };
+
+    //Add a field to each field object indicating that the button is not visible.
+    helpTextService.initialise = function() {
+        var propNames = Object.getOwnPropertyNames(helpTextService.dmpHelpText.project);
+        $log.debug(propNames);
+        for (var i = 0, len = propNames.length; i < len; i++) {
+            helpTextService.dmpHelpText.project[propNames[i]].buttonHidden=true;
+        }
+
     };
 
     return helpTextService;
 
-});
+  });
 
 //Loads field of research data from JSON
 app.service('fieldOfResearchService', function($http) {
