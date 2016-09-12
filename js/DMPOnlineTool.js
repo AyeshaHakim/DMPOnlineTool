@@ -3,13 +3,15 @@
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
 
-app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, appPageService, userDataService, helpTextService) {
+app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, appPageService, userDataService, helpTextService, fieldOfResearchService) {
 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
     helpTextService.loadHelpText().then(function(response) {
         $scope.helpTextService = response.data;
     });
+    $scope.fieldOfResearchService = fieldOfResearchService;
+    fieldOfResearchService.loadFieldOfResearchArray();
 
 
     //ev is the dom click event to control the animation.
@@ -27,24 +29,6 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, 
             $scope.userDataService.deleteContributor(id);
         }, function() {});
     };
-
-    //ev is the dom click event to control the animation.
-    $scope.helpBox = function(ev, title, body) {
-        // Appending dialog to document.body to cover sidenav in docs app
-        // Modal dialogs should fully cover application
-        // to prevent interaction outside of dialog
-        $mdDialog.show(
-            $mdDialog.alert()
-            .parent(angular.element(document.querySelector('#popupContainer')))
-            .clickOutsideToClose(true)
-            .title(title)
-            .textContent(body)
-            .ariaLabel('Help box')
-            .ok('Got it!')
-            .targetEvent(ev)
-        );
-    };
-
 
     //TODO: make this work
     //ev is the dom click event to control the animation.
@@ -66,63 +50,6 @@ app.controller('formCtrl', function($scope, $http, $log, $rootScope, $mdDialog, 
     };
 
 
-    //Field of research search thingy.
-    $scope.selectedItem = null;
-    $scope.searchText = null;
-    $scope.selectedFORs = [];
-
-    /**
-     * Return the proper object when the append is called.
-     */
-    $scope.transformChip = function(chip) {
-        // If it is an object, it's already a known chip
-        if (angular.isObject(chip)) {
-            return chip;
-        }
-
-        // Otherwise, create a new one
-        return {
-            name: chip,
-            code: 'new'
-        };
-    };
-
-    /**
-     * Search for fieldOfResearchs.
-     */
-    $scope.querySearch = function(query) {
-        var results = query ? $scope.fieldOfResearchArray.filter($scope.createFilterFor(query)) : [];
-        return results;
-    };
-
-    /**
-     * Create filter function for a query string
-     */
-    $scope.createFilterFor = function(query) {
-        var lowercaseQuery = angular.lowercase(query);
-
-        return function filterFn(fieldOfResearch) {
-            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
-                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
-        };
-
-    };
-
-    //Load fields of research from json
-    $scope.loadFieldOfResearchArray = function() {
-        $http.get('text\\fieldOfResearch_flat.json')
-            .then(function mySuccess(response) {
-                $scope.fieldOfResearchArray = response.data;
-                $scope.fieldOfResearchArray.map(function(fieldOfResearch) {
-                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
-                    return fieldOfResearch;
-                });
-            }, function myError(response) {
-                $scope.fieldOfResearchArray = null;
-            });
-    };
-
-    $scope.loadFieldOfResearchArray();
 
 
 });
@@ -130,7 +57,7 @@ app.controller('sideNavCtrl', function($scope, $timeout, $mdSidenav, $log, $root
 
     $scope.appPageService = appPageService;
     $scope.userDataService = userDataService;
-    
+
     $scope.toggleLeft = buildDelayedToggler('left');
 
     /**
@@ -189,6 +116,45 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
                 $log.debug("close LEFT is done");
             });
 
+    };
+});
+
+//Control a help button, including its visibility hopefully.
+app.controller('helpCtrl', function($scope,$timeout,$mdDialog) {
+    $scope.helpButtonHidden=true;
+
+    $scope.toggleHelpButton = function() {
+      $scope.helpButtonHidden=!$scope.helpButtonHidden;
+    };
+
+    $scope.showHelpButton = function() {
+      $scope.helpButtonHidden=false;
+    };
+
+    $scope.hideHelpButton = function() {
+      $scope.helpButtonHidden=true;
+    };
+
+    $scope.hideHelpButtonDelayed = function() {
+      $scope.hide=$timeout(function() {$scope.hideHelpButton();},600);
+    };
+
+    //ev is the dom click event to control the animation.
+    $scope.helpBox = function(ev, title, body) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        // Modal dialogs should fully cover application
+        // to prevent interaction outside of dialog
+        $timeout.cancel($scope.hide);
+        $mdDialog.show(
+            $mdDialog.alert()
+            .parent(angular.element(document.querySelector('#popupContainer')))
+            .clickOutsideToClose(true)
+            .title(title)
+            .textContent(body)
+            .ariaLabel('Help box')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
     };
 });
 
@@ -290,7 +256,7 @@ app.service('userDataService', function($http, $log) {
                 userDataService.dmp.project.lastUpdateDate = new Date(userDataService.dmp.project.lastUpdateDate);
                 userDataService.dmp.project.lastAccessDate = new Date();
                 userDataService.dmp.project.startDate = new Date(userDataService.dmp.project.startDate);
-                if ((userDataService.dmp.project.endDate !== '')) {
+                if ((userDataService.dmp.project.endDate !== '') && (userDataService.dmp.project.endDate !== null)) {
                     userDataService.dmp.project.endDate = new Date(userDataService.dmp.project.endDate);
                 }
             }, function myError(response) {
@@ -305,6 +271,7 @@ app.service('userDataService', function($http, $log) {
 app.service('helpTextService', function($http) {
 
     var helpTextService = {};
+
     helpTextService.loadHelpText = function() {
         return $http.get('text/dmpHelpText.json');
     };
@@ -317,11 +284,65 @@ app.service('helpTextService', function($http) {
 app.service('fieldOfResearchService', function($http) {
 
     var fieldOfResearchService = {};
-    helpTextService.loadHelpText = function() {
-        return $http.get('text/dmpHelpText.json');
+
+    //Field of research search thingy.
+    fieldOfResearchService.selectedItem = null;
+    fieldOfResearchService.searchText = null;
+    fieldOfResearchService.selectedFORs = [];
+
+    /**
+     * Return the proper object when the append is called.
+     */
+    fieldOfResearchService.transformChip = function(chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+            return chip;
+        }
+
+        // Otherwise, create a new one
+        return {
+            name: chip,
+            code: 'new'
+        };
     };
 
-    return helpTextService;
+    /**
+     * Search for fieldOfResearchs.
+     */
+    fieldOfResearchService.querySearch = function(query) {
+        var results = query ? fieldOfResearchService.fieldOfResearchArray.filter(fieldOfResearchService.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    fieldOfResearchService.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(fieldOfResearch) {
+            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+    //Load fields of research from json
+    fieldOfResearchService.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                fieldOfResearchService.fieldOfResearchArray = response.data;
+                fieldOfResearchService.fieldOfResearchArray.map(function(fieldOfResearch) {
+                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
+                    return fieldOfResearch;
+                });
+            }, function myError(response) {
+                fieldOfResearchService.fieldOfResearchArray = null;
+            });
+    };
+
+
+    return fieldOfResearchService;
 
 });
 

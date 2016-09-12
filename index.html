@@ -88,12 +88,12 @@
                     <div id="project" class="formContent" ng-switch-when="project">
                         <h2 class="md-display-2">Project details</h2>
 
-                        <div layout="row">
+                        <div ng-controller="helpCtrl" layout="row">
                             <md-input-container flex>
                                 <label>Project title</label>
-                                <input ng-model="userDataService.dmp.project.title">
+                                <input ng-model="userDataService.dmp.project.title" ng-focus="showHelpButton()" ng-blur="hideHelpButtonDelayed()">
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpButtonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>
@@ -115,8 +115,8 @@
                                 <label>Field of Research</label>
 
                                 <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
-                                    <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" placeholder="Input field and hit enter">
-                                        <span md-highlight-text="searchText">{{item.name}}</span>
+                                    <md-autocomplete md-selected-item="fieldOfResearchService.selectedItem" md-search-text="fieldOfResearchService.searchText" md-items="item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)" md-item-text="item.name" placeholder="Input field and hit enter">
+                                        <span md-highlight-text="fieldOfResearchService.searchText">{{item.name}}</span>
                                     </md-autocomplete>
                                     <md-chip-template>
                                         <span>
