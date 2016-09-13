@@ -3,19 +3,19 @@
         "project": {
             "title": {
                 "label": "Project title",
-                "defaultText": "",
-                "helpBoxText": "",
+                "defaultText": "Something",
+                "helpBoxText": "If applying for funding, state the name exactly as in the grant proposal.",
                 "tooltip": ""
             },
             "description": {
                 "label": "Description",
                 "defaultText": "",
-                "helpBoxText": "",
+                "helpBoxText": "Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.",
                 "tooltip": ""
             },
             "fieldOfResearch": {
-                "label": "Project title",
-                "defaultText": "Input field and hit enter",
+                "label": "Field of research",
+                "defaultText": "Input research area and hit enter",
                 "helpBoxText": "",
                 "tooltip": ""
             },
@@ -31,7 +31,44 @@
                 "helpBoxText": "",
                 "tooltip": ""
             }
+        },
+        "contributors": {
+            "username": {
+                "label": "Username (UPI)",
+                "defaultText": "",
+                "helpBoxText": "Some help text",
+                "tooltip": ""
+            },
+            "lastname": {
+                "label": "Family name",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "firstname": {
+                "label": "Given names",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "email": {
+                "label": "Email address",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "affiliation": {
+                "label": "Affiliation",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "orcid": {
+                "label": "Last name",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            }
         }
-
     }
 }

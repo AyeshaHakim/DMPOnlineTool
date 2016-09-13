@@ -122,27 +122,45 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
 });
 
 //Control a help button, including its visibility hopefully.
-app.controller('helpCtrl', function($scope,$timeout,$mdDialog) {
-    $scope.helpButtonHidden=true;
+app.controller('helpCtrl', function($scope, $timeout, $mdDialog, $log, helpTextService) {
+    $scope.helpTextService = helpTextService;
+    $scope.helpButtonHidden = true;
+    $scope.helpProperties = {};
+
+
+    //Takes the fields JSON reference as an argument e.g. showHelpButton("project.title")
+    $scope.init = function(jsonRef) {
+        $scope.jsonRef = jsonRef;
+
+        //Needs to wait until help text is loaded, hence the promise.
+        $scope.helpTextService.promise.then(function() {
+            $scope.helpProperties = $scope.helpTextService.getFieldRef($scope.jsonRef);
+            // if ($scope.helpProperties.defaultText === "") {
+            //     $scope.helpProperties.defaultText=undefined;
+            // }
+        });
+    };
 
     $scope.toggleHelpButton = function() {
-      $scope.helpButtonHidden=!$scope.helpButtonHidden;
+        $scope.helpButtonHidden = !$scope.helpButtonHidden;
     };
 
+    //Shows the help button associated with an element (if help text exists)
     $scope.showHelpButton = function() {
-      $scope.helpButtonHidden=false;
-    };
+      if ($scope.helpProperties.helpBoxText !== "") {
+          $scope.helpTextService.showHelpButton($scope.jsonRef);
+      }
 
-    $scope.hideHelpButton = function() {
-      $scope.helpButtonHidden=true;
     };
 
     $scope.hideHelpButtonDelayed = function() {
-      $scope.hide=$timeout(function() {$scope.hideHelpButton();},600);
+        $scope.hide = $timeout(function() {
+            $scope.hideHelpButton();
+        }, 500);
     };
 
     //ev is the dom click event to control the animation.
-    $scope.helpBox = function(ev, title, body) {
+    $scope.helpBox = function(ev) {
         // Appending dialog to document.body to cover sidenav in docs app
         // Modal dialogs should fully cover application
         // to prevent interaction outside of dialog
@@ -151,15 +169,14 @@ app.controller('helpCtrl', function($scope,$timeout,$mdDialog) {
             $mdDialog.alert()
             .parent(angular.element(document.querySelector('#popupContainer')))
             .clickOutsideToClose(true)
-            .title(title)
-            .textContent(body)
+            .title($scope.helpProperties.label)
+            .textContent($scope.helpProperties.helpBoxText)
             .ariaLabel('Help box')
             .ok('Got it!')
             .targetEvent(ev)
         );
     };
 });
-
 
 //Passes view information around the place
 app.service('appPageService', function() {
@@ -205,13 +222,14 @@ app.service('userDataService', function($http, $log) {
         }
     };
 
-    //TODO: Will need to be changed to support loading.
     userDataService.nextContributorID = 1;
 
     //A class for contributors
     function Contributor(id) {
         this.id = id;
         this.firstname = id;
+        this.lastname = "";
+        this.role = "";
         this.affiliation = "";
         this.email = "";
         this.username = "";
@@ -261,6 +279,8 @@ app.service('userDataService', function($http, $log) {
                 if ((userDataService.dmp.project.endDate !== '') && (userDataService.dmp.project.endDate !== null)) {
                     userDataService.dmp.project.endDate = new Date(userDataService.dmp.project.endDate);
                 }
+                //Set next contributor ID
+                userDataService.nextContributorID = userDataService.dmp.project.contributors.length;
             }, function myError(response) {
                 userDataService.getStatus = response.statusText;
             });
@@ -272,33 +292,61 @@ app.service('userDataService', function($http, $log) {
 //Loads help text and labels etc.
 //I might try and get this to control visibility of help buttons. Seems inordinate,
 //but I'm not very good at this.
-app.service('helpTextService', function($http,$log) {
+app.service('helpTextService', function($http, $log) {
 
-    var helpLocation='text/dmpHelpText.json';
 
     var helpTextService = {};
-    helpTextService.dmpHelpText ={};
+    helpTextService.helpLocation = 'text/dmpHelpText.json';
+    helpTextService.dmpHelpText = {};
 
     helpTextService.loadHelpText = function() {
-        $http.get(helpLocation).then(function(response) {
+        helpTextService.promise = $http.get(helpTextService.helpLocation);
+        helpTextService.promise.then(function(response) {
             helpTextService.dmpHelpText = response.data.dmpHelpText;
             helpTextService.initialise();
-          });
+        });
     };
 
     //Add a field to each field object indicating that the button is not visible.
     helpTextService.initialise = function() {
+        helpTextService.hideAllHelpButtons();
+
+    };
+
+    //Sets the hidden attribute of a help button to false
+    //e.g. element = 'project.title'
+    helpTextService.showHelpButton = function(element) {
+        var visProp = helpTextService.deep_value(helpTextService.dmpHelpText, element);
+        visProp.buttonHidden = false;
+
+    };
+
+    //Hide all help buttons.
+    helpTextService.hideAllHelpButtons = function() {
         var propNames = Object.getOwnPropertyNames(helpTextService.dmpHelpText.project);
-        $log.debug(propNames);
         for (var i = 0, len = propNames.length; i < len; i++) {
-            helpTextService.dmpHelpText.project[propNames[i]].buttonHidden=true;
+            helpTextService.dmpHelpText.project[propNames[i]].buttonHidden = true;
         }
 
     };
 
+    //Gets a reference to a help text field associated with a JSON string (e.g. 'project.title')
+    helpTextService.getFieldRef = function(path) {
+        return helpTextService.deep_value(helpTextService.dmpHelpText, path);
+    };
+
+    //From stack exchange, gets nested fields from string
+    helpTextService.deep_value = function(obj, path) {
+        for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
+            obj = obj[path[i]];
+        }
+        return obj;
+    };
+
+
     return helpTextService;
 
-  });
+});
 
 //Loads field of research data from JSON
 app.service('fieldOfResearchService', function($http) {
@@ -365,6 +413,8 @@ app.service('fieldOfResearchService', function($http) {
     return fieldOfResearchService;
 
 });
+
+
 
 //ORCID stuff
 var oauthWindow;

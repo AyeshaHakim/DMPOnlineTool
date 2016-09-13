@@ -87,35 +87,37 @@
 
                     <div id="project" class="formContent" ng-switch-when="project">
                         <h2 class="md-display-2">Project details</h2>
-                        /{{helpTextService.dmpHelpText}}/
-                        <div ng-controller="helpCtrl" layout="row">
-                            <md-input-container flex>
-                                <label>Project title</label>
-                                <input ng-model="userDataService.dmp.project.title" ng-focus="showHelpButton()" ng-blur="hideHelpButtonDelayed()">
+
+                        <div ng-controller="helpCtrl" ng-init="init('project.title')" layout="row">
+                            <md-input-container flex ng-dblclick="helpBox($event)">
+                                <label>{{helpProperties.label}}</label>
+                                <input ng-model="userDataService.dmp.project.title" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()" aria-label="{{helpProperties.label}}" attrs="placeholder">
+                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpTextService.dmpHelpText.project.title.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event)">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>
                         <br>
 
-                        <div layout="row">
+                        <div ng-controller="helpCtrl" ng-init="init('project.description')" layout="row">
                             <md-input-container flex>
-                                <label>Description</label>
-                                <textarea ng-model="userDataService.dmp.project.description" rows="3"></textarea>
+                                <label>{{helpProperties.label}}</label>
+                                <textarea rows="3" ng-model="userDataService.dmp.project.description" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></textarea>
+                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" aria-label="Help" ng-click="helpBox($event,'Project description','Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.')">
+                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event)">
                                 <md-icon md-font-library="material-icons">help</md-icon>
                             </md-button>
                         </div>
                         <br>
 
-                        <div layout="row">
+                        <div ng-controller="helpCtrl" ng-init="init('project.fieldOfResearch')" layout="row">
                             <md-input-container flex>
-                                <label>Field of Research</label>
+                                <label>{{helpProperties.label}}</label>
 
-                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
-                                    <md-autocomplete md-selected-item="fieldOfResearchService.selectedItem" md-search-text="fieldOfResearchService.searchText" md-items="item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)" md-item-text="item.name" placeholder="Input field and hit enter">
+                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)" ng-click="helpTextService.hideAllHelpButtons();showHelpButton()">
+                                    <md-autocomplete md-selected-item="fieldOfResearchService.selectedItem" md-search-text="fieldOfResearchService.searchText" md-items="item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)" md-item-text="item.name" placeholder="{{helpProperties.defaultText}}">
                                         <span md-highlight-text="fieldOfResearchService.searchText">{{item.name}}</span>
                                     </md-autocomplete>
                                     <md-chip-template>
@@ -125,8 +127,11 @@
                                     </span>
                                     </md-chip-template>
                                 </md-chips>
-
+                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
+                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                                <md-icon md-font-library="material-icons">help</md-icon>
+                            </md-button>
                         </div>
                         <br>
 
@@ -135,23 +140,32 @@
 
                         <!-- Dates -->
                         <div layout="row" layout-align="space-around center">
-                            <div>
+                            <div ng-controller="helpCtrl" ng-init="init('project.startDate')">
                                 <md-input-container>
-                                    <label>Start date</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.startDate"></md-datepicker>
+                                    <label>{{helpProperties.label}}</label>
+                                    <md-datepicker ng-model="userDataService.dmp.project.startDate" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></md-datepicker>
+                                    <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                                 </md-input-container>
+                                <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                                    <md-icon md-font-library="material-icons">help</md-icon>
+                                </md-button>
                             </div>
-                            <div id="endDate">
+
+                            <div ng-controller="helpCtrl" ng-init="init('project.endDate')">
                                 <md-input-container>
-                                    <label>End date</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
+                                    <label>{{helpProperties.label}}</label>
+                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></md-datepicker>
+                                    <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                                 </md-input-container>
+                                <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                                    <md-icon md-font-library="material-icons">help</md-icon>
+                                </md-button>
                             </div>
                         </div>
                         <br>
                     </div>
 
-                    <!-- Add/remove users -->
+                    <!-- Add/remove contributors -->
                     <div id="contributors" class="formContent" ng-switch-when="contributors">
                         <h2 class="md-display-2">Contributors
 
@@ -162,14 +176,25 @@
                         <div layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade">
                             <div layout="column">
                                 <div layout="row">
+
+                                    <div ng-controller="helpCtrl" ng-init="init('contributors.username')">
+                                        <md-input-container>
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.username">
+                                        </md-input-container>
+                                        <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
+                                            <md-icon md-font-library="material-icons">help</md-icon>
+                                        </md-button>
+                                    </div>
+
                                     <md-input-container>
-                                        <label>Name</label>
+                                        <label>firstname</label>
                                         <input ng-model="contributor.firstname">
                                     </md-input-container>
 
                                     <md-input-container>
-                                        <label>Affiliation</label>
-                                        <input ng-model="contributor.affiliation">
+                                        <label>Name</label>
+                                        <input ng-model="contributor.lastname">
                                     </md-input-container>
 
                                     <md-input-container>
@@ -179,13 +204,13 @@
                                 </div>
                                 <div layout="row">
                                     <md-input-container>
-                                        <label>Username</label>
-                                        <input ng-model="contributor.username">
+                                        <label>orcid</label>
+                                        <input ng-model="contributor.orcid">
                                     </md-input-container>
 
                                     <md-input-container>
-                                        <label>orcid</label>
-                                        <input ng-model="contributor.orcid">
+                                        <label>Affiliation</label>
+                                        <input ng-model="contributor.affiliation">
                                     </md-input-container>
                                     <!-- <button id="connect-orcid-button" onclick="openORCID()">
                                         <img id="orcid-id-logo" src="http://orcid.org/sites/default/files/images/orcid_24x24.png" width="24" height="24" alt="ORCID logo" /> Create or Connect your ORCID iD
