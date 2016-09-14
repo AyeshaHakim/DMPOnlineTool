@@ -121,12 +121,20 @@ app.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
     };
 });
 
-//Control a help button, including its visibility hopefully.
-app.controller('helpCtrl', function($scope, $timeout, $mdDialog, $log, helpTextService) {
+//Control an input field, its help text, and such. Also get link to model for that
+//data in userDataService (so it requires the two to be the same!)
+app.controller('inputCtrl', function($scope, $timeout, $mdDialog, $log, helpTextService, userDataService) {
     $scope.helpTextService = helpTextService;
-    $scope.helpButtonHidden = true;
-    $scope.helpProperties = {};
+    $scope.userDataService = userDataService;
 
+    $scope.helpProperties = {
+        "label": "",
+        "defaultText": "",
+        "helpBoxText": "",
+        "tooltip": "",
+        "options": [],
+        "autocomplete": []
+    };
 
     //Takes the fields JSON reference as an argument e.g. showHelpButton("project.title")
     $scope.init = function(jsonRef) {
@@ -134,29 +142,14 @@ app.controller('helpCtrl', function($scope, $timeout, $mdDialog, $log, helpTextS
 
         //Needs to wait until help text is loaded, hence the promise.
         $scope.helpTextService.promise.then(function() {
-            $scope.helpProperties = $scope.helpTextService.getFieldRef($scope.jsonRef);
+            //Get help text JSON
+            var helpPropertiesFromJSON = $scope.helpTextService.getFieldRef($scope.jsonRef);
+            //Merge with default values
+            $scope.helpProperties = merge($scope.helpProperties, helpPropertiesFromJSON);
             // if ($scope.helpProperties.defaultText === "") {
             //     $scope.helpProperties.defaultText=undefined;
             // }
         });
-    };
-
-    $scope.toggleHelpButton = function() {
-        $scope.helpButtonHidden = !$scope.helpButtonHidden;
-    };
-
-    //Shows the help button associated with an element (if help text exists)
-    $scope.showHelpButton = function() {
-      if ($scope.helpProperties.helpBoxText !== "") {
-          $scope.helpTextService.showHelpButton($scope.jsonRef);
-      }
-
-    };
-
-    $scope.hideHelpButtonDelayed = function() {
-        $scope.hide = $timeout(function() {
-            $scope.hideHelpButton();
-        }, 500);
     };
 
     //ev is the dom click event to control the animation.
@@ -176,12 +169,52 @@ app.controller('helpCtrl', function($scope, $timeout, $mdDialog, $log, helpTextS
             .targetEvent(ev)
         );
     };
+
+    //Autocomplete functions.
+    //Search for fieldOfResearchs.
+    $scope.querySearch = function(query) {
+        var results = query ? $scope.helpProperties.autocomplete.filter($scope.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    $scope.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(match) {
+            return (match._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (match.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+
+    //Merge objects from http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+    //Slightly modified to ignore empty values (i.e. retain default if JSON is empty)
+    var merge = function() {
+        var obj = {},
+            i = 0,
+            il = arguments.length,
+            key;
+        for (; i < il; i++) {
+            for (key in arguments[i]) {
+                if (arguments[i].hasOwnProperty(key) && (arguments[i][key] !== "")  && (arguments[i][key] !== {})) {
+                    obj[key] = arguments[i][key];
+                }
+            }
+        }
+        return obj;
+    };
+
+
 });
 
 //Passes view information around the place
 app.service('appPageService', function() {
 
-    this.pageID = 'project';
+    this.pageID = 'contributors';
 
 });
 
@@ -227,7 +260,7 @@ app.service('userDataService', function($http, $log) {
     //A class for contributors
     function Contributor(id) {
         this.id = id;
-        this.firstname = id;
+        this.firstname = "";
         this.lastname = "";
         this.role = "";
         this.affiliation = "";
@@ -280,11 +313,27 @@ app.service('userDataService', function($http, $log) {
                     userDataService.dmp.project.endDate = new Date(userDataService.dmp.project.endDate);
                 }
                 //Set next contributor ID
-                userDataService.nextContributorID = userDataService.dmp.project.contributors.length;
+                userDataService.nextContributorID = userDataService.dmp.contributors.length;
             }, function myError(response) {
                 userDataService.getStatus = response.statusText;
             });
     };
+
+    //Gets a reference to a help text field associated with a JSON string (e.g. 'project.title')
+    userDataService.getDataModelRef = function(path) {
+        return userDataService.deep_value(userDataService.dmp, path);
+    };
+
+    //From stack exchange, gets nested fields from string
+    userDataService.deep_value = function(obj, path) {
+        $log.debug(obj);
+        $log.debug(path);
+        for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
+            obj = obj[path[i]];
+        }
+        return obj;
+    };
+
     return userDataService;
 
 });
@@ -303,31 +352,7 @@ app.service('helpTextService', function($http, $log) {
         helpTextService.promise = $http.get(helpTextService.helpLocation);
         helpTextService.promise.then(function(response) {
             helpTextService.dmpHelpText = response.data.dmpHelpText;
-            helpTextService.initialise();
         });
-    };
-
-    //Add a field to each field object indicating that the button is not visible.
-    helpTextService.initialise = function() {
-        helpTextService.hideAllHelpButtons();
-
-    };
-
-    //Sets the hidden attribute of a help button to false
-    //e.g. element = 'project.title'
-    helpTextService.showHelpButton = function(element) {
-        var visProp = helpTextService.deep_value(helpTextService.dmpHelpText, element);
-        visProp.buttonHidden = false;
-
-    };
-
-    //Hide all help buttons.
-    helpTextService.hideAllHelpButtons = function() {
-        var propNames = Object.getOwnPropertyNames(helpTextService.dmpHelpText.project);
-        for (var i = 0, len = propNames.length; i < len; i++) {
-            helpTextService.dmpHelpText.project[propNames[i]].buttonHidden = true;
-        }
-
     };
 
     //Gets a reference to a help text field associated with a JSON string (e.g. 'project.title')

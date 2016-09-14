@@ -85,38 +85,31 @@
                 <!-- Controls the in-page switching -->
                 <div ng-switch on="appPageService.pageID">
 
-                    <div id="project" class="formContent" ng-switch-when="project">
-                        <h2 class="md-display-2">Project details</h2>
+                    <div id="project" flex class="formContent" ng-switch-when="project">
+                        <h4 class="md-headline">Project details</h4>
 
-                        <div ng-controller="helpCtrl" ng-init="init('project.title')" layout="row">
+                        <div ng-controller="inputCtrl" ng-init="init('project.title')" layout="row">
                             <md-input-container flex ng-dblclick="helpBox($event)">
                                 <label>{{helpProperties.label}}</label>
-                                <input ng-model="userDataService.dmp.project.title" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()" aria-label="{{helpProperties.label}}" attrs="placeholder">
+                                <input ng-model="userDataService.dmp.project.title" aria-label="{{helpProperties.label}}">
                                 <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event)">
-                                <md-icon md-font-library="material-icons">help</md-icon>
-                            </md-button>
                         </div>
                         <br>
 
-                        <div ng-controller="helpCtrl" ng-init="init('project.description')" layout="row">
-                            <md-input-container flex>
+                        <div ng-controller="inputCtrl" ng-init="init('project.description')" layout="row">
+                            <md-input-container flex ng-dblclick="helpBox($event)">
                                 <label>{{helpProperties.label}}</label>
-                                <textarea rows="3" ng-model="userDataService.dmp.project.description" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></textarea>
+                                <textarea rows="3" ng-model="userDataService.dmp.project.description"></textarea>
                                 <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event)">
-                                <md-icon md-font-library="material-icons">help</md-icon>
-                            </md-button>
                         </div>
                         <br>
 
-                        <div ng-controller="helpCtrl" ng-init="init('project.fieldOfResearch')" layout="row">
-                            <md-input-container flex>
+                        <div ng-controller="inputCtrl" ng-init="init('project.fieldOfResearch')" layout="row">
+                            <md-input-container flex ng-dblclick="helpBox($event)">
                                 <label>{{helpProperties.label}}</label>
-
-                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)" ng-click="helpTextService.hideAllHelpButtons();showHelpButton()">
+                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
                                     <md-autocomplete md-selected-item="fieldOfResearchService.selectedItem" md-search-text="fieldOfResearchService.searchText" md-items="item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)" md-item-text="item.name" placeholder="{{helpProperties.defaultText}}">
                                         <span md-highlight-text="fieldOfResearchService.searchText">{{item.name}}</span>
                                     </md-autocomplete>
@@ -129,9 +122,6 @@
                                 </md-chips>
                                 <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                             </md-input-container>
-                            <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
-                                <md-icon md-font-library="material-icons">help</md-icon>
-                            </md-button>
                         </div>
                         <br>
 
@@ -140,26 +130,20 @@
 
                         <!-- Dates -->
                         <div layout="row" layout-align="space-around center">
-                            <div ng-controller="helpCtrl" ng-init="init('project.startDate')">
+                            <div ng-controller="inputCtrl" ng-init="init('project.startDate')" ng-dblclick="helpBox($event)">
                                 <md-input-container>
                                     <label>{{helpProperties.label}}</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.startDate" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></md-datepicker>
+                                    <md-datepicker ng-model="userDataService.dmp.project.startDate"></md-datepicker>
                                     <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                                 </md-input-container>
-                                <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
-                                    <md-icon md-font-library="material-icons">help</md-icon>
-                                </md-button>
                             </div>
 
-                            <div ng-controller="helpCtrl" ng-init="init('project.endDate')">
+                            <div ng-controller="inputCtrl" ng-init="init('project.endDate')" ng-dblclick="helpBox($event)">
                                 <md-input-container>
                                     <label>{{helpProperties.label}}</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false" ng-focus="helpTextService.hideAllHelpButtons();showHelpButton()"></md-datepicker>
+                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
                                     <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
                                 </md-input-container>
-                                <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
-                                    <md-icon md-font-library="material-icons">help</md-icon>
-                                </md-button>
                             </div>
                         </div>
                         <br>
@@ -167,68 +151,91 @@
 
                     <!-- Add/remove contributors -->
                     <div id="contributors" class="formContent" ng-switch-when="contributors">
-                        <h2 class="md-display-2">Contributors
+                        <h4 class="md-title">Contributors
 
                         <md-button class="md-raised md-primary" ng-click="userDataService.addContributor()" >
                             <md-icon md-font-library="material-icons">add</md-icon>Add contributor
                         </md-button>
-                        </h2>
-                        <div layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade">
+                      </h4>
+                        <md-content layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade" layout-padding>
                             <div layout="column">
-                                <div layout="row">
+                                <div flex layout="row" layout-align="space-between top">
 
-                                    <div ng-controller="helpCtrl" ng-init="init('contributors.username')">
-                                        <md-input-container>
+                                    <div flex="20" ng-controller="inputCtrl" ng-init="init('contributors.username')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
                                             <label>{{helpProperties.label}}</label>
                                             <input ng-model="contributor.username">
                                         </md-input-container>
-                                        <md-button class="md-fab md-super-mini md-primary" ng-hide="helpProperties.buttonHidden" aria-label="Help" ng-click="helpBox($event,'Project title','If applying for funding, state the name exactly as in the grant proposal.')">
-                                            <md-icon md-font-library="material-icons">help</md-icon>
-                                        </md-button>
                                     </div>
 
-                                    <md-input-container>
-                                        <label>firstname</label>
-                                        <input ng-model="contributor.firstname">
-                                    </md-input-container>
+                                    <div flex="25" ng-controller="inputCtrl" ng-init="init('contributors.lastname')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.firstname">
+                                        </md-input-container>
+                                    </div>
 
-                                    <md-input-container>
-                                        <label>Name</label>
-                                        <input ng-model="contributor.lastname">
-                                    </md-input-container>
+                                    <div flex="30" ng-controller="inputCtrl" ng-init="init('contributors.firstname')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.lastname">
+                                        </md-input-container>
+                                    </div>
 
-                                    <md-input-container>
-                                        <label>Email</label>
-                                        <input ng-model="contributor.email">
-                                    </md-input-container>
+                                    <div ng-controller="inputCtrl" ng-init="init('contributors.role')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+
+                                            <md-select ng-model="contributor.role" data-md-container-class="selectdemoSelectHeader" multiple="">
+                                                <md-select-header class="demo-select-header">
+                                                    <input ng-model="searchTerm" placeholder="Select one or more roles.." class="demo-header-searchbox md-text" type="search">
+                                                </md-select-header>
+
+                                                <md-optgroup label="options">
+                                                    <md-option ng-value="option" ng-repeat="option in helpProperties.options">{{option}}</md-option>
+                                                </md-optgroup>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+
+
                                 </div>
-                                <div layout="row">
-                                    <md-input-container>
-                                        <label>orcid</label>
-                                        <input ng-model="contributor.orcid">
-                                    </md-input-container>
+                                <div flex layout="row" layout-align="space-between top">
 
-                                    <md-input-container>
-                                        <label>Affiliation</label>
-                                        <input ng-model="contributor.affiliation">
-                                    </md-input-container>
-                                    <!-- <button id="connect-orcid-button" onclick="openORCID()">
-                                        <img id="orcid-id-logo" src="http://orcid.org/sites/default/files/images/orcid_24x24.png" width="24" height="24" alt="ORCID logo" /> Create or Connect your ORCID iD
-                                    </button> -->
+                                    <div ng-controller="inputCtrl" ng-init="init('contributors.email')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.email">
+                                        </md-input-container>
+                                    </div>
+
+                                    <div ng-controller="inputCtrl" ng-init="init('contributors.affiliation')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.affiliation">
+                                        </md-input-container>
+                                    </div>
+
+                                    <div ng-controller="inputCtrl" ng-init="init('contributors.orcid')">
+                                        <md-input-container ng-dblclick="helpBox($event)">
+                                            <label>{{helpProperties.label}}</label>
+                                            <input ng-model="contributor.orcid">
+                                        </md-input-container>
+                                    </div>
+
                                     <md-button class="md-fab md-mini md-primary" ng-click="confirmDeleteContributor($event,contributor.id)">
                                         <md-icon md-font-library="material-icons">close</md-icon>
                                     </md-button>
                                 </div>
                             </div>
 
-                        </div>
+                        </md-content>
 
                     </div>
 
                     <!-- Policies and guidance -->
                     <div id="policies" class="formContent" ng-switch-when="policies">
-                        <h2 class="md-display-2">Policies and Guidance</h2>
-
+                        <h4 class="md-headline">Policies and Guidance</h4>
                         <md-input-container layout="row">
                             <label>Related policies</label>
                             <textarea ng-model="userDataService.dmp.policies.relatedPolicies" rows="3"></textarea>
@@ -238,7 +245,7 @@
 
                     <!-- Funding -->
                     <div id="funding" class="formContent" ng-switch-when="funding">
-                        <h2 class="md-display-2">Funding</h2>
+                        <h4 class="md-headline">Funding</h4>
 
                         <md-input-container>
                             <label>Funding agency</label>
@@ -259,7 +266,7 @@
 
                     <!-- Ethics -->
                     <div id="ethics" class="formContent" ng-switch-when="ethics">
-                        <h2 class="md-display-2">Ethics and Privacy</h2>
+                        <h4 class="md-headline">Ethics and Privacy</h4>
 
                         <md-input-container>
                             <label>Ethics Requirements</label>

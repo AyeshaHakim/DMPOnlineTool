@@ -34,6 +34,7 @@
 .fade.ng-leave.ng-leave-active {
     opacity: 0;
 }
+
 .md-super-mini {
     max-width: 36px;
     min-width: 36px;
@@ -41,29 +42,50 @@
     min-height: 36px;
 }
 
-/*ORCID stuff*/
-#connect-orcid-button{
-	border: 1px solid #D3D3D3;
-	padding: .3em;
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 1px 1px 3px #999;
-	cursor: pointer;
-	color: #999;
-	font-weight: bold;
-	font-size: .8em;
-	line-height: 24px;
-	vertical-align: middle;
+
+.formContent {
+    position: fixed;
+    top: 0;
+    width: 85%;
+    padding: 25px;
+    -webkit-transition: 0.2s linear all;
+  	transition: 0.2s linear all;
+
+}
+.formContent.ng-enter {
+    opacity: 0;
+}
+.formContent.ng-enter-active {
+    opacity: 1;
+}
+.formContent.ng-leave {
+    opacity: 1;
+}
+.formContent.ng-leave-active {
+    opacity: 0;
 }
 
-#connect-orcid-button:hover{
-	border: 1px solid #338caf;
-	color: #338caf;
+.layout-max-width {
+  width: 100%;
+  max-width: 1200px;
 }
 
-#orcid-id-logo{
-	display: block;
-	margin: 0 .5em 0 0;
-	padding: 0;
-	float: left;
-}
+.selectdemoSelectHeader {
+  /* Please note: All these selectors are only applied to children of elements with the 'selectdemoSelectHeader' class */ }
+  .selectdemoSelectHeader .demo-header-searchbox {
+    border: none;
+    outline: none;
+    height: 100%;
+    width: 100%;
+    padding: 0; }
+  .selectdemoSelectHeader .demo-select-header {
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
+    padding-left: 10.667px;
+    height: 48px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: auto; }
+  .selectdemoSelectHeader md-content._md {
+    max-height: 240px; }

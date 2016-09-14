@@ -51,6 +51,13 @@
                 "helpBoxText": "",
                 "tooltip": ""
             },
+            "role": {
+                "label": "Role",
+                "defaultText": "",
+                "helpBoxText": "",
+                "tooltip": "",
+                "options": ["Lead researcher", "Data contact", "Doctoral candidate"]
+            },
             "email": {
                 "label": "Email address",
                 "defaultText": "",
@@ -64,7 +71,7 @@
                 "tooltip": ""
             },
             "orcid": {
-                "label": "Last name",
+                "label": "ORCiD",
                 "defaultText": "",
                 "helpBoxText": "",
                 "tooltip": ""
