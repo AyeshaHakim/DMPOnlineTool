@@ -240,14 +240,8 @@ app.service('userDataService', function($http, $log) {
             endDate: null
         },
         contributors: [new Contributor(0)],
-        policies: {
-            relatedPolicies: ""
-        },
-        funding: {
-            funder: "",
-            funderID: "",
-            researchOfficeID: ""
-        },
+        policies: [new Policy(0)],
+        funding: [new Funder(0)],
         ethics: {
             required: "",
             manageEthics: "",
@@ -267,6 +261,21 @@ app.service('userDataService', function($http, $log) {
         this.email = "";
         this.username = "";
         this.orcid = "";
+    }
+
+    //A class for policies
+    function Policy(id) {
+        this.id = id;
+        this.name = "";
+        this.description = "";
+    }
+
+    //A class for funders
+    function Funder(id) {
+        this.id = id;
+        this.agency = "";
+        this.funderID = "";
+        this.researchOfficeID = "";
     }
 
     //Adds a contributor to the DMP

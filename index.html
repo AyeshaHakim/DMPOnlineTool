@@ -86,7 +86,7 @@
                 <div ng-switch on="appPageService.pageID">
 
                     <div id="project" flex class="formContent" ng-switch-when="project">
-                        <h4 class="md-headline">Project details</h4>
+                        <h4 class="md-title">Project details</h4>
 
                         <div ng-controller="inputCtrl" ng-init="init('project.title')" layout="row">
                             <md-input-container flex ng-dblclick="helpBox($event)">
@@ -158,8 +158,8 @@
                         </md-button>
                       </h4>
                         <md-content layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade" layout-padding>
-                            <div layout="column">
-                                <div flex layout="row" layout-align="space-between top">
+                            <div layout="column" class="contributorPanel">
+                                <div flex layout="row" layout-align="space-between top" >
 
                                     <div flex="20" ng-controller="inputCtrl" ng-init="init('contributors.username')">
                                         <md-input-container ng-dblclick="helpBox($event)">
@@ -186,7 +186,7 @@
                                         <md-input-container ng-dblclick="helpBox($event)">
                                             <label>{{helpProperties.label}}</label>
 
-                                            <md-select ng-model="contributor.role" data-md-container-class="selectdemoSelectHeader" multiple="">
+                                            <md-select ng-model="contributor.role" data-md-container-class="selectdemoSelectHeader" multiple="" aria-label="{{helpProperties.label}}">
                                                 <md-select-header class="demo-select-header">
                                                     <input ng-model="searchTerm" placeholder="Select one or more roles.." class="demo-header-searchbox md-text" type="search">
                                                 </md-select-header>
@@ -235,17 +235,25 @@
 
                     <!-- Policies and guidance -->
                     <div id="policies" class="formContent" ng-switch-when="policies">
-                        <h4 class="md-headline">Policies and Guidance</h4>
-                        <md-input-container layout="row">
+                        <h4 class="md-title">Policies and Guidance</h4>
+                        <md-input-container layout="row" ng-dblclick="helpBox($event)">
                             <label>Related policies</label>
                             <textarea ng-model="userDataService.dmp.policies.relatedPolicies" rows="3"></textarea>
                         </md-input-container>
                         <br>
+
+                        <div ng-controller="inputCtrl" ng-init="init('project.description')" layout="row">
+                            <md-input-container flex ng-dblclick="helpBox($event)">
+                                <label>{{helpProperties.label}}</label>
+                                <textarea rows="3" ng-model="userDataService.dmp.project.description"></textarea>
+                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
+                            </md-input-container>
+                        </div>
                     </div>
 
                     <!-- Funding -->
                     <div id="funding" class="formContent" ng-switch-when="funding">
-                        <h4 class="md-headline">Funding</h4>
+                        <h4 class="md-title">Funding</h4>
 
                         <md-input-container>
                             <label>Funding agency</label>
@@ -266,7 +274,7 @@
 
                     <!-- Ethics -->
                     <div id="ethics" class="formContent" ng-switch-when="ethics">
-                        <h4 class="md-headline">Ethics and Privacy</h4>
+                        <h4 class="md-title">Ethics and Privacy</h4>
 
                         <md-input-container>
                             <label>Ethics Requirements</label>
