@@ -1,78 +1,33 @@
 {
     "dmpHelpText": {
-        "project": {
+        "projectDetails": {
             "title": {
                 "label": "Project title",
-                "defaultText": "Something",
+                "placeholder": "Something",
                 "helpBoxText": "If applying for funding, state the name exactly as in the grant proposal.",
-                "tooltip": ""
+                "tooltip": "A tooltip"
             },
             "description": {
                 "label": "Description",
-                "defaultText": "",
+                "placeholder": "",
                 "helpBoxText": "Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.",
                 "tooltip": ""
             },
             "fieldOfResearch": {
                 "label": "Field of research",
-                "defaultText": "Input research area and hit enter",
+                "placeholder": "Input research area and hit enter",
                 "helpBoxText": "",
                 "tooltip": ""
             },
             "startDate": {
                 "label": "Start date",
-                "defaultText": "",
+                "placeholder": "",
                 "helpBoxText": "",
                 "tooltip": ""
             },
             "endDate": {
                 "label": "End date",
-                "defaultText": "Ongoing",
-                "helpBoxText": "",
-                "tooltip": ""
-            }
-        },
-        "contributors": {
-            "username": {
-                "label": "Username (UPI)",
-                "defaultText": "",
-                "helpBoxText": "Some help text",
-                "tooltip": ""
-            },
-            "lastname": {
-                "label": "Family name",
-                "defaultText": "",
-                "helpBoxText": "",
-                "tooltip": ""
-            },
-            "firstname": {
-                "label": "Given names",
-                "defaultText": "",
-                "helpBoxText": "",
-                "tooltip": ""
-            },
-            "role": {
-                "label": "Role",
-                "defaultText": "",
-                "helpBoxText": "",
-                "tooltip": "",
-                "options": ["Lead researcher", "Data contact", "Doctoral candidate"]
-            },
-            "email": {
-                "label": "Email address",
-                "defaultText": "",
-                "helpBoxText": "",
-                "tooltip": ""
-            },
-            "affiliation": {
-                "label": "Affiliation",
-                "defaultText": "",
-                "helpBoxText": "",
-                "tooltip": ""
-            },
-            "orcid": {
-                "label": "ORCiD",
-                "defaultText": "",
+                "placeholder": "Ongoing",
                 "helpBoxText": "",
                 "tooltip": ""
             }

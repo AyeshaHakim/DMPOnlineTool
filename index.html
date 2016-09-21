@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en" ng-app="dmpOnlineTool">
 
 <head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>DMPOnlineTool</title>
+
 
     <!-- Angular Material CSS -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
@@ -13,297 +14,50 @@
     <!-- Local CSS -->
     <link href="css/DMPOnlineTool.css" rel="stylesheet" type="text/css">
 
-    <!-- Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
-
-    <!-- Angular Material Dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
-
-    <!-- Angular Material -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-
 
 </head>
 
-<body>
+<body ng-controller="formCtrl">
 
-    <div ng-controller="sideNavCtrl" ng-cloak="" layout="row" flex>
-
-        <!-- Sidenav -->
-        <md-sidenav class="md-sidenav-left" flex md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
-
-            <md-toolbar class="md-theme-indigo">
-                <div layout="row">
-                    <h1 class="md-toolbar-tools">DMP Online Tool
-
-                    </h1>
-                    <md-button ng-click="toggleLeft()" class="sidenav-close md-fab md-primary" hide-gt-md="" flex="25">
-                        <md-icon md-font-library="material-icons">close</md-icon>
-                    </md-button>
-                </div>
-            </md-toolbar>
-            <md-content layout-padding="" ng-controller="LeftCtrl">
-                <md-button ng-click="appPageService.pageID='project';toggleLeft()" class="sidenav-btn md-primary">Project</md-button>
-                <br>
-                <md-button ng-click="appPageService.pageID='contributors';toggleLeft()" class="sidenav-btn md-primary">Contributors</md-button>
-                <br>
-                <md-button ng-click="appPageService.pageID='policies';toggleLeft()" class="sidenav-btn md-primary">Policies and Guidance</md-button>
-                <br>
-                <md-button ng-click="appPageService.pageID='funding';toggleLeft()" class="sidenav-btn md-primary">Funding</md-button>
-                <br>
-                <md-button ng-click="appPageService.pageID='ethics';toggleLeft()" class="sidenav-btn md-primary">Ethics and Privacy</md-button>
-            </md-content>
-
-            <!-- Buttons -->
-            <div layout-align="end end">
-                <md-button class="md-raised md-primary" ng-click="userDataService.save()">
-                    Save
-                </md-button>
-                <md-button class="md-raised md-primary" ng-click="userDataService.load()">
-                    Load
-                </md-button>
-
-            </div>
-
-        </md-sidenav>
-
-        <div layout-align="top left">
-            <md-button ng-click="toggleLeft()" class="md-fab md-primary" hide-gt-md="">
-                <md-icon md-font-library="material-icons">reorder</md-icon>
-            </md-button>
+    <md-content class="formContent" layout="column">
+        <div flex>
+            <h2 class="formTitle">Project Details</h2>
         </div>
+        <p>{{userDataService.dmp.projectDetails.title}}</p>
+        <br>
+          <dmp-text-box ng-model="userDataService.dmp.projectDetails.title"></dmp-text-box>
+        <br>
 
-        <!-- Form -->
-        <md-content flex ng-controller="formCtrl" layout-margin="" layout-padding="" layout-align="top left">
-
-            <form novalidate>
-                <!-- Controls the in-page switching -->
-                <div ng-switch on="appPageService.pageID">
-
-                    <div id="project" flex class="formContent" ng-switch-when="project">
-                        <h4 class="md-title">Project details</h4>
-
-                        <div ng-controller="inputCtrl" ng-init="init('project.title')" layout="row">
-                            <md-input-container flex ng-dblclick="helpBox($event)">
-                                <label>{{helpProperties.label}}</label>
-                                <input ng-model="userDataService.dmp.project.title" aria-label="{{helpProperties.label}}">
-                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                            </md-input-container>
-                        </div>
-                        <br>
-
-                        <div ng-controller="inputCtrl" ng-init="init('project.description')" layout="row">
-                            <md-input-container flex ng-dblclick="helpBox($event)">
-                                <label>{{helpProperties.label}}</label>
-                                <textarea rows="3" ng-model="userDataService.dmp.project.description"></textarea>
-                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                            </md-input-container>
-                        </div>
-                        <br>
-
-                        <div ng-controller="inputCtrl" ng-init="init('project.fieldOfResearch')" layout="row">
-                            <md-input-container flex ng-dblclick="helpBox($event)">
-                                <label>{{helpProperties.label}}</label>
-                                <md-chips ng-model="userDataService.dmp.project.fieldOfResearch" md-autocomplete-snap="width" md-transform-chip="transformChip($chip)">
-                                    <md-autocomplete md-selected-item="fieldOfResearchService.selectedItem" md-search-text="fieldOfResearchService.searchText" md-items="item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)" md-item-text="item.name" placeholder="{{helpProperties.defaultText}}">
-                                        <span md-highlight-text="fieldOfResearchService.searchText">{{item.name}}</span>
-                                    </md-autocomplete>
-                                    <md-chip-template>
-                                        <span>
-                                      <strong>{{$chip.name}}</strong>
-                                      <!-- <em>({{$chip.code}})</em> -->
-                                    </span>
-                                    </md-chip-template>
-                                </md-chips>
-                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                            </md-input-container>
-                        </div>
-                        <br>
-
-                        <br>
+        <br>
+          <dmp-text-box ng-model="userDataService.dmp.projectDetails.description"></dmp-text-box>
+        <br>
 
 
-                        <!-- Dates -->
-                        <div layout="row" layout-align="space-around center">
-                            <div ng-controller="inputCtrl" ng-init="init('project.startDate')" ng-dblclick="helpBox($event)">
-                                <md-input-container>
-                                    <label>{{helpProperties.label}}</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.startDate"></md-datepicker>
-                                    <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                                </md-input-container>
-                            </div>
+        <!-- <md-input-container >
+            <label>test</label>
+            <input ng-model="userDataService.dmp.projectDetails.title" ng-change="onChange()">
+        </md-input-container> -->
+    </md-content>
 
-                            <div ng-controller="inputCtrl" ng-init="init('project.endDate')" ng-dblclick="helpBox($event)">
-                                <md-input-container>
-                                    <label>{{helpProperties.label}}</label>
-                                    <md-datepicker ng-model="userDataService.dmp.project.endDate" md-placeholder="Ongoing" ng-required="false"></md-datepicker>
-                                    <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <br>
-                    </div>
-
-                    <!-- Add/remove contributors -->
-                    <div id="contributors" class="formContent" ng-switch-when="contributors">
-                        <h4 class="md-title">Contributors
-
-                        <md-button class="md-raised md-primary" ng-click="userDataService.addContributor()" >
-                            <md-icon md-font-library="material-icons">add</md-icon>Add contributor
-                        </md-button>
-                      </h4>
-                        <md-content layout="row" ng-repeat="contributor in userDataService.dmp.contributors" class="fade" layout-padding>
-                            <div layout="column" class="contributorPanel">
-                                <div flex layout="row" layout-align="space-between top" >
-
-                                    <div flex="20" ng-controller="inputCtrl" ng-init="init('contributors.username')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.username">
-                                        </md-input-container>
-                                    </div>
-
-                                    <div flex="25" ng-controller="inputCtrl" ng-init="init('contributors.lastname')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.firstname">
-                                        </md-input-container>
-                                    </div>
-
-                                    <div flex="30" ng-controller="inputCtrl" ng-init="init('contributors.firstname')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.lastname">
-                                        </md-input-container>
-                                    </div>
-
-                                    <div ng-controller="inputCtrl" ng-init="init('contributors.role')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-
-                                            <md-select ng-model="contributor.role" data-md-container-class="selectdemoSelectHeader" multiple="" aria-label="{{helpProperties.label}}">
-                                                <md-select-header class="demo-select-header">
-                                                    <input ng-model="searchTerm" placeholder="Select one or more roles.." class="demo-header-searchbox md-text" type="search">
-                                                </md-select-header>
-
-                                                <md-optgroup label="options">
-                                                    <md-option ng-value="option" ng-repeat="option in helpProperties.options">{{option}}</md-option>
-                                                </md-optgroup>
-                                            </md-select>
-                                        </md-input-container>
-                                    </div>
+    <!-- <div user-avatar>howdy</div> -->
 
 
-                                </div>
-                                <div flex layout="row" layout-align="space-between top">
-
-                                    <div ng-controller="inputCtrl" ng-init="init('contributors.email')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.email">
-                                        </md-input-container>
-                                    </div>
-
-                                    <div ng-controller="inputCtrl" ng-init="init('contributors.affiliation')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.affiliation">
-                                        </md-input-container>
-                                    </div>
-
-                                    <div ng-controller="inputCtrl" ng-init="init('contributors.orcid')">
-                                        <md-input-container ng-dblclick="helpBox($event)">
-                                            <label>{{helpProperties.label}}</label>
-                                            <input ng-model="contributor.orcid">
-                                        </md-input-container>
-                                    </div>
-
-                                    <md-button class="md-fab md-mini md-primary" ng-click="confirmDeleteContributor($event,contributor.id)">
-                                        <md-icon md-font-library="material-icons">close</md-icon>
-                                    </md-button>
-                                </div>
-                            </div>
-
-                        </md-content>
-
-                    </div>
-
-                    <!-- Policies and guidance -->
-                    <div id="policies" class="formContent" ng-switch-when="policies">
-                        <h4 class="md-title">Policies and Guidance</h4>
-                        <md-input-container layout="row" ng-dblclick="helpBox($event)">
-                            <label>Related policies</label>
-                            <textarea ng-model="userDataService.dmp.policies.relatedPolicies" rows="3"></textarea>
-                        </md-input-container>
-                        <br>
-
-                        <div ng-controller="inputCtrl" ng-init="init('project.description')" layout="row">
-                            <md-input-container flex ng-dblclick="helpBox($event)">
-                                <label>{{helpProperties.label}}</label>
-                                <textarea rows="3" ng-model="userDataService.dmp.project.description"></textarea>
-                                <md-tooltip>{{helpProperties.tooltip}}</md-tooltip>
-                            </md-input-container>
-                        </div>
-                    </div>
-
-                    <!-- Funding -->
-                    <div id="funding" class="formContent" ng-switch-when="funding">
-                        <h4 class="md-title">Funding</h4>
-
-                        <md-input-container>
-                            <label>Funding agency</label>
-                            <input ng-model="userDataService.dmp.funding.funder">
-                        </md-input-container>
-
-                        <md-input-container>
-                            <label>Funding ID</label>
-                            <input ng-model="userDataService.dmp.funding.funderID">
-                        </md-input-container>
-
-                        <md-input-container>
-                            <label>Research Office ID</label>
-                            <input ng-model="userDataService.dmp.funding.researchOfficeID">
-                        </md-input-container>
-                        <br>
-                    </div>
-
-                    <!-- Ethics -->
-                    <div id="ethics" class="formContent" ng-switch-when="ethics">
-                        <h4 class="md-title">Ethics and Privacy</h4>
-
-                        <md-input-container>
-                            <label>Ethics Requirements</label>
-                            <input ng-model="userDataService.dmp.ethics.required">
-                        </md-input-container>
-
-                        <md-input-container layout="row">
-                            <label>How will you manage any ethical issues?</label>
-                            <textarea ng-model="userDataService.dmp.ethics.manageEthics" rows="3"></textarea>
-                        </md-input-container>
-
-                        <md-input-container>
-                            <label>Are there other privacy and/or security requirements?</label>
-                            <textarea ng-model="userDataService.dmp.ethics.managePrivacy" rows="3"></textarea>
-                        </md-input-container>
-                        <br>
-                    </div>
-                </div>
-            </form>
-
-        </md-content>
-    </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
-    <!-- <script src="js/init.js"></script> -->
-    <!-- <script src="js/field-of-research-calculator.js"></script> -->
-    <script src="js/DMPOnlineTool.js"></script>
-    <!-- <script src="js/sideNav.js"></script> -->
 </body>
+
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+
+<!-- Angular Material Dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+
+<!-- Angular Material -->
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+<script src="js/DMPOnlineTool.js"></script>
 
 </html>
