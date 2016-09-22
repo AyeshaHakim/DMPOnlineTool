@@ -2,10 +2,10 @@
     "dmpHelpText": {
         "projectDetails": {
             "title": {
-                "label": "Project title",
+                "label": "Title",
                 "placeholder": "Something",
                 "helpBoxText": "If applying for funding, state the name exactly as in the grant proposal.",
-                "tooltip": "A tooltip"
+                "tooltip": ""
             },
             "description": {
                 "label": "Description",
@@ -16,13 +16,13 @@
             "fieldOfResearch": {
                 "label": "Field of research",
                 "placeholder": "Input research area and hit enter",
-                "helpBoxText": "",
+                "helpBoxText": "Try and be specific as possible. If your field is not in the list, that doesn't surprise me.",
                 "tooltip": ""
             },
             "startDate": {
                 "label": "Start date",
                 "placeholder": "",
-                "helpBoxText": "",
+                "helpBoxText": "Does this work?",
                 "tooltip": ""
             },
             "endDate": {

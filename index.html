@@ -19,24 +19,86 @@
 
 <body ng-controller="formCtrl">
 
-    <md-content class="formContent" layout="column">
-        <div flex>
-            <h2 class="formTitle">Project Details</h2>
+    <md-content class="formContent" layout="column" ng-cloak>
+        <h2 class="formTitle">Project Details</h2>
+        <!-- <p>{{userDataService.dmp.projectDetails.title}}</p> -->
+        <br>
+        <dmp-input ng-model="userDataService.dmp.projectDetails.title"></dmp-input>
+        <br>
+        <dmp-input ng-model="userDataService.dmp.projectDetails.description" inputtype="textarea" inputtags="rows='3'"></dmp-input>
+        <br>
+        <dmp-input ng-model="userDataService.dmp.projectDetails.fieldOfResearch" inputtype="md-chips" inputtags="flex='100' md-autocomplete-snap='width' md-transform-chip='transformChip($chip)'" inputcontent="{{fieldOfResearchService.autocompleteText}}"></dmp-input>
+        <br>
+        <div layout="row">
+            <dmp-input ng-model="userDataService.dmp.projectDetails.startDate" inputtype="md-datepicker"></dmp-input>
+            <dmp-input ng-model="userDataService.dmp.projectDetails.endDate" inputtype="md-datepicker" inputtags="md-placeholder='Ongoing' ng-required='false'">
+            </dmp-input>
         </div>
-        <p>{{userDataService.dmp.projectDetails.title}}</p>
-        <br>
-          <dmp-text-box ng-model="userDataService.dmp.projectDetails.title"></dmp-text-box>
-        <br>
-
-        <br>
-          <dmp-text-box ng-model="userDataService.dmp.projectDetails.description"></dmp-text-box>
-        <br>
 
 
-        <!-- <md-input-container >
-            <label>test</label>
-            <input ng-model="userDataService.dmp.projectDetails.title" ng-change="onChange()">
-        </md-input-container> -->
+        <h2 class="formTitle">Contributors</h2>
+
+
+        <div layout="row">
+            <!-- <div flex-xs flex-gt-xs="50"> -->
+            <div layout-wrap flex="33" ng-repeat="contributor in userDataService.dmp.contributors">
+                <contributor-card ng-model="contributor"></contributor-card>
+            </div>
+            <!-- <div flex="50">
+                <md-card>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Card with image0</span>
+                            <span class="md-subhead">Large</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content>
+                        The titles of Washed Out's breakthrough song and the first single from Paracosm share the two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
+                    </md-card-content>
+                    <md-card-actions layout="row" layout-align="end center">
+                        <md-button>Action 1</md-button>
+                        <md-button>Action 2</md-button>
+                    </md-card-actions>
+                </md-card>
+            </div>
+
+            <div flex="50">
+                <md-card>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Card with image1</span>
+                            <span class="md-subhead">Large</span>
+                        </md-card-title-text>
+                        <md-card-title-media>
+                            <div class="md-media-lg card-media"></div>
+                        </md-card-title-media>
+                    </md-card-title>
+                    <md-card-actions layout="row" layout-align="end center">
+                        <md-button>Action 1</md-button>
+                        <md-button>Action 2</md-button>
+                    </md-card-actions>
+                </md-card>
+            </div>
+
+            <div flex="50">
+                <md-card>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Card with image2</span>
+                            <span class="md-subhead">Large</span>
+                        </md-card-title-text>
+                        <md-card-title-media>
+                            <div class="md-media-lg card-media"></div>
+                        </md-card-title-media>
+                    </md-card-title>
+                    <md-card-actions layout="row" layout-align="end center">
+                        <md-button>Action 1</md-button>
+                        <md-button>Action 2</md-button>
+                    </md-card-actions>
+                </md-card>
+            </div> -->
+        </div>
+
     </md-content>
 
     <!-- <div user-avatar>howdy</div> -->

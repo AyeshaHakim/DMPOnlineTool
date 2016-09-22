@@ -1,20 +1,42 @@
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
-app.controller('formCtrl', function($scope, userDataService, helpTextService) {
+app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService) {
     $scope.userDataService = userDataService;
-
     $scope.userDataService.load();
 
+    $scope.fieldOfResearchService = fieldOfResearchService;
+    fieldOfResearchService.loadFieldOfResearchArray();
 
     $scope.helpTextService = helpTextService;
     $scope.helpTextService.loadHelpText();
+
+    //ev is the dom click event to control the animation.
+    $scope.helpBox = function(ev, title, helpBoxText) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        // Modal dialogs should fully cover application
+        // to prevent interaction outside of dialog
+        $timeout.cancel($scope.hide);
+        $mdDialog.show(
+            $mdDialog.alert()
+            .parent(angular.element(document.querySelector('#popupContainer')))
+            .clickOutsideToClose(true)
+            .title(title)
+            .textContent(helpBoxText)
+            .ariaLabel('Help box')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
+        // $log.debug('hollaa');
+
+    };
 
 
 });
 
 
 //A directive to make input areas, and hopefully automagically get helper text from json
-app.directive("dmpTextBox", function($log, $compile, helpTextService) {
+//Leading and trailing spaces are automagically inserted
+app.directive("dmpInput", function($log, $compile, helpTextService) {
 
     return {
         require: "?ngModel",
@@ -31,22 +53,34 @@ app.directive("dmpTextBox", function($log, $compile, helpTextService) {
                     scope.helpFields = scope.helpTextService.getFieldRef(attrs.ngModel);
 
                     //Format tags from html
-                    var containerTags = attrs.hasOwnProperty('containertags') ? attrs.containertags : "";
-                    var inputTags = attrs.hasOwnProperty('inputtags') ? attrs.inputtags : "";
-                    var label = (scope.helpFields.hasOwnProperty('label') && scope.helpFields.label !== "") ? scope.helpFields.label : "";
+                    var inputType = attrs.hasOwnProperty('inputtype') ? (attrs.inputtype + " ") : "input ";
+
+                    //Attributes inserted in md-input-container start tag
+                    var containerTags = attrs.hasOwnProperty('containertags') ? (attrs.containertags + " ") : "";
+                    //Attributes inserted in input start tag
+                    var inputTags = attrs.hasOwnProperty('inputtags') ? (attrs.inputtags + " ") : "";
+                    //Text inserted between input start and end tags
+                    var inputContent = attrs.hasOwnProperty('inputcontent') ? (attrs.inputcontent + " ") : "";
+
+                    var label = (scope.helpFields.hasOwnProperty('label') && scope.helpFields.label !== "") ? escapeRegExp(scope.helpFields.label) : "";
                     var labelTags = (label !== "") ? ("<label>" + scope.helpFields.label + "</label>") : "";
-                    var labelAria = (label !== "") ? (" aria-label=" + scope.helpFields.label) : "";
-                    var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder=" + scope.helpFields.placeholder) : "";
-                    var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + scope.helpFields.tooltip + "</md-tooltip>") : "";
+                    var labelAria = (label !== "") ? ("aria-label='" + scope.helpFields.label + "' ") : "";
+
+                    var helpBox = (scope.helpFields.hasOwnProperty('helpBoxText') && scope.helpFields.helpBoxText !== "") ? ("ng-dblclick=\"helpBox($event,'" + label + "','" + escapeRegExp(scope.helpFields.helpBoxText) + "')\" ") : "";
+                    var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "' ") : "";
+                    var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + escapeRegExp(scope.helpFields.tooltip) + "</md-tooltip>") : "";
+
+
 
                     //Create input HTML
-                    var template = '<md-input-container layout="row"' + containerTags + '>' +
+                    var template = '<md-input-container layout="row" ' + containerTags + helpBox + '>' +
                         labelTags +
-                        '<input ' + placeholder + " ng-model='value' ng-change='onChange()'" + inputTags + labelAria + ">" +
+                        '<' + inputType + placeholder + "ng-model='value' ng-change='onChange()' " + inputTags + labelAria + ">" + inputContent + "</" + inputType + ">" +
                         tooltip +
                         '</md-input-container>';
 
-                    //Compile the HTML, and add to DOM
+                    //Compile to HTML, and add to DOM
+                    // $log.debug(template);
                     var linkFn = $compile(template);
                     var content = linkFn(scope);
                     element.append(content);
@@ -54,6 +88,60 @@ app.directive("dmpTextBox", function($log, $compile, helpTextService) {
             }
 
             init();
+
+            scope.onChange = function() {
+                ngModel.$setViewValue(scope.value);
+            };
+
+            ngModel.$render = function() {
+                scope.value = ngModel.$modelValue;
+            };
+        }
+    };
+});
+
+//A directive to display a contributor as a card.
+app.directive("contributorCard", function($log, $compile, helpTextService) {
+
+    return {
+        restrict: 'E',
+
+        require: "?ngModel",
+
+        scope: {
+            ngModel: '='
+        },
+
+        template: function(element, attrs) {
+            // var type = attrs.type || 'text';
+            // var required = attrs.hasOwnProperty('required') ? "required='required'" : "";
+            // for (var i = 0; i < cars.length; i++) {
+            //     text += cars[i] + "<br>";
+            // }
+
+            var htmlText =
+                "<md-card class='card'>" +
+                "<md-card-title>" +
+                "<md-card-title-text>" +
+                "<span class='md-headline'>{{ngModel.firstname}} {{ngModel.lastname}}</span>" +
+                "<em>{{ngModel.role.join(', ')}}</em>" +
+                "<span class='md-subhead'>{{ngModel.affiliation}}</span>" +
+                "<span class='md-subhead'>{{ngModel.email}}</span>" +
+                "</md-card-title-text>" +
+                "</md-card-title>" +
+                "<md-card-content>" +
+                "</md-card-content>" +
+                "<md-card-actions layout=\"row\" layout-align=\"end center\">" +
+                "<md-button>Edit</md-button>" +
+                "<md-button>Remove</md-button>" +
+                "</md-card-actions>" +
+                "</md-card>";
+            $log.debug(htmlText);
+            return htmlText;
+        },
+
+        link: function(scope, element, attrs, ngModel) {
+            if (!ngModel) return;
 
             scope.onChange = function() {
                 ngModel.$setViewValue(scope.value);
@@ -257,6 +345,87 @@ app.service('helpTextService', function($http, $log) {
 
 });
 
+//Loads field of research data from JSON
+app.service('fieldOfResearchService', function($http) {
+
+    var fieldOfResearchService = {};
+
+    //Field of research search thingy.
+    fieldOfResearchService.selectedItem = null;
+    fieldOfResearchService.searchText = null;
+    fieldOfResearchService.selectedFORs = [];
+
+    //Text to insert between input tags for autocomplete functionality.
+    fieldOfResearchService.autocompleteText = "<md-autocomplete " +
+        "md-selected-item=\"fieldOfResearchService.selectedItem\" " +
+        "md-search-text=\"fieldOfResearchService.searchText\" " +
+        "md-items=\"item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)\" " +
+        "md-item-text=\"item.name\">" +
+        // "placeholder=\"{{helpProperties.defaultText}}\">" +
+        "<span md-highlight-text=\"fieldOfResearchService.searchText\">{{item.name}}</span></md-autocomplete>" +
+        "<md-chip-template>" +
+        "<span>" +
+        "<strong>{{$chip.name}} </strong>" +
+        "<em>({{$chip.code}})</em>" +
+        "</span>" +
+        "</md-chip-template>";
+
+    /**
+     * Return the proper object when the append is called.
+     */
+    fieldOfResearchService.transformChip = function(chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+            return chip;
+        }
+
+        // Otherwise, create a new one
+        return {
+            name: chip,
+            code: 'new'
+        };
+    };
+
+    /**
+     * Search for fieldOfResearchs.
+     */
+    fieldOfResearchService.querySearch = function(query) {
+        var results = query ? fieldOfResearchService.fieldOfResearchArray.filter(fieldOfResearchService.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    fieldOfResearchService.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(fieldOfResearch) {
+            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+    //Load fields of research from json
+    fieldOfResearchService.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                fieldOfResearchService.fieldOfResearchArray = response.data;
+                fieldOfResearchService.fieldOfResearchArray.map(function(fieldOfResearch) {
+                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
+                    return fieldOfResearch;
+                });
+            }, function myError(response) {
+                fieldOfResearchService.fieldOfResearchArray = null;
+            });
+    };
+
+
+    return fieldOfResearchService;
+
+});
+
 
 function DialogController($scope, $mdDialog) {
     $scope.hide = function() {
@@ -270,18 +439,11 @@ function DialogController($scope, $mdDialog) {
     };
 }
 
-
-function DialogController($scope, $mdDialog) {
-    $scope.hide = function() {
-        $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-        $mdDialog.cancel();
-    };
-    $scope.answer = function(answer) {
-        $mdDialog.hide(answer);
-    };
+//http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+function escapeRegExp(str) {
+    return str.replace(/[\'\"]/g, "\\$&");
 }
+
 
 //From stack exchange, gets nested fields from string
 deep_value = function(obj, path) {
