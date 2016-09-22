@@ -1,0 +1,145 @@
+{
+    "dmpCreatedDate": "2016-09-14T21:44:42.782Z",
+    "lastUpdateDate": "2016-09-14T21:45:02.893Z",
+    "lastAccessDate": "2016-09-14T21:44:42.782Z",
+
+    "projectDetails": {
+        "title": "Project to test the DMPOnlineTool",
+        "description": "A project to test all of this stuff, something to do with brains. This is a slightly more fleshed out description so that it fills multiple lines in the input box.",
+        "fieldOfResearch": [{
+            "code": "170299",
+            "name": "Cognitive Science not elsewhere classified"
+        }],
+        "startDate": "2016-09-14T21:44:42.782Z",
+        "endDate": ""
+    },
+
+    "contributors": [{
+        "id": "0",
+        "firstname": "Joanne",
+        "lastname": "One",
+        "role": [
+            "Supervisor",
+            "Data contact"
+        ],
+        "affiliation": "University of Auckland",
+        "email": "joanne.one@auckland.ac.nz",
+        "username": "joone111",
+        "orcid": ""
+    }, {
+        "id": "1",
+        "firstname": "Jim",
+        "lastname": "Two",
+        "role": [
+            "Doctoral candidate"
+        ],
+        "affiliation": "University of Auckland",
+        "email": "jim.two@auckland.ac.nz",
+        "username": "jitwo222",
+        "orcid": ""
+    }],
+
+    "funding": [{
+        "funder": "Royal Society of NZ",
+        "funderID": "72935",
+        "researchOfficeID": "9856A"
+    }],
+
+    "ethics": {
+        "required": "true",
+        "ethicsDocuments": [{
+            "id": "0",
+            "description": "Ethics committee consent",
+            "link": "link.to/uploaded/document"
+        }, {
+            "id": "1",
+            "description": "Informed consent form",
+            "link": "link.to/uploaded/document"
+        }]
+    },
+
+    "dataAssets": [{
+        "id": "0",
+        "description": "Lots of EEG data from people in raw format.",
+        "collectionProcess": "Collected from peoples' brains using a computer.",
+        "organisationProcess": "Organised in heaps of folders, really deep and really wide.",
+        "storageProcess": "Store it on my laptop, might put it on a USB.",
+        "metadataRequirements": "I will write what the data are about in my lab book.",
+        "copyrightOwner": "University of Auckland",
+        "accessControl": {
+            "status": "restricted",
+            "details": "Restricted because of reasons.",
+            "releaseDate": "2016-09-14T21:44:42.782Z",
+            "complianceProcess": "I will keep it on a USB in my pocket."
+        },
+        "retention": {
+          "retentionType": "medical",
+          "retainUntil": "2016-09-14T21:44:42.782Z"
+        },
+        "publicationProcess": "I will publish it on a discipline-specific repository.",
+        "license": {
+            "name": "CC-0",
+            "logo": "link.to/logo"
+        },
+        "archiving": "This data should be stored forever because it's super important.",
+        "dataContact": "2",
+        "requiredResources": "I will need a VM with 20TB of RAM.",
+        "issues": [{
+            "id": "0",
+            "type": "cultural",
+            "description": "Some cultures believe that EEG captures your soul.",
+            "managementProcess": "Screen for such cultural beliefs, as indicated in page X of informed consent form."
+        }],
+        "policyRequirements": [{
+            "id": "0",
+            "controllingBody": "Department of Brains",
+            "relevantText": "4.1.1. The researcher is required to tell four friends about their research, and ask those friends to tell four friends."
+        }, {
+            "id": "1",
+            "controllingBody": "University of Auckland",
+            "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
+        }]
+    }, {
+        "id": "1",
+        "description": "Behavioural data like reaction times and junk.",
+        "collectionProcess": "People will push a button and I'll see how long it taes.",
+        "organisationProcess": "Arranged on my desktop.",
+        "storageProcess": "Store it on my laptop, might put it on a USB.",
+        "metadataRequirements": "I think I'll remember what the files are, I'm not an idiot.",
+        "copyrightOwner": "University of Auckland",
+        "accessControl": {
+            "status": "unrestricted",
+            "details": "",
+            "releaseDate": "",
+            "complianceProcess": ""
+        },
+        "retention": {
+          "retentionType": "medical",
+          "retainUntil": "2016-09-14T21:44:42.782Z"
+        },
+        "publicationProcess": "I will publish it on my personal website.",
+        "license": {
+            "name": "MIT",
+            "logo": "link.to/logo"
+        },
+        "archiving": "",
+        "dataContact": "2",
+        "requiredResources": "Make me a relational database.",
+        "issues": [{
+            "id": "0",
+            "type": "privacy",
+            "description": "People don't like others to know their reaction time because it might be embarassing.",
+            "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
+        }, {
+            "id": "1",
+            "type": "ethical",
+            "description": "People don't like others to know their reaction time because it might be embarassing.",
+            "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
+        }],
+        "policyRequirements": [{
+            "id": "0",
+            "controllingBody": "University of Auckland",
+            "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
+        }]
+    }]
+}
