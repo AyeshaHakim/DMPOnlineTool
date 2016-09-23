@@ -1,24 +1,99 @@
 .formContent {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 3px 8px;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 3px 8px;
 }
-
 .formTitle {
-  font-weight: 500;
-  color: white;
-  padding: 3px 8px;
-  background-color: rgb(0, 70, 127);
-  padding-bottom: 4px;
+    font-weight: 500;
+    color: white;
+    padding: 8px 20px;
+    background-color: rgb(0, 70, 127);
 }
-
 .md-chips .md-chip-input-container md-autocomplete input {
     width: 600px;
 }
-
 .card {
-  box-shadow: 0 0 12px rgba(0,0,0,0.25);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    border-radius: 4px;
+    -webkit-transform: translateY(0);
+    -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
+}
+.card:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 15px rgba(71, 206, 230, 0.2);
+    opacity: 0;
+    -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
+}
+.card:hover:after {
+    opacity: .6
 }
 .card:hover {
-  box-shadow: 0 0 12px rgba(0,0,0,0.4);
+    -webkit-transform: scale(1.02, 1.02);
+    transform: scale(1.02, 1.02);
+}
+.addcard:active {
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+}
+.elevated {
+    z-index: 1;
+}
+.raised-subhead {
+    position: relative;
+    top: -18px;
+}
+.center {
+    text-align: center;
+}
+.lift-icon {
+    position: relative;
+    top: -10px;
+}
+.icon-60px {
+    width: 60px;
+    height: 60px;
+}
+.icon-90px {
+    width: 90px;
+    height: 90px;
+}
+.icon-120px {
+    width: 120px;
+    height: 120px;
+}
+.icon-150px {
+    width: 150px;
+    height: 150px;
+}
+.supplementary-plus {
+    width: 72px;
+    height: 72px;
+    position: relative;
+    right: 24px;
+}
+.right-offset-icon {
+    position: relative;
+    right: -30px;
+}
+.smaller-text80 {
+    font-size: 80%;
+}
+.smaller-text90 {
+    font-size: 90%;
+}
+.flip-horizontal {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
 }

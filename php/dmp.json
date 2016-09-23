@@ -45,21 +45,24 @@
         "researchOfficeID": "9856A"
     }],
 
-    "ethics": {
-        "required": "true",
-        "ethicsDocuments": [{
-            "id": "0",
-            "description": "Ethics committee consent",
-            "link": "link.to/uploaded/document"
-        }, {
-            "id": "1",
-            "description": "Informed consent form",
-            "link": "link.to/uploaded/document"
-        }]
-    },
+    "ethicsRequired": true,
+    "iwiConsultationRequired": true,
+
+    "referenceDocuments": [{
+        "id": "0",
+        "shortname": "Ethics committee consent",
+        "summary": "The ethics committee has allowed me to test on humans and publish their data, as long as they provide informed consent.",
+        "link": "link.to/uploaded/document"
+    }, {
+        "id": "1",
+        "shortname": "Informed consent form",
+        "summary": "",
+        "link": "link.to/uploaded/document"
+    }],
 
     "dataAssets": [{
         "id": "0",
+        "shortname": "EEG data",
         "description": "Lots of EEG data from people in raw format.",
         "collectionProcess": "Collected from peoples' brains using a computer.",
         "organisationProcess": "Organised in heaps of folders, really deep and really wide.",
@@ -73,8 +76,8 @@
             "complianceProcess": "I will keep it on a USB in my pocket."
         },
         "retention": {
-          "retentionType": "medical",
-          "retainUntil": "2016-09-14T21:44:42.782Z"
+            "retentionType": "medical",
+            "retainUntil": "2016-09-14T21:44:42.782Z"
         },
         "publicationProcess": "I will publish it on a discipline-specific repository.",
         "license": {
@@ -101,6 +104,7 @@
         }]
     }, {
         "id": "1",
+        "shortname": "Behavioural data",
         "description": "Behavioural data like reaction times and junk.",
         "collectionProcess": "People will push a button and I'll see how long it taes.",
         "organisationProcess": "Arranged on my desktop.",
@@ -114,8 +118,8 @@
             "complianceProcess": ""
         },
         "retention": {
-          "retentionType": "medical",
-          "retainUntil": "2016-09-14T21:44:42.782Z"
+            "retentionType": "medical",
+            "retainUntil": "2016-09-14T21:44:42.782Z"
         },
         "publicationProcess": "I will publish it on my personal website.",
         "license": {

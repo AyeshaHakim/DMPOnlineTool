@@ -70,8 +70,6 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
                     var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "' ") : "";
                     var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + escapeRegExp(scope.helpFields.tooltip) + "</md-tooltip>") : "";
 
-
-
                     //Create input HTML
                     var template = '<md-input-container layout="row" ' + containerTags + helpBox + '>' +
                         labelTags +
@@ -101,7 +99,8 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
 });
 
 //A directive to display a contributor as a card.
-app.directive("contributorCard", function($log, $compile, helpTextService) {
+//Also allows display of a "Add new" card.
+app.directive("dmpCard", function($log, $compile, helpTextService) {
 
     return {
         restrict: 'E',
@@ -113,29 +112,111 @@ app.directive("contributorCard", function($log, $compile, helpTextService) {
         },
 
         template: function(element, attrs) {
-            // var type = attrs.type || 'text';
+            var type = attrs.type || 'contributor';
+            $log.debug(type);
             // var required = attrs.hasOwnProperty('required') ? "required='required'" : "";
             // for (var i = 0; i < cars.length; i++) {
             //     text += cars[i] + "<br>";
             // }
+            var htmlText = "";
+            //Bits of the card
+            var cardTags = "class='card'";
+            var heading = "";
+            var subheading = "";
+            var contentTags = "";
+            var content = "";
+            var buttons = "";
 
-            var htmlText =
-                "<md-card class='card'>" +
+            if (type === 'contributor') {
+                heading = "{{ngModel.firstname}} {{ngModel.lastname}}";
+                subheading = "{{ngModel.affiliation}}";
+                content = "<em>{{ngModel.role.join(', ')}}</em>" +
+                    "<div class='md-subhead'>{{ngModel.email}}</div>";
+                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                    "<md-button class=\"elevated\">Remove</md-button>";
+            } else if (type === 'addnewcontributor') {
+                cardTags = "class='card addcard'";
+                heading = "Add new contributor...";
+                contentTags = "class='center'";
+                content = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
+            } else if (type === 'dataasset') {
+                heading = "{{ngModel.shortname}}";
+                content = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                    "<div class='smaller-text80'>" +
+                    "<p><em>Collection: </em><br>" +
+                    "{{ngModel.collectionProcess}}</p>" +
+                    "<p><em>Organisation: </em><br>" +
+                    "{{ngModel.organisationProcess}}</p>" +
+                    "<p><em>Storage: </em><br>" +
+                    "{{ngModel.storageProcess}}</p>" +
+                    "<p><em>Metadata: </em><br>" +
+                    "{{ngModel.metadataRequirements}}</p>" +
+                    "<p><em>Copyright owner: </em><br>" +
+                    "{{ngModel.copyrightOwner}}</p>" +
+                    "<p><em>Publication process: </em><br>" +
+                    "{{ngModel.publicationProcess}}</p>" +
+                    "<p><em>Archiving requirements: </em><br>" +
+                    "{{ngModel.archiving}}</p>" +
+                    "<p><em>Resource requirements: </em><br>" +
+                    "{{ngModel.requiredResources}}</p>" +
+                    "</div>";
+                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                    "<md-button class=\"elevated\">Remove</md-button>";
+            } else if (type === 'addnewdataasset') {
+                cardTags = "class='card addcard'";
+                heading = "Add new data asset...";
+                contentTags = "class='center'";
+                content = "<md-icon md-svg-icon=\"database-plus\" class=\"icon-150px lift-icon\"></md-icon>";
+            } else if (type === 'funder') {
+                heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
+                subheading = "{{ngModel.affiliation}}";
+                content = "<span class='md-subhead'>Reference numbers: </span>" +
+                    "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
+                    "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
+                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                    "<md-button class=\"elevated\">Remove</md-button>";
+            } else if (type === 'addnewfunder') {
+                cardTags = "class='card addcard'";
+                heading = "<div class='smaller-text80'>Add new funder...</div>";
+                contentTags = "class='center'";
+                content = "<div class='right-offset-icon'><md-icon md-svg-icon=\"bank\" class=\"icon-90px lift-icon\"></md-icon>" +
+                    "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
+            } else if (type === 'document') {
+                heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
+                content = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                    "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
+                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                    "<md-button class=\"elevated\">Remove</md-button>";
+            } else if (type === 'addnewdocument') {
+                cardTags = "class='card addcard'";
+                heading = "<div class='smaller-text80'>Attach new document...</div>";
+                contentTags = "class='center'";
+                content = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+            }
+
+            //Compile optional stuff
+            buttons = (buttons !== "") ? ("<md-card-actions layout=\"row\" layout-align=\"end center\">" + buttons + "</md-card-actions>") : "";
+            subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
+
+            //Create card
+            htmlText =
+                "<md-card" + addLeadingSpace(cardTags) + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
-                "<span class='md-headline'>{{ngModel.firstname}} {{ngModel.lastname}}</span>" +
-                "<em>{{ngModel.role.join(', ')}}</em>" +
-                "<span class='md-subhead'>{{ngModel.affiliation}}</span>" +
-                "<span class='md-subhead'>{{ngModel.email}}</span>" +
+                "<span class='md-headline'>" +
+                heading +
+                "</span>" +
+                subheading +
                 "</md-card-title-text>" +
                 "</md-card-title>" +
-                "<md-card-content>" +
+                "<md-card-content" + addLeadingSpace(contentTags) + ">" +
+                content +
                 "</md-card-content>" +
-                "<md-card-actions layout=\"row\" layout-align=\"end center\">" +
-                "<md-button>Edit</md-button>" +
-                "<md-button>Remove</md-button>" +
-                "</md-card-actions>" +
+                buttons +
                 "</md-card>";
+
+
+            $log.debug('html');
             $log.debug(htmlText);
             return htmlText;
         },
@@ -169,6 +250,12 @@ app.config(function($mdThemingProvider) {
         .accentPalette('pink');
     $mdThemingProvider.theme('input', 'default')
         .primaryPalette('grey');
+});
+
+//Include MDI (icons)
+app.config(function($mdIconProvider) {
+    $mdIconProvider
+        .defaultIconSet('icons/mdi.svg');
 });
 
 //Passes user data around the place
@@ -444,6 +531,9 @@ function escapeRegExp(str) {
     return str.replace(/[\'\"]/g, "\\$&");
 }
 
+function addLeadingSpace(str) {
+    return (str === "") ? "" : (" " + str);
+}
 
 //From stack exchange, gets nested fields from string
 deep_value = function(obj, path) {

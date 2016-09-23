@@ -7,13 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>DMPOnlineTool</title>
 
-
     <!-- Angular Material CSS -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
     <!-- Local CSS -->
     <link href="css/DMPOnlineTool.css" rel="stylesheet" type="text/css">
 
+    <!-- Icons -->
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
 
 </head>
 
@@ -31,84 +33,53 @@
         <br>
         <div layout="row">
             <dmp-input ng-model="userDataService.dmp.projectDetails.startDate" inputtype="md-datepicker"></dmp-input>
-            <dmp-input ng-model="userDataService.dmp.projectDetails.endDate" inputtype="md-datepicker" inputtags="md-placeholder='Ongoing' ng-required='false'">
-            </dmp-input>
+            <dmp-input ng-model="userDataService.dmp.projectDetails.endDate" inputtype="md-datepicker" inputtags="md-placeholder='Ongoing' ng-required='false'"></dmp-input>
         </div>
 
+        <md-checkbox ng-model="userDataService.dmp.ethicsRequired" aria-label="Ethics required">
+            Ethical approval required
+        </md-checkbox>
+        <md-checkbox ng-model="userDataService.dmp.iwiConsultationRequired" aria-label="Iwi consultation required">
+            Iwi consultation required
+        </md-checkbox>
+
+        <h2 class="formTitle">Reference Documents</h2>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
+                <dmp-card ng-model="document" type="document"></dmp-card>
+            </div>
+            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
+        </div>
+
+        <h2 class="formTitle">Funding</h2>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="funder in userDataService.dmp.funding">
+                <dmp-card ng-model="funder" type="funder"></dmp-card>
+            </div>
+            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewfunder"></dmp-card>
+        </div>
 
         <h2 class="formTitle">Contributors</h2>
-
-
-        <div layout="row">
-            <!-- <div flex-xs flex-gt-xs="50"> -->
-            <div layout-wrap flex="33" ng-repeat="contributor in userDataService.dmp.contributors">
-                <contributor-card ng-model="contributor"></contributor-card>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33"  ng-repeat="contributor in userDataService.dmp.contributors">
+                <dmp-card ng-model="contributor" type="contributor"></dmp-card>
             </div>
-            <!-- <div flex="50">
-                <md-card>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Card with image0</span>
-                            <span class="md-subhead">Large</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                    <md-card-content>
-                        The titles of Washed Out's breakthrough song and the first single from Paracosm share the two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
-                    </md-card-content>
-                    <md-card-actions layout="row" layout-align="end center">
-                        <md-button>Action 1</md-button>
-                        <md-button>Action 2</md-button>
-                    </md-card-actions>
-                </md-card>
-            </div>
-
-            <div flex="50">
-                <md-card>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Card with image1</span>
-                            <span class="md-subhead">Large</span>
-                        </md-card-title-text>
-                        <md-card-title-media>
-                            <div class="md-media-lg card-media"></div>
-                        </md-card-title-media>
-                    </md-card-title>
-                    <md-card-actions layout="row" layout-align="end center">
-                        <md-button>Action 1</md-button>
-                        <md-button>Action 2</md-button>
-                    </md-card-actions>
-                </md-card>
-            </div>
-
-            <div flex="50">
-                <md-card>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Card with image2</span>
-                            <span class="md-subhead">Large</span>
-                        </md-card-title-text>
-                        <md-card-title-media>
-                            <div class="md-media-lg card-media"></div>
-                        </md-card-title-media>
-                    </md-card-title>
-                    <md-card-actions layout="row" layout-align="end center">
-                        <md-button>Action 1</md-button>
-                        <md-button>Action 2</md-button>
-                    </md-card-actions>
-                </md-card>
-            </div> -->
+            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33"  type="addnewcontributor"></dmp-card>
         </div>
 
+        <h2 class="formTitle">Data Assets</h2>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" ng-repeat="dataasset in userDataService.dmp.dataAssets">
+                <dmp-card ng-model="dataasset" type="dataasset"></dmp-card>
+            </div>
+            <dmp-card flex="100" flex-gt-xs="50" type="addnewdataasset"></dmp-card>
+        </div>
     </md-content>
 
-    <!-- <div user-avatar>howdy</div> -->
 
 
 </body>
 
-<!-- Icons -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
 
 <!-- Angular Material Dependencies -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
@@ -116,6 +87,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+
 
 <!-- Angular Material -->
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
