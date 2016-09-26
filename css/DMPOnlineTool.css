@@ -36,13 +36,14 @@
     opacity: .6
 }
 .card:hover {
-    -webkit-transform: scale(1.02, 1.02);
-    transform: scale(1.02, 1.02);
+    -webkit-transform: scale(1.05, 1.05);
+    transform: scale(1.05, 1.05);
 }
 .addcard:active {
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
 }
+
 .elevated {
     z-index: 1;
 }

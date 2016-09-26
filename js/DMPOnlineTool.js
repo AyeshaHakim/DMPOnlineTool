@@ -26,12 +26,69 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
             .ok('Got it!')
             .targetEvent(ev)
         );
-        // $log.debug('hollaa');
-
     };
-
-
 });
+
+app.controller('AnimationCtrl', AnimationCtrl);
+app.controller('PanelDialogCtrl', PanelDialogCtrl);
+
+
+function AnimationCtrl($mdPanel) {
+  this._mdPanel = $mdPanel;
+  this.openFrom = 'button';
+  this.closeTo = 'button';
+  this.animationType = 'none';
+}
+
+
+AnimationCtrl.prototype.showDialog = function() {
+  let alert = this.$mdDialog.alert({
+    content: 'stuff',
+    skipHide: true
+})
+$mdDialog.show(alert);
+$mdDialog.show(alert);
+  // var position = this._mdPanel.newPanelPosition()
+  //     .absolute()
+  //     .center();
+  //
+  // var animation = this._mdPanel.newPanelAnimation();
+  //
+  //     animation.openFrom('.animation-target');
+  //     animation.closeTo('.animation-target');
+  //
+  //     animation.withAnimation(this._mdPanel.animation.SCALE);
+  //
+  // var config = {
+  //   animation: animation,
+  //   attachTo: angular.element(document.body),
+  //   controller: PanelDialogCtrl,
+  //   controllerAs: 'ctrl',
+  //   templateUrl: 'panel.tmpl.html',
+  //   panelClass: 'demo-dialog-example',
+  //   position: position,
+  //   trapFocus: true,
+  //   zIndex: 150,
+  //   clickOutsideToClose: true,
+  //   clickEscapeToClose: true,
+  //   hasBackdrop: true,
+  //   focusOnOpen: true
+  // };
+  //
+  // this._mdPanel.open(config);
+};
+
+
+// Necessary to pass locals to the dialog template.
+function PanelDialogCtrl(mdPanelRef) {
+  this._mdPanelRef = mdPanelRef;
+}
+
+PanelDialogCtrl.prototype.closeDialog = function() {
+  this._mdPanelRef && this._mdPanelRef.close();
+};
+
+//
 
 
 //A directive to make input areas, and hopefully automagically get helper text from json
@@ -78,7 +135,7 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
                         '</md-input-container>';
 
                     //Compile to HTML, and add to DOM
-                    // $log.debug(template);
+                    $log.debug(template);
                     var linkFn = $compile(template);
                     var content = linkFn(scope);
                     element.append(content);
@@ -113,7 +170,7 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
 
         template: function(element, attrs) {
             var type = attrs.type || 'contributor';
-            $log.debug(type);
+            // $log.debug(type);
             // var required = attrs.hasOwnProperty('required') ? "required='required'" : "";
             // for (var i = 0; i < cars.length; i++) {
             //     text += cars[i] + "<br>";
@@ -132,8 +189,6 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                 subheading = "{{ngModel.affiliation}}";
                 content = "<em>{{ngModel.role.join(', ')}}</em>" +
                     "<div class='md-subhead'>{{ngModel.email}}</div>";
-                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                    "<md-button class=\"elevated\">Remove</md-button>";
             } else if (type === 'addnewcontributor') {
                 cardTags = "class='card addcard'";
                 heading = "Add new contributor...";
@@ -160,8 +215,6 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                     "<p><em>Resource requirements: </em><br>" +
                     "{{ngModel.requiredResources}}</p>" +
                     "</div>";
-                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                    "<md-button class=\"elevated\">Remove</md-button>";
             } else if (type === 'addnewdataasset') {
                 cardTags = "class='card addcard'";
                 heading = "Add new data asset...";
@@ -173,8 +226,6 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                 content = "<span class='md-subhead'>Reference numbers: </span>" +
                     "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
                     "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
-                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                    "<md-button class=\"elevated\">Remove</md-button>";
             } else if (type === 'addnewfunder') {
                 cardTags = "class='card addcard'";
                 heading = "<div class='smaller-text80'>Add new funder...</div>";
@@ -185,13 +236,18 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                 heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
                 content = "<div class='md-subhead'>{{ngModel.description}}</div>" +
                     "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                    "<md-button class=\"elevated\">Remove</md-button>";
+
             } else if (type === 'addnewdocument') {
                 cardTags = "class='card addcard'";
                 heading = "<div class='smaller-text80'>Attach new document...</div>";
                 contentTags = "class='center'";
                 content = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+            }
+
+            //Insert buttons if required.
+            if (!type.match(/^addnew/)) {
+                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                    "<md-button class=\"elevated\">Remove</md-button>";
             }
 
             //Compile optional stuff
@@ -200,7 +256,7 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + " onclick='console.log(\"hi\")'" + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
                 "<span class='md-headline'>" +
@@ -216,8 +272,8 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                 "</md-card>";
 
 
-            $log.debug('html');
-            $log.debug(htmlText);
+            // $log.debug('html');
+            // $log.debug(htmlText);
             return htmlText;
         },
 
@@ -525,6 +581,7 @@ function DialogController($scope, $mdDialog) {
         $mdDialog.hide(answer);
     };
 }
+
 
 //http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
 function escapeRegExp(str) {
