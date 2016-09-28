@@ -24,6 +24,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
 
+    <script data-require="ui-router@0.2.15" data-semver="0.2.15" src="http://rawgit.com/angular-ui/ui-router/0.2.15/release/angular-ui-router.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ui-router-extras/0.1.0/modular/ct-ui-router-extras.core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ui-router-extras/0.1.0/modular/ct-ui-router-extras.sticky.min.js"></script>
+
+
     <!-- Angular Material -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
@@ -31,11 +36,17 @@
 
 </head>
 
+
+
+
 <body ng-controller="formCtrl">
 
+
     <md-content class="formContent" layout="column" ng-cloak>
+
+
+
         <h2 class="formTitle">Project Details</h2>
-        <!-- <p>{{userDataService.dmp.projectDetails.title}}</p> -->
         <br>
         <dmp-input ng-model="userDataService.dmp.projectDetails.title"></dmp-input>
         <br>
@@ -47,16 +58,47 @@
             <dmp-input ng-model="userDataService.dmp.projectDetails.startDate" inputtype="md-datepicker"></dmp-input>
             <dmp-input ng-model="userDataService.dmp.projectDetails.endDate" inputtype="md-datepicker" inputtags="md-placeholder='Ongoing' ng-required='false'"></dmp-input>
         </div>
+        <dmp-input ng-model="userDataService.dmp.ethicsRequired" inputtype="md-checkbox"></dmp-input>
+        <dmp-input ng-model="userDataService.dmp.culturalConsultationRequired" inputtype="md-checkbox"></dmp-input>
+        <br>
 
-        <md-checkbox ng-model="userDataService.dmp.ethicsRequired" aria-label="Ethics required">
-            Ethical approval required
-        </md-checkbox>
-        <md-checkbox ng-model="userDataService.dmp.iwiConsultationRequired" aria-label="Iwi consultation required">
-            Cultural consultation required
-        </md-checkbox>
 
+        <h2 class="formTitle">Contributors</h2>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="contributor in userDataService.dmp.contributors">
+                <dmp-card ng-model="contributor" type="contributor"></dmp-card>
+            </div>
+            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewcontributor"></dmp-card>
+        </div>
 
         <h2 class="formTitle">Reference Documents</h2>
+        <!-- <md-card ng-show="cardVisibilityService.documents.detailsCardVisible" ng-class="{false:'card detailscard-hidden', true:'card detailscard-shown'}[cardVisibilityService.documents.detailsCardVisible]"> -->
+        <md-card ng-show="cardVisibilityService.documents.detailsCardVisible" class="detailscard">
+
+            <md-card-header>
+                <md-card-avatar>
+                    <md-icon md-svg-icon="book"></md-icon>
+                </md-card-avatar>
+                <md-card-header-text class="md-headline">
+                    Add new document...
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-content>
+                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input>
+                <br>
+                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows='3'"></dmp-input>
+                <br>
+                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input>
+                <br>
+                <md-card-actions layout="row" layout-align="end center">
+                    <md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Confirm</md-button>
+                    <md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>
+                </md-card-actions>
+            </md-card-content>
+
+        </md-card>
+
+
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
                 <dmp-card ng-model="document" type="document"></dmp-card>
@@ -64,20 +106,13 @@
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
         </div>
 
+
         <h2 class="formTitle">Funding</h2>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="funder in userDataService.dmp.funding">
                 <dmp-card ng-model="funder" type="funder"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewfunder"></dmp-card>
-        </div>
-
-        <h2 class="formTitle">Contributors</h2>
-        <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33"  ng-repeat="contributor in userDataService.dmp.contributors">
-                <dmp-card ng-model="contributor" type="contributor"></dmp-card>
-            </div>
-            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33"  type="addnewcontributor"></dmp-card>
         </div>
 
         <h2 class="formTitle">Data Assets</h2>

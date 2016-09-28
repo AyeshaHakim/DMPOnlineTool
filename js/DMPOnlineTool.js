@@ -1,6 +1,10 @@
-var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
+var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages', 'ui.router', 'ct.ui.router.extras.core', 'ct.ui.router.extras.sticky']);
 
-app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService) {
+app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService, cardVisibilityService) {
+
+
+    $scope.cardVisibilityService = cardVisibilityService;
+
     $scope.userDataService = userDataService;
     $scope.userDataService.load();
 
@@ -9,6 +13,11 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
 
     $scope.helpTextService = helpTextService;
     $scope.helpTextService.loadHelpText();
+
+    $scope.toggleDetailsDocuments = function() {
+        $scope.cardVisibilityService.documents.detailsCardVisible = !$scope.cardVisibilityService.documents.detailsCardVisible;
+    };
+
 
     //ev is the dom click event to control the animation.
     $scope.helpBox = function(ev, title, helpBoxText) {
@@ -29,72 +38,11 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 });
 
-app.controller('AnimationCtrl', AnimationCtrl);
-app.controller('PanelDialogCtrl', PanelDialogCtrl);
-
-
-function AnimationCtrl($mdPanel) {
-  this._mdPanel = $mdPanel;
-  this.openFrom = 'button';
-  this.closeTo = 'button';
-  this.animationType = 'none';
-}
-
-
-AnimationCtrl.prototype.showDialog = function() {
-  let alert = this.$mdDialog.alert({
-    content: 'stuff',
-    skipHide: true
-})
-$mdDialog.show(alert);
-$mdDialog.show(alert);
-  // var position = this._mdPanel.newPanelPosition()
-  //     .absolute()
-  //     .center();
-  //
-  // var animation = this._mdPanel.newPanelAnimation();
-  //
-  //     animation.openFrom('.animation-target');
-  //     animation.closeTo('.animation-target');
-  //
-  //     animation.withAnimation(this._mdPanel.animation.SCALE);
-  //
-  // var config = {
-  //   animation: animation,
-  //   attachTo: angular.element(document.body),
-  //   controller: PanelDialogCtrl,
-  //   controllerAs: 'ctrl',
-  //   templateUrl: 'panel.tmpl.html',
-  //   panelClass: 'demo-dialog-example',
-  //   position: position,
-  //   trapFocus: true,
-  //   zIndex: 150,
-  //   clickOutsideToClose: true,
-  //   clickEscapeToClose: true,
-  //   hasBackdrop: true,
-  //   focusOnOpen: true
-  // };
-  //
-  // this._mdPanel.open(config);
-};
-
-
-// Necessary to pass locals to the dialog template.
-function PanelDialogCtrl(mdPanelRef) {
-  this._mdPanelRef = mdPanelRef;
-}
-
-PanelDialogCtrl.prototype.closeDialog = function() {
-  this._mdPanelRef && this._mdPanelRef.close();
-};
-
-//
 
 
 //A directive to make input areas, and hopefully automagically get helper text from json
 //Leading and trailing spaces are automagically inserted
 app.directive("dmpInput", function($log, $compile, helpTextService) {
-
     return {
         require: "?ngModel",
 
@@ -110,14 +58,20 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
                     scope.helpFields = scope.helpTextService.getFieldRef(attrs.ngModel);
 
                     //Format tags from html
-                    var inputType = attrs.hasOwnProperty('inputtype') ? (attrs.inputtype + " ") : "input ";
+                    var inputType = attrs.hasOwnProperty('inputtype') ? (attrs.inputtype) : "input ";
+
+                    //Only do this if help fields are defined in the JSON
+                    if (scope.helpFields === undefined) {
+                        scope.helpFields = {};
+                    }
+
 
                     //Attributes inserted in md-input-container start tag
-                    var containerTags = attrs.hasOwnProperty('containertags') ? (attrs.containertags + " ") : "";
+                    containerTags = attrs.hasOwnProperty('containertags') ? (attrs.containertags + " ") : "";
                     //Attributes inserted in input start tag
-                    var inputTags = attrs.hasOwnProperty('inputtags') ? (attrs.inputtags + " ") : "";
+                    inputTags = attrs.hasOwnProperty('inputtags') ? (attrs.inputtags + " ") : "";
                     //Text inserted between input start and end tags
-                    var inputContent = attrs.hasOwnProperty('inputcontent') ? (attrs.inputcontent + " ") : "";
+                    inputContent = attrs.hasOwnProperty('inputcontent') ? (attrs.inputcontent + " ") : "";
 
                     var label = (scope.helpFields.hasOwnProperty('label') && scope.helpFields.label !== "") ? escapeRegExp(scope.helpFields.label) : "";
                     var labelTags = (label !== "") ? ("<label>" + scope.helpFields.label + "</label>") : "";
@@ -127,15 +81,20 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
                     var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "' ") : "";
                     var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + escapeRegExp(scope.helpFields.tooltip) + "</md-tooltip>") : "";
 
+                    //Label is placed where input content should be for checkboxes.
+                    if (inputType === "md-checkbox") {
+                        inputContent = label;
+                        labelTags = "";
+                    }
+
                     //Create input HTML
-                    var template = '<md-input-container layout="row" ' + containerTags + helpBox + '>' +
+                    var template = '<md-input-container layout="row"' + addLeadingSpace(containerTags) + addLeadingSpace(helpBox) + '>' +
                         labelTags +
-                        '<' + inputType + placeholder + "ng-model='value' ng-change='onChange()' " + inputTags + labelAria + ">" + inputContent + "</" + inputType + ">" +
+                        '<' + inputType + addLeadingSpace(placeholder) + " ng-model='value' ng-change='onChange()'" + addLeadingSpace(inputTags) + addLeadingSpace(labelAria) + ">" + inputContent + "</" + inputType + ">" +
                         tooltip +
                         '</md-input-container>';
 
                     //Compile to HTML, and add to DOM
-                    $log.debug(template);
                     var linkFn = $compile(template);
                     var content = linkFn(scope);
                     element.append(content);
@@ -155,108 +114,120 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
     };
 });
 
-//A directive to display a contributor as a card.
+//A directive to display a bit of the DMP as a card.
 //Also allows display of a "Add new" card.
-app.directive("dmpCard", function($log, $compile, helpTextService) {
+app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
     return {
-        restrict: 'E',
+        restrict: 'EA',
 
         require: "?ngModel",
 
         scope: {
-            ngModel: '='
-        },
+            ngModel: '=',
+            cardVisibilityService: '=?'
 
-        template: function(element, attrs) {
+        },
+        
+        link: function(scope, element, attrs, ngModel) {
+
+            scope.cardVisibilityService = cardVisibilityService;
+            $log.debug(scope.cardVisibilityService);
+
             var type = attrs.type || 'contributor';
-            // $log.debug(type);
-            // var required = attrs.hasOwnProperty('required') ? "required='required'" : "";
-            // for (var i = 0; i < cars.length; i++) {
-            //     text += cars[i] + "<br>";
-            // }
+
             var htmlText = "";
             //Bits of the card
-            var cardTags = "class='card'";
+            var cardTags = "class='hoverable card'";
             var heading = "";
             var subheading = "";
             var contentTags = "";
-            var content = "";
+            var cardContent = "";
             var buttons = "";
+            var ngclick = "";
 
-            if (type === 'contributor') {
-                heading = "{{ngModel.firstname}} {{ngModel.lastname}}";
-                subheading = "{{ngModel.affiliation}}";
-                content = "<em>{{ngModel.role.join(', ')}}</em>" +
-                    "<div class='md-subhead'>{{ngModel.email}}</div>";
-            } else if (type === 'addnewcontributor') {
-                cardTags = "class='card addcard'";
-                heading = "Add new contributor...";
-                contentTags = "class='center'";
-                content = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
-            } else if (type === 'dataasset') {
-                heading = "{{ngModel.shortname}}";
-                content = "<div class='md-subhead'>{{ngModel.description}}</div>" +
-                    "<div class='smaller-text80'>" +
-                    "<p><em>Collection: </em><br>" +
-                    "{{ngModel.collectionProcess}}</p>" +
-                    "<p><em>Organisation: </em><br>" +
-                    "{{ngModel.organisationProcess}}</p>" +
-                    "<p><em>Storage: </em><br>" +
-                    "{{ngModel.storageProcess}}</p>" +
-                    "<p><em>Metadata: </em><br>" +
-                    "{{ngModel.metadataRequirements}}</p>" +
-                    "<p><em>Copyright owner: </em><br>" +
-                    "{{ngModel.copyrightOwner}}</p>" +
-                    "<p><em>Publication process: </em><br>" +
-                    "{{ngModel.publicationProcess}}</p>" +
-                    "<p><em>Archiving requirements: </em><br>" +
-                    "{{ngModel.archiving}}</p>" +
-                    "<p><em>Resource requirements: </em><br>" +
-                    "{{ngModel.requiredResources}}</p>" +
-                    "</div>";
-            } else if (type === 'addnewdataasset') {
-                cardTags = "class='card addcard'";
-                heading = "Add new data asset...";
-                contentTags = "class='center'";
-                content = "<md-icon md-svg-icon=\"database-plus\" class=\"icon-150px lift-icon\"></md-icon>";
-            } else if (type === 'funder') {
-                heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
-                subheading = "{{ngModel.affiliation}}";
-                content = "<span class='md-subhead'>Reference numbers: </span>" +
-                    "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
-                    "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
-            } else if (type === 'addnewfunder') {
-                cardTags = "class='card addcard'";
-                heading = "<div class='smaller-text80'>Add new funder...</div>";
-                contentTags = "class='center'";
-                content = "<div class='right-offset-icon'><md-icon md-svg-icon=\"bank\" class=\"icon-90px lift-icon\"></md-icon>" +
-                    "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
-            } else if (type === 'document') {
-                heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
-                content = "<div class='md-subhead'>{{ngModel.description}}</div>" +
-                    "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-
-            } else if (type === 'addnewdocument') {
-                cardTags = "class='card addcard'";
-                heading = "<div class='smaller-text80'>Attach new document...</div>";
-                contentTags = "class='center'";
-                content = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+            switch (type) {
+                case "contributor":
+                    heading = "{{ngModel.firstname}} {{ngModel.lastname}}";
+                    subheading = "{{ngModel.affiliation}}";
+                    cardContent = "<em>{{ngModel.role.join(', ')}}</em>" +
+                        "<div class='md-subhead'>{{ngModel.email}}</div>";
+                    break;
+                case "addnewcontributor":
+                    heading = "Add new contributor...";
+                    contentTags = "class='center'";
+                    cardContent = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
+                    break;
+                case "dataasset":
+                    heading = "{{ngModel.shortname}}";
+                    cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                        "<div class='smaller-text80'>" +
+                        "<p><em>Collection: </em><br>" +
+                        "{{ngModel.collectionProcess}}</p>" +
+                        "<p><em>Organisation: </em><br>" +
+                        "{{ngModel.organisationProcess}}</p>" +
+                        "<p><em>Storage: </em><br>" +
+                        "{{ngModel.storageProcess}}</p>" +
+                        "<p><em>Metadata: </em><br>" +
+                        "{{ngModel.metadataRequirements}}</p>" +
+                        "<p><em>Copyright owner: </em><br>" +
+                        "{{ngModel.copyrightOwner}}</p>" +
+                        "<p><em>Publication process: </em><br>" +
+                        "{{ngModel.publicationProcess}}</p>" +
+                        "<p><em>Archiving requirements: </em><br>" +
+                        "{{ngModel.archiving}}</p>" +
+                        "<p><em>Resource requirements: </em><br>" +
+                        "{{ngModel.requiredResources}}</p>" +
+                        "</div>";
+                    break;
+                case "addnewdataasset":
+                    heading = "Add new data asset...";
+                    contentTags = "class='center'";
+                    cardContent = "<md-icon md-svg-icon=\"database-plus\" class=\"icon-150px lift-icon\"></md-icon>";
+                    break;
+                case "funder":
+                    heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
+                    subheading = "{{ngModel.affiliation}}";
+                    cardContent = "<span class='md-subhead'>Reference numbers: </span>" +
+                        "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
+                        "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
+                    break;
+                case "addnewfunder":
+                    heading = "<div class='smaller-text80'>Add new funder...</div>";
+                    contentTags = "class='center'";
+                    cardContent = "<div class='right-offset-icon'><md-icon md-svg-icon=\"bank\" class=\"icon-90px lift-icon\"></md-icon>" +
+                        "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
+                    break;
+                case "document":
+                    heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
+                    cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                        "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
+                    break;
+                case 'addnewdocument':
+                    heading = "<div class='smaller-text80'>Add new document...</div>";
+                    contentTags = "class='center'";
+                    cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+                    ngclick = "cardVisibilityService.documents.detailsCardVisible=!cardVisibilityService.documents.detailsCardVisible";
+                    break;
             }
+
 
             //Insert buttons if required.
             if (!type.match(/^addnew/)) {
                 buttons = "<md-button class=\"elevated\">Edit</md-button>" +
                     "<md-button class=\"elevated\">Remove</md-button>";
+            } else {
+                cardTags = "class='card addcard hoverable'";
             }
 
             //Compile optional stuff
             buttons = (buttons !== "") ? ("<md-card-actions layout=\"row\" layout-align=\"end center\">" + buttons + "</md-card-actions>") : "";
             subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
+            ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + " onclick='console.log(\"hi\")'" + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngclick) + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
                 "<span class='md-headline'>" +
@@ -266,18 +237,16 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
                 "</md-card-title-text>" +
                 "</md-card-title>" +
                 "<md-card-content" + addLeadingSpace(contentTags) + ">" +
-                content +
+                cardContent +
                 "</md-card-content>" +
                 buttons +
                 "</md-card>";
 
+            var linkFn = $compile(htmlText);
+            var content = linkFn(scope);
+            element.append(content);
 
-            // $log.debug('html');
-            // $log.debug(htmlText);
-            return htmlText;
-        },
-
-        link: function(scope, element, attrs, ngModel) {
+            //Do this jazz for two-way binding, maybe not necessary.
             if (!ngModel) return;
 
             scope.onChange = function() {
@@ -290,6 +259,8 @@ app.directive("dmpCard", function($log, $compile, helpTextService) {
         }
     };
 });
+
+
 
 app.config(function($mdThemingProvider) {
     var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
@@ -358,8 +329,8 @@ app.service('userDataService', function($http, $log) {
         this.orcid = "";
     }
 
-    //A class for ethics documents
-    function EthicsDocument(id) {
+    //A class for documents
+    function Document(id) {
         this.id = id;
         this.description = "";
         this.link = "";
@@ -488,6 +459,19 @@ app.service('helpTextService', function($http, $log) {
 
 });
 
+//Keeps track of which input cards are visible.
+app.service('cardVisibilityService', function($http, $log) {
+
+    var cardVisibilityService = {};
+    cardVisibilityService.documents = {
+        detailsCardVisible: false
+    };
+
+
+    return cardVisibilityService;
+
+});
+
 //Loads field of research data from JSON
 app.service('fieldOfResearchService', function($http) {
 
@@ -593,9 +577,22 @@ function addLeadingSpace(str) {
 }
 
 //From stack exchange, gets nested fields from string
+//Also removes list indices.
 deep_value = function(obj, path) {
+    console.log(path);
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
-        obj = obj[path[i]];
+        path[i] = path[i].replace(/\[\d+\]/g, "");
+
+        if (obj.hasOwnProperty(path[i]))
+            obj = obj[path[i]];
+        else {
+            obj = {};
+            return obj;
+        }
     }
+    if (obj === undefined) {
+        obj = {};
+    }
+
     return obj;
 };

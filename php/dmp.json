@@ -46,7 +46,7 @@
     }],
 
     "ethicsRequired": true,
-    "iwiConsultationRequired": true,
+    "culturalConsultationRequired": true,
 
     "referenceDocuments": [{
         "id": "0",

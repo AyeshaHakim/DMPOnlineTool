@@ -31,6 +31,39 @@
                 "helpBoxText": "",
                 "tooltip": ""
             }
+        },
+        "ethicsRequired": {
+            "label": "Ethical approval required",
+            "placeholder": "",
+            "helpBoxText": "Do you need to obtain ethical consent for this project?",
+            "tooltip": ""
+        },
+        "culturalConsultationRequired": {
+            "label": "Cultural consideration required",
+            "placeholder": "",
+            "helpBoxText": "Do you need consultation in order to maintain cultural sensitivity?",
+            "tooltip": ""
+
+        },
+        "referenceDocuments": {
+            "shortname": {
+                "label": "Short name",
+                "placeholder": "",
+                "helpBoxText": "Short description of this document.",
+                "tooltip": ""
+            },
+            "summary": {
+                "label": "Summary",
+                "placeholder": "",
+                "helpBoxText": "Please summarise the contents of this document.",
+                "tooltip": ""
+            },
+            "link": {
+                "label": "Link",
+                "placeholder": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            }
         }
     }
 }
