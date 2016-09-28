@@ -1,4 +1,4 @@
-var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages', 'ui.router', 'ct.ui.router.extras.core', 'ct.ui.router.extras.sticky']);
+var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
 app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService, cardVisibilityService) {
 
@@ -128,11 +128,10 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             cardVisibilityService: '=?'
 
         },
-        
+
         link: function(scope, element, attrs, ngModel) {
 
             scope.cardVisibilityService = cardVisibilityService;
-            $log.debug(scope.cardVisibilityService);
 
             var type = attrs.type || 'contributor';
 
@@ -259,6 +258,66 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
         }
     };
 });
+
+
+//A directive for an editable display card (hopefully).
+app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) {
+
+    return {
+        restrict: 'EA',
+
+        require: "?ngModel",
+
+        scope: {
+            ngModel: '=',
+            cardVisibilityService: '=?'
+
+        },
+
+        link: function(scope, element, attrs, ngModel) {
+
+            //Create card
+            var htmlText = '<md-card ng-show="cardVisibilityService.documents.detailsCardVisible" class="detailscard">' +
+              '<md-card-header>' +
+                    '<md-card-avatar>' +
+                        '<md-icon md-svg-icon="book"></md-icon>' +
+                    '</md-card-avatar>' +
+                    '<md-card-header-text class="md-headline">' +
+                        'Add new document...' +
+                    '</md-card-header-text>' +
+                '</md-card-header>' +
+                '<md-card-content>' +
+                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input>' +
+                    '<br>' +
+                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input>' +
+                    '<br>' +
+                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input>' +
+                    '<br>' +
+                    '<md-card-actions layout="row" layout-align="end center">' +
+                        '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Confirm</md-button>' +
+                        '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>' +
+                    '</md-card-actions>' +
+                '</md-card-content>' +
+            '</md-card>';
+            $log.debug(htmlText);
+            var linkFn = $compile(htmlText);
+            var content = linkFn(scope);
+            element.append(content);
+
+            //Do this jazz for two-way binding, maybe not necessary.
+            if (!ngModel) return;
+
+            scope.onChange = function() {
+                ngModel.$setViewValue(scope.value);
+            };
+
+            ngModel.$render = function() {
+                scope.value = ngModel.$modelValue;
+            };
+        }
+    };
+});
+
 
 
 
@@ -579,7 +638,6 @@ function addLeadingSpace(str) {
 //From stack exchange, gets nested fields from string
 //Also removes list indices.
 deep_value = function(obj, path) {
-    console.log(path);
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
         path[i] = path[i].replace(/\[\d+\]/g, "");
 
