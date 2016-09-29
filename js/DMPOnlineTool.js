@@ -379,9 +379,6 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
     };
 });
 
-
-
-
 app.config(function($mdThemingProvider) {
     var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
         'contrastDefaultColor': 'light',

@@ -52,7 +52,7 @@
     -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
-    max-height: 600px;
+    max-height: 700px;
     opacity: 1;
     -moz-transition: .5s;
     -ms-transition: .5s;
@@ -191,8 +191,5 @@
     display: block;
 }
 .padded-heading {
-    padding: 20px 0;
-}
-.padded-button {
     padding: 20px 0;
 }
