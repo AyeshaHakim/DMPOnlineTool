@@ -48,7 +48,7 @@
         <br>
         <dmp-input ng-model="userDataService.dmp.projectDetails.description" inputtype="textarea" inputtags="rows='3'"></dmp-input>
         <br>
-        <dmp-input ng-model="userDataService.dmp.projectDetails.fieldOfResearch" inputtype="md-chips" inputtags="flex='100' md-autocomplete-snap='width' md-transform-chip='transformChip($chip)'" inputcontent="{{fieldOfResearchService.autocompleteText}}"></dmp-input>
+        <dmp-input ng-model="userDataService.dmp.projectDetails.fieldOfResearch" inputtype="md-chips" inputtags="flex='100' md-autocomplete-snap='width' md-transform-chip='transformChip($chip)'"></dmp-input>
         <br>
         <div layout="row">
             <dmp-input ng-model="userDataService.dmp.projectDetails.startDate" inputtype="md-datepicker"></dmp-input>
@@ -60,6 +60,7 @@
 
 
         <h2 class="formTitle">Contributors</h2>
+        <dmp-details-card type="contributor"></dmp-details-card>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="contributor in userDataService.dmp.contributors">
                 <dmp-card ng-model="contributor" type="contributor"></dmp-card>
@@ -68,43 +69,13 @@
         </div>
 
         <h2 class="formTitle">Reference Documents</h2>
-        <!-- <md-card ng-show="cardVisibilityService.documents.detailsCardVisible" ng-class="{false:'card detailscard-hidden', true:'card detailscard-shown'}[cardVisibilityService.documents.detailsCardVisible]"> -->
-        <dmp-details-card></dmp-details-card>
-
-<!--
-        <md-card ng-show="cardVisibilityService.documents.detailsCardVisible" class="detailscard">
-
-            <md-card-header>
-                <md-card-avatar>
-                    <md-icon md-svg-icon="book"></md-icon>
-                </md-card-avatar>
-                <md-card-header-text class="md-headline">
-                    Add new document...
-                </md-card-header-text>
-            </md-card-header>
-            <md-card-content>
-                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input>
-                <br>
-                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows='3'"></dmp-input>
-                <br>
-                <dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input>
-                <br>
-                <md-card-actions layout="row" layout-align="end center">
-                    <md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Confirm</md-button>
-                    <md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>
-                </md-card-actions>
-            </md-card-content>
-
-        </md-card> -->
-
-
+        <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
                 <dmp-card ng-model="document" type="document"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
         </div>
-
 
         <h2 class="formTitle">Funding</h2>
         <div layout="row" layout-wrap>

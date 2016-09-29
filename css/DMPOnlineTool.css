@@ -8,6 +8,13 @@
     color: white;
     padding: 8px 20px;
     background-color: rgb(0, 70, 127);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
 }
 .md-chips .md-chip-input-container md-autocomplete input {
     width: 600px;
@@ -24,35 +31,34 @@
 }*/
 
 .detailscard.ng-hide {
+    max-height: 0;
     -ms-transform: scale(0.5, 0.5);
     -webkit-transform: scale(0.5, 0.5);
     transform: scale(0.5, 0.5);
-    max-height: 0;
     -moz-transition: .5s;
     -ms-transition: .5s;
     -o-transition: .5s;
     -webkit-transition: .5s;
-    transition: 1s;
+    transition: .5s;
     overflow: hidden;
-    padding:0;
-    margin:0;
+    padding: 0;
+    margin: 0;
     opacity: 0;
 }
 .detailscard {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    border-radius: 4px;
     -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
     max-height: 600px;
     opacity: 1;
-    z-index: 1;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    border-radius: 4px;
     -moz-transition: .5s;
     -ms-transition: .5s;
     -o-transition: .5s;
     -webkit-transition: .5s;
-    transition: 1s;
+    transition: .5s;
 }
 .card {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -74,27 +80,51 @@
     -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
     transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
 }
-.cssSlideUp {
-    transition: .5s linear all;
-    height: 600px;
+.addcard.ng-hide {
+    max-height: 0;
+    -ms-transform: scale(0.5, 0.5);
+    -webkit-transform: scale(0.5, 0.5);
+    transform: scale(0.5, 0.5);
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
     overflow: hidden;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
 }
-.cssSlideUp.ng-hide {
-    height:0;
+.addcard {
+    -ms-transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+    max-height: 600px;
+    opacity: 1;
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
 }
-
 .hoverable:hover:after {
     opacity: .6
 }
 .hoverable:hover {
     -ms-transform: scale(1.05, 1.05);
-    /* IE 9 */
     -webkit-transform: scale(1.05, 1.05);
     transform: scale(1.05, 1.05);
+    -ms-transition: -ms-transform .25s;
+    -webkit-transition: -webkit-transform .25s;
+    transition: transform .25s;
 }
-.addcard:active {
+.hoverable:active {
+    -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
+    -ms-transition: -ms-transform .25s;
+    -webkit-transition: -webkit-transform .25s;
+    transition: transform .25s;
 }
 .elevated {
     z-index: 1;
@@ -126,6 +156,11 @@
     width: 150px;
     height: 150px;
 }
+.icon-100pc {
+    width: auto;
+    height: 100%;
+    display: block;
+}
 .supplementary-plus {
     width: 72px;
     height: 72px;
@@ -150,71 +185,14 @@
     filter: FlipH;
     -ms-filter: "FlipH";
 }
-.intro {
-    position: absolute;
-    left: 30px;
-    top: 20px;
-    width: 600px;
-    height: 20px;
-    font-size: 12px;
+.padded-subheading {
+    padding: 20px 0;
+    line-height: .5;
+    display: block;
 }
-.demo {
-    position: relative;
-    width: 600px;
-    height: 300px;
-    background-color: #cccccc;
-    margin-top: 40px;
-    margin-left: 0px;
+.padded-heading {
+    padding: 20px 0;
 }
-.well {
-    background-color: rgb(255, 255, 255);
-    padding: 30px;
-    font-weight: 600;
-    border: 1px solid #999999;
-    border-top: none;
-}
-
-/* Have to set height explicity on ui-view
-to prevent collapsing during animation*/
-
-.well[ui-view] {
-    /*height: 65px;*/
-}
-.ui-view-container {
-    position: relative;
-}
-[ui-view].ng-enter, [ui-view].ng-leave {
-    position: absolute;
-    left: 0;
-    right: 0;
-    -webkit-transition: all .5s ease-in-out;
-    -moz-transition: all .5s ease-in-out;
-    -o-transition: all .5s ease-in-out;
-    transition: all .5s ease-in-out;
-}
-[ui-view].ng-enter {
-    opacity: 0;
-    -webkit-transform: scale3d(0.5, 0.5, 0.5);
-    -moz-transform: scale3d(0.5, 0.5, 0.5);
-    transform: scale3d(0.5, 0.5, 0.5);
-}
-[ui-view].ng-enter-active {
-    opacity: 1;
-    -webkit-transform: scale3d(1, 1, 1);
-    -moz-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-}
-[ui-view].ng-leave {
-    opacity: 1;
-    /*padding-left: 0px;*/
-    /*-webkit-transform:translate3d(0, 0, 0);
-  -moz-transform:translate3d(0, 0, 0);
-  transform:translate3d(0, 0, 0);*/
-}
-[ui-view].ng-leave-active {
-    opacity: 0;
-    /*padding-left: 100px;*/
-    /*-webkit-transform:translate3d(100px, 0, 0);
-  -moz-transform:translate3d(100px, 0, 0);
-  transform:translate3d(100px, 0, 0);*/
+.padded-button {
+    padding: 20px 0;
 }

@@ -3,7 +3,7 @@
         "projectDetails": {
             "title": {
                 "label": "Title",
-                "placeholder": "Something",
+                "placeholder": "",
                 "helpBoxText": "If applying for funding, state the name exactly as in the grant proposal.",
                 "tooltip": ""
             },
@@ -46,6 +46,7 @@
 
         },
         "referenceDocuments": {
+            "cardsubheading": "Attach and summarise any documents that you feel will be useful in understanding your data management plan. This might include ethical approval, iwi consultation, metadata standards, or anything really.",
             "shortname": {
                 "label": "Short name",
                 "placeholder": "",
@@ -62,6 +63,52 @@
                 "label": "Link",
                 "placeholder": "",
                 "helpBoxText": "",
+                "tooltip": ""
+            }
+        },
+        "contributors": {
+            "cardsubheading": "Add the details of people who contribute to the project. This might include University of Auckland staff, students, or external collaborators.",
+            "firstname": {
+                "label": "Given name(s)",
+                "placeholder": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "lastname": {
+                "label": "Family name",
+                "placeholder": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "role": {
+                "label": "Role",
+                "placeholder": "",
+                "helpBoxText": "What does this person do in the project?",
+                "tooltip": ""
+            },
+            "affiliation": {
+                "label": "Affiliation",
+                "placeholder": "",
+                "helpBoxText": "What organisation is this person affiliated with?",
+                "defaultValue": "University of Auckland",
+                "tooltip": ""
+            },
+            "email": {
+                "label": "Email address",
+                "placeholder": "",
+                "helpBoxText": "",
+                "tooltip": ""
+            },
+            "username": {
+                "label": "University of Auckland Username",
+                "placeholder": "e.g. ssam012",
+                "helpBoxText": "The contributor's unique University of Auckland username (e.g. ssam012), leave blank if not applicable.",
+                "tooltip": ""
+            },
+            "orcid": {
+                "label": "ORCiD link",
+                "placeholder": "",
+                "helpBoxText": "The contributor's ORCiD, can be found at ORCiD.com or something.",
                 "tooltip": ""
             }
         }

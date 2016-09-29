@@ -42,7 +42,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
 
 //A directive to make input areas, and hopefully automagically get helper text from json
 //Leading and trailing spaces are automagically inserted
-app.directive("dmpInput", function($log, $compile, helpTextService) {
+app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResearchService) {
     return {
         require: "?ngModel",
 
@@ -67,24 +67,29 @@ app.directive("dmpInput", function($log, $compile, helpTextService) {
 
 
                     //Attributes inserted in md-input-container start tag
-                    containerTags = attrs.hasOwnProperty('containertags') ? (attrs.containertags + " ") : "";
+                    containerTags = attrs.hasOwnProperty('containertags') ? (attrs.containertags) : "";
                     //Attributes inserted in input start tag
-                    inputTags = attrs.hasOwnProperty('inputtags') ? (attrs.inputtags + " ") : "";
+                    inputTags = attrs.hasOwnProperty('inputtags') ? (attrs.inputtags) : "";
                     //Text inserted between input start and end tags
-                    inputContent = attrs.hasOwnProperty('inputcontent') ? (attrs.inputcontent + " ") : "";
+                    inputContent = attrs.hasOwnProperty('inputcontent') ? (attrs.inputcontent) : "";
 
                     var label = (scope.helpFields.hasOwnProperty('label') && scope.helpFields.label !== "") ? escapeRegExp(scope.helpFields.label) : "";
                     var labelTags = (label !== "") ? ("<label>" + scope.helpFields.label + "</label>") : "";
-                    var labelAria = (label !== "") ? ("aria-label='" + scope.helpFields.label + "' ") : "";
+                    var labelAria = (label !== "") ? ("aria-label='" + scope.helpFields.label + "'") : "";
 
                     var helpBox = (scope.helpFields.hasOwnProperty('helpBoxText') && scope.helpFields.helpBoxText !== "") ? ("ng-dblclick=\"helpBox($event,'" + label + "','" + escapeRegExp(scope.helpFields.helpBoxText) + "')\" ") : "";
-                    var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "' ") : "";
+                    var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "'") : "";
                     var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + escapeRegExp(scope.helpFields.tooltip) + "</md-tooltip>") : "";
 
                     //Label is placed where input content should be for checkboxes.
                     if (inputType === "md-checkbox") {
                         inputContent = label;
                         labelTags = "";
+                    } else if (inputType === "md-chips") {
+                        scope.fieldOfResearchService = fieldOfResearchService;
+                        //Text to insert between input tags for autocomplete functionality.
+                        inputContent = fieldOfResearchService.getAutoCompleteInsert(placeholder);
+
                     }
 
                     //Create input HTML
@@ -144,6 +149,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             var cardContent = "";
             var buttons = "";
             var ngclick = "";
+            var ngshow = "";
 
             switch (type) {
                 case "contributor":
@@ -156,6 +162,8 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     heading = "Add new contributor...";
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
+                    ngclick = "cardVisibilityService.contributors.detailsCardVisible=true";
+                    ngshow = "!cardVisibilityService.contributors.detailsCardVisible";
                     break;
                 case "dataasset":
                     heading = "{{ngModel.shortname}}";
@@ -206,7 +214,8 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     heading = "<div class='smaller-text80'>Add new document...</div>";
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    ngclick = "cardVisibilityService.documents.detailsCardVisible=!cardVisibilityService.documents.detailsCardVisible";
+                    ngclick = "cardVisibilityService.documents.detailsCardVisible=true";
+                    ngshow = "!cardVisibilityService.documents.detailsCardVisible";
                     break;
             }
 
@@ -223,10 +232,11 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             buttons = (buttons !== "") ? ("<md-card-actions layout=\"row\" layout-align=\"end center\">" + buttons + "</md-card-actions>") : "";
             subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
             ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
+            ngshow = (ngshow !== "") ? ("ng-show=\"" + ngshow + "\"") : "";
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngclick) + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(ngclick) + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
                 "<span class='md-headline'>" +
@@ -261,44 +271,95 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
 
 //A directive for an editable display card (hopefully).
-app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) {
+app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
 
     return {
         restrict: 'EA',
 
-        require: "?ngModel",
-
-        scope: {
-            ngModel: '=',
-            cardVisibilityService: '=?'
-
-        },
+        scope: false,
 
         link: function(scope, element, attrs, ngModel) {
 
+
+            var type = attrs.type || 'contributor';
+
+            var htmlText = "";
+            //Bits of the card
+            var cardTags = "class='detailscard'";
+            var heading = "";
+            var icon = "";
+            var subheading = "";
+            var contentTags = "";
+            var cardContent = "";
+            var buttons = "";
+            var ngclick = "";
+            var ngshow = "";
+
+            switch (type) {
+                case "contributor":
+                    ngshow = "cardVisibilityService.contributors.detailsCardVisible";
+                    heading = "Add new contributor...";
+                    icon = '<md-icon md-svg-icon="account"></md-icon>';
+                    subheading = "{{helpTextService.dmpHelpText.contributors.cardsubheading}}";
+                    cardContent = '<div layout="row">' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].firstname" flex="45"></dmp-input>' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].lastname" flex="45"></dmp-input><br>' +
+                      '</div>' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].role"></dmp-input><br>' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].affiliation"></dmp-input><br>' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].email"></dmp-input><br>' +
+                      '<div layout="row">' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].username" flex="45"></dmp-input>' +
+                      '<dmp-input ng-model="userDataService.dmp.contributors[0].orcid" flex="45"></dmp-input><br>' +
+                      '</div>'
+                      ;
+                    buttons = '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Save</md-button>' +
+                        '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
+                    break;
+                case "document":
+                    ngshow = "cardVisibilityService.documents.detailsCardVisible";
+                    heading = "Add new document...";
+                    icon = '<md-icon md-svg-icon="book"></md-icon>';
+                    subheading = "{{helpTextService.dmpHelpText.referenceDocuments.cardsubheading}}";
+                    cardContent = '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input><br>';
+                    buttons = '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Save</md-button>' +
+                        '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>';
+                    break;
+            }
+
+            //Compile optional stuff
+            buttons = (buttons !== "") ? ("<md-card-actions layout=\"row\" layout-align=\"end center\">" + buttons + "</md-card-actions>") : "";
+            subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
+            ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
+            ngshow = (ngshow !== "") ? ("ng-show=\"" + ngshow + "\"") : "";
+            icon = (icon !== "") ? ('<md-card-avatar>' + icon + '</md-card-avatar>') : "";
+
+
             //Create card
-            var htmlText = '<md-card ng-show="cardVisibilityService.documents.detailsCardVisible" class="detailscard">' +
-              '<md-card-header>' +
-                    '<md-card-avatar>' +
-                        '<md-icon md-svg-icon="book"></md-icon>' +
-                    '</md-card-avatar>' +
-                    '<md-card-header-text class="md-headline">' +
-                        'Add new document...' +
-                    '</md-card-header-text>' +
+            htmlText =
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(ngclick) + ">" +
+                '<div class="padded-heading">' +
+                '<md-card-header>' +
+                icon +
+                '<md-card-header-text class="md-headline">' +
+                heading +
+                "<div class='md-headline padded-subheading'>" +
+                subheading +
+                "</div>" +
+                '</md-card-header-text>' +
                 '</md-card-header>' +
-                '<md-card-content>' +
-                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input>' +
-                    '<br>' +
-                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input>' +
-                    '<br>' +
-                    '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input>' +
-                    '<br>' +
-                    '<md-card-actions layout="row" layout-align="end center">' +
-                        '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Confirm</md-button>' +
-                        '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>' +
-                    '</md-card-actions>' +
-                '</md-card-content>' +
-            '</md-card>';
+                "</div>" +
+                "<md-card-title-text>" +
+                "</md-card-title-text>" +
+                "</md-card-title>" +
+                "<md-card-content" + addLeadingSpace(contentTags) + ">" +
+                cardContent +
+                "</md-card-content>" +
+                buttons +
+                "</md-card>";
+
             $log.debug(htmlText);
             var linkFn = $compile(htmlText);
             var content = linkFn(scope);
@@ -523,7 +584,8 @@ app.service('cardVisibilityService', function($http, $log) {
 
     var cardVisibilityService = {};
     cardVisibilityService.documents = {
-        detailsCardVisible: false
+        detailsCardVisible: false,
+        contributorCardVisible: false
     };
 
 
@@ -541,20 +603,24 @@ app.service('fieldOfResearchService', function($http) {
     fieldOfResearchService.searchText = null;
     fieldOfResearchService.selectedFORs = [];
 
-    //Text to insert between input tags for autocomplete functionality.
-    fieldOfResearchService.autocompleteText = "<md-autocomplete " +
-        "md-selected-item=\"fieldOfResearchService.selectedItem\" " +
-        "md-search-text=\"fieldOfResearchService.searchText\" " +
-        "md-items=\"item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)\" " +
-        "md-item-text=\"item.name\">" +
-        // "placeholder=\"{{helpProperties.defaultText}}\">" +
-        "<span md-highlight-text=\"fieldOfResearchService.searchText\">{{item.name}}</span></md-autocomplete>" +
-        "<md-chip-template>" +
-        "<span>" +
-        "<strong>{{$chip.name}} </strong>" +
-        "<em>({{$chip.code}})</em>" +
-        "</span>" +
-        "</md-chip-template>";
+
+    //Get text for autocomplete, placeholder should be provided.
+    fieldOfResearchService.getAutoCompleteInsert = function(placeholderText) {
+        return "<md-autocomplete " +
+            "md-selected-item=\"fieldOfResearchService.selectedItem\" " +
+            "md-search-text=\"fieldOfResearchService.searchText\" " +
+            "md-items=\"item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)\" " +
+            placeholderText +
+            "md-item-text=\"item.name\">" +
+            "<span md-highlight-text=\"fieldOfResearchService.searchText\">{{item.name}}</span></md-autocomplete>" +
+            "<md-chip-template>" +
+            "<span>" +
+            "<strong>{{$chip.name}} </strong>" +
+            "<em>({{$chip.code}})</em>" +
+            "</span>" +
+            "</md-chip-template>";
+    };
+
 
     /**
      * Return the proper object when the append is called.
