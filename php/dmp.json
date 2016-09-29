@@ -50,14 +50,14 @@
 
     "referenceDocuments": [{
         "id": "0",
-        "shortname": "Ethics committee consent",
+        "shortname": "Ethics committee approval",
         "summary": "The ethics committee has allowed me to test on humans and publish their data, as long as they provide informed consent.",
-        "link": "link.to/uploaded/document"
+        "link": "link.to/ethics/approval"
     }, {
         "id": "1",
         "shortname": "Informed consent form",
         "summary": "",
-        "link": "link.to/uploaded/document"
+        "link": "link.to/consent/form"
     }],
 
     "dataAssets": [{

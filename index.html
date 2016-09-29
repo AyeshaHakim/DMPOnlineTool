@@ -58,6 +58,16 @@
         <br>
 
 
+        <h2 class="formTitle">Reference Documents</h2>
+        {{userDataService.dmp.referenceDocuments[0]}}
+        <dmp-details-card type="document"></dmp-details-card>
+        <div layout="row" layout-wrap>
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
+                <dmp-card ng-model="document" cardindex="{{$index}}" type="document"></dmp-card>
+            </div>
+            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
+        </div>
+
         <h2 class="formTitle">Contributors</h2>
         <dmp-details-card type="contributor"></dmp-details-card>
         <div layout="row" layout-wrap>
@@ -67,14 +77,6 @@
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewcontributor"></dmp-card>
         </div>
 
-        <h2 class="formTitle">Reference Documents</h2>
-        <dmp-details-card type="document" ng-model="userDataService.dmp.referenceDocuments[0]"></dmp-details-card>
-        <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
-                <dmp-card ng-model="document" cardindex="{{$index}}" type="document"></dmp-card>
-            </div>
-            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
-        </div>
 
         <h2 class="formTitle">Funding</h2>
         <div layout="row" layout-wrap>

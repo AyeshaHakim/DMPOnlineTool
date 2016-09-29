@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
 app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService, cardVisibilityService) {
@@ -152,6 +154,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             var buttons = "";
             var ngclick = "";
             var ngshow = "";
+            var nghide = "";
 
             switch (type) {
                 case "contributor":
@@ -167,6 +170,33 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     cardContent = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
                     ngclick = "cardVisibilityService.contributors.detailsCardVisible=true";
                     ngshow = "!cardVisibilityService.contributors.detailsCardVisible";
+                    break;
+                case "document":
+                    heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
+                    cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                        "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
+                    ngclick = "cardVisibilityService.switchCardToNum('documents'," + cardIndex + ");";
+                    nghide = "cardVisibilityService.documents.detailsCardVisible && cardVisibilityService.documents.detailsCardIndex==" + cardIndex;
+                    break;
+                case 'addnewdocument':
+                    heading = "<div class='smaller-text80'>Add new document...</div>";
+                    contentTags = "class='center'";
+                    cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+                    ngclick = "cardVisibilityService.switchCardToNum('documents',-1);";
+                    nghide = "cardVisibilityService.documents.detailsCardVisible && cardVisibilityService.documents.detailsCardIndex==-1";
+                    break;
+                case "funder":
+                    heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
+                    subheading = "{{ngModel.affiliation}}";
+                    cardContent = "<span class='md-subhead'>Reference numbers: </span>" +
+                        "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
+                        "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
+                    break;
+                case "addnewfunder":
+                    heading = "<div class='smaller-text80'>Add new funder...</div>";
+                    contentTags = "class='center'";
+                    cardContent = "<div class='right-offset-icon'><md-icon md-svg-icon=\"bank\" class=\"icon-90px lift-icon\"></md-icon>" +
+                        "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
                     break;
                 case "dataasset":
                     heading = "{{ngModel.shortname}}";
@@ -195,40 +225,15 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"database-plus\" class=\"icon-150px lift-icon\"></md-icon>";
                     break;
-                case "funder":
-                    heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
-                    subheading = "{{ngModel.affiliation}}";
-                    cardContent = "<span class='md-subhead'>Reference numbers: </span>" +
-                        "<div><em>Funder: </em>{{ngModel.funderID}}</div>" +
-                        "<div><em>Research office: </em>{{ngModel.researchOfficeID}}</div>";
-                    break;
-                case "addnewfunder":
-                    heading = "<div class='smaller-text80'>Add new funder...</div>";
-                    contentTags = "class='center'";
-                    cardContent = "<div class='right-offset-icon'><md-icon md-svg-icon=\"bank\" class=\"icon-90px lift-icon\"></md-icon>" +
-                        "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
-                    break;
-                case "document":
-                    heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
-                    cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
-                        "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    break;
-                case 'addnewdocument':
-                    heading = "<div class='smaller-text80'>Add new document...</div>";
-                    contentTags = "class='center'";
-                    cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    ngclick = "cardVisibilityService.documents.detailsCardVisible=true";
-                    ngshow = "!cardVisibilityService.documents.detailsCardVisible";
-                    break;
             }
 
 
             //Insert buttons if required.
             if (!type.match(/^addnew/)) {
-                buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                    "<md-button class=\"elevated\">Remove</md-button>";
+                // buttons = "<md-button class=\"elevated\">Edit</md-button>" +
+                //     "<md-button class=\"elevated\">Remove</md-button>";
             } else {
-                cardTags = "class='card addcard hoverable'";
+
             }
 
             //Compile optional stuff
@@ -236,10 +241,11 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
             ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
             ngshow = (ngshow !== "") ? ("ng-show=\"" + ngshow + "\"") : "";
+            nghide = (nghide !== "") ? ("ng-hide=\"" + nghide + "\"") : "";
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(ngclick) + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(nghide) + addLeadingSpace(ngclick) + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
                 "<span class='md-headline'>" +
@@ -253,6 +259,8 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                 "</md-card-content>" +
                 buttons +
                 "</md-card>";
+
+            // $log.debug(htmlText)
 
             var linkFn = $compile(htmlText);
             var content = linkFn(scope);
@@ -284,13 +292,11 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVi
         scope: false,
 
         link: function(scope, element, attrs, ngModel) {
-
-
             var type = attrs.type || 'contributor';
 
             var htmlText = "";
             //Bits of the card
-            var cardTags = "class='detailscard'";
+            var cardTags = "class='card'";
             var heading = "";
             var icon = "";
             var subheading = "";
@@ -299,8 +305,6 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVi
             var buttons = "";
             var ngclick = "";
             var ngshow = "";
-
-            $log.debug(ngModel);
 
             switch (type) {
                 case "contributor":
@@ -327,9 +331,9 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVi
                     heading = "Add new document...";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
                     subheading = "{{helpTextService.dmpHelpText.referenceDocuments.cardsubheading}}";
-                    cardContent = '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input><br>';
+                    cardContent = '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.documents.detailsCardIndex].shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.documents.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.documents.detailsCardIndex].link"></dmp-input><br>';
                     // cardContent = '<dmp-input ng-model="ngModel.shortname"></dmp-input><br>' +
                     //     '<dmp-input ng-model="ngModel.summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                     //     '<dmp-input ng-model="ngModel.link"></dmp-input><br>';
@@ -369,7 +373,7 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVi
                 buttons +
                 "</md-card>";
 
-            $log.debug(htmlText);
+            // $log.debug(htmlText);
             var linkFn = $compile(htmlText);
             var content = linkFn(scope);
             element.append(content);
@@ -416,7 +420,11 @@ app.service('userDataService', function($http, $log) {
 
     var userDataService = {};
 
+    //The user's DMP, to be synced with the server.
     userDataService.dmp = DMP(0);
+
+    //Temporary storage. Individual parts to be synced with the DMP when requested.
+    userDataService.scratch = DMP(0);
 
     //A class for DMPs
     function DMP(id) {
@@ -435,28 +443,28 @@ app.service('userDataService', function($http, $log) {
 
         this.funders = [];
 
-        this.ethics = {
-            required: "",
-            ethicsDocuments: []
-        };
+        this.ethicsRequired = false;
+        this.culturalConsultationRequired = false;
+
+        this.referenceDocuments = [];
 
         this.dataAssets = [];
     }
 
     //A class for contributors
-    function Contributor(id) {
+    function Contributor(id=0,firstname="",lastname="",role=[],affiliation="",email="",username="",orcid="") {
         this.id = id;
-        this.firstname = "";
-        this.lastname = "";
-        this.role = "";
-        this.affiliation = "";
-        this.email = "";
-        this.username = "";
-        this.orcid = "";
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.role = role;
+        this.affiliation = affiliation;
+        this.email = email;
+        this.username = username;
+        this.orcid = orcid;
     }
 
     //A class for documents
-    function Document(id) {
+    function Document(id=0) {
         this.id = id;
         this.description = "";
         this.link = "";
@@ -587,9 +595,10 @@ app.service('helpTextService', function($http, $log) {
 
 //Keeps track of which input cards are visible, and the index of the card that the
 //details card should be associated with (-1 is a new card)
-app.service('cardVisibilityService', function($http, $log) {
+app.service('cardVisibilityService', function($http, $log, $timeout) {
 
     var cardVisibilityService = {};
+
     cardVisibilityService.documents = {
         detailsCardVisible: false,
         detailsCardIndex: -1
@@ -598,6 +607,22 @@ app.service('cardVisibilityService', function($http, $log) {
     cardVisibilityService.contributors = {
         detailsCardVisible: false,
         detailsCardIndex: -1
+    };
+
+    //Switch to a details card, allowing time for short transition if another
+    //details card is being displayed.
+    cardVisibilityService.switchCardToNum = function(categoryName, switchToNum) {
+        if (cardVisibilityService[categoryName].detailsCardVisible) {
+            cardVisibilityService[categoryName].detailsCardVisible = false;
+            cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
+            $timeout(function() {
+                cardVisibilityService[categoryName].detailsCardVisible = true;
+
+            }, 100);
+        } else {
+          cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
+          cardVisibilityService[categoryName].detailsCardVisible = true;
+        }
     };
 
 

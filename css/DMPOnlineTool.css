@@ -19,112 +19,56 @@
 .md-chips .md-chip-input-container md-autocomplete input {
     width: 600px;
 }
-
-/*
-.detailscard {
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    border-radius: 4px;
-    -webkit-transform: translateY(0);
-    -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
-    transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}*/
-
-.detailscard.ng-hide {
-    max-height: 0;
-    -ms-transform: scale(0.5, 0.5);
-    -webkit-transform: scale(0.5, 0.5);
-    transform: scale(0.5, 0.5);
-    -moz-transition: .5s;
-    -ms-transition: .5s;
-    -o-transition: .5s;
-    -webkit-transition: .5s;
-    transition: .5s;
-    overflow: hidden;
-    padding: 0;
-    margin: 0;
-    opacity: 0;
-}
-.detailscard {
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    border-radius: 4px;
-    -ms-transform: scale(1, 1);
-    -webkit-transform: scale(1, 1);
-    transform: scale(1, 1);
-    max-height: 700px;
-    opacity: 1;
-    -moz-transition: .5s;
-    -ms-transition: .5s;
-    -o-transition: .5s;
-    -webkit-transition: .5s;
-    transition: .5s;
-}
 .card {
+    max-height: 800px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     position: relative;
     border-radius: 4px;
-    -webkit-transform: translateY(0);
-    -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
-    transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
+    -ms-transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+    padding-bottom: 30px;
 }
-.card:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 0 15px rgba(71, 206, 230, 0.2);
-    opacity: 0;
-    -webkit-transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1);
-    transition: all .2s cubic-bezier(0.165, 0.84, 0.44, 1)
-}
-.addcard.ng-hide {
+.card.ng-hide {
     max-height: 0;
     -ms-transform: scale(0.5, 0.5);
     -webkit-transform: scale(0.5, 0.5);
     transform: scale(0.5, 0.5);
-    -moz-transition: .25s;
-    -ms-transition: .25s;
-    -o-transition: .25s;
-    -webkit-transition: .25s;
-    transition: .25s;
     overflow: hidden;
     padding: 0;
     margin: 0;
     opacity: 0;
 }
-.addcard {
-    -ms-transform: scale(1, 1);
-    -webkit-transform: scale(1, 1);
-    transform: scale(1, 1);
-    max-height: 600px;
-    opacity: 1;
-    -moz-transition: .25s;
-    -ms-transition: .25s;
-    -o-transition: .25s;
-    -webkit-transition: .25s;
-    transition: .25s;
+.card.ng-hide-add {
+    -moz-transition: 1s;
+    -ms-transition: 1s;
+    -o-transition: 1s;
+    -webkit-transition: 1s;
+    transition: 1s;
 }
-.hoverable:hover:after {
-    opacity: .6
+.card.ng-hide-remove {
+    -moz-transition: 1s;
+    -ms-transition: 1s;
+    -o-transition: 1s;
+    -webkit-transition: 1s;
+    transition: 1s;
 }
 .hoverable:hover {
+    box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
     -ms-transform: scale(1.05, 1.05);
     -webkit-transform: scale(1.05, 1.05);
     transform: scale(1.05, 1.05);
-    -ms-transition: -ms-transform .25s;
-    -webkit-transition: -webkit-transform .25s;
-    transition: transform .25s;
+    -ms-transition: -ms-transform 1s;
+    -webkit-transition: -webkit-transform 1s;
+    transition: transform 1s;
 }
 .hoverable:active {
     -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
-    -ms-transition: -ms-transform .25s;
-    -webkit-transition: -webkit-transform .25s;
-    transition: transform .25s;
+    -ms-transition: -ms-transform 1s;
+    -webkit-transition: -webkit-transform 1s;
+    transition: transform 1s;
 }
 .elevated {
     z-index: 1;
