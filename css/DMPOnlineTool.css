@@ -186,7 +186,7 @@
     -ms-filter: "FlipH";
 }
 .padded-subheading {
-    padding: 20px 0;
+    padding: 20px 1px;
     line-height: .5;
     display: block;
 }

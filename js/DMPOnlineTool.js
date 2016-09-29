@@ -140,6 +140,8 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
             var type = attrs.type || 'contributor';
 
+            var cardIndex = attrs.cardindex;
+
             var htmlText = "";
             //Bits of the card
             var cardTags = "class='hoverable card'";
@@ -157,6 +159,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     subheading = "{{ngModel.affiliation}}";
                     cardContent = "<em>{{ngModel.role.join(', ')}}</em>" +
                         "<div class='md-subhead'>{{ngModel.email}}</div>";
+                    ngclick = "cardVisibilityService.contributors.detailsCardIndex=" + cardIndex + "; cardVisibilityService.contributors.detailsCardVisible=true";
                     break;
                 case "addnewcontributor":
                     heading = "Add new contributor...";
@@ -271,10 +274,12 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
 
 //A directive for an editable display card (hopefully).
-app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
+app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVisibilityService) {
 
     return {
         restrict: 'EA',
+
+        require: "?ngModel",
 
         scope: false,
 
@@ -295,6 +300,8 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
             var ngclick = "";
             var ngshow = "";
 
+            $log.debug(ngModel);
+
             switch (type) {
                 case "contributor":
                     ngshow = "cardVisibilityService.contributors.detailsCardVisible";
@@ -302,17 +309,16 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
                     icon = '<md-icon md-svg-icon="account"></md-icon>';
                     subheading = "{{helpTextService.dmpHelpText.contributors.cardsubheading}}";
                     cardContent = '<div layout="row">' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].firstname" flex="45"></dmp-input>' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].lastname" flex="45"></dmp-input><br>' +
-                      '</div>' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].role"></dmp-input><br>' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].affiliation"></dmp-input><br>' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].email"></dmp-input><br>' +
-                      '<div layout="row">' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].username" flex="45"></dmp-input>' +
-                      '<dmp-input ng-model="userDataService.dmp.contributors[0].orcid" flex="45"></dmp-input><br>' +
-                      '</div>'
-                      ;
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].firstname" flex="50"></dmp-input>' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].lastname" flex="50"></dmp-input><br>' +
+                        '</div>' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].role"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].affiliation"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].email"></dmp-input><br>' +
+                        '<div layout="row">' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].username" flex="40"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].orcid" flex="60"></dmp-input>' +
+                        '</div>';
                     buttons = '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Save</md-button>' +
                         '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
                     break;
@@ -324,6 +330,9 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService) {
                     cardContent = '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].shortname"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.dmp.referenceDocuments[0].link"></dmp-input><br>';
+                    // cardContent = '<dmp-input ng-model="ngModel.shortname"></dmp-input><br>' +
+                    //     '<dmp-input ng-model="ngModel.summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                    //     '<dmp-input ng-model="ngModel.link"></dmp-input><br>';
                     buttons = '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Save</md-button>' +
                         '<md-button ng-click="cardVisibilityService.documents.detailsCardVisible=false">Cancel</md-button>';
                     break;
@@ -576,13 +585,19 @@ app.service('helpTextService', function($http, $log) {
 
 });
 
-//Keeps track of which input cards are visible.
+//Keeps track of which input cards are visible, and the index of the card that the
+//details card should be associated with (-1 is a new card)
 app.service('cardVisibilityService', function($http, $log) {
 
     var cardVisibilityService = {};
     cardVisibilityService.documents = {
         detailsCardVisible: false,
-        contributorCardVisible: false
+        detailsCardIndex: -1
+    };
+
+    cardVisibilityService.contributors = {
+        detailsCardVisible: false,
+        detailsCardIndex: -1
     };
 
 
@@ -701,8 +716,9 @@ function addLeadingSpace(str) {
 //From stack exchange, gets nested fields from string
 //Also removes list indices.
 deep_value = function(obj, path) {
+    path = path.replace(/\[.+?\]/g, "");
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
-        path[i] = path[i].replace(/\[\d+\]/g, "");
+
 
         if (obj.hasOwnProperty(path[i]))
             obj = obj[path[i]];
