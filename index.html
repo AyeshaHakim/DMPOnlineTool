@@ -59,7 +59,9 @@
 
 
         <h2 class="formTitle">Reference Documents</h2>
-        {{userDataService.dmp.referenceDocuments[0]}}
+        {{userDataService.dmp.referenceDocuments[0]}}<br>
+        {{cardVisibilityService.document.detailsCardVisible}}<br>
+        {{cardVisibilityService.document.detailsCardIndex}}<br>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
