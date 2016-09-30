@@ -282,14 +282,11 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
 
 //A directive for an editable display card (hopefully).
-app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVisibilityService) {
+app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) {
 
     return {
-        restrict: 'EA',
 
-        require: "?ngModel",
-
-        scope: false,
+        scope: true,
 
         link: function(scope, element, attrs, ngModel) {
             var type = attrs.type || 'contributor';
@@ -331,10 +328,10 @@ app.directive("dmpDetailsCard", function($log, $compile, helpTextService, cardVi
                     heading = "Add new document...";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
                     subheading = "{{helpTextService.dmpHelpText.referenceDocuments.cardsubheading}}";
-                    cardContent = '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
-                    buttons = '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Save</md-button>' +
+                    cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
+                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex)">Save</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Cancel</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Delete</md-button>';
                     break;
@@ -424,7 +421,9 @@ app.service('userDataService', function($http, $log) {
     userDataService.dmp = DMP(0);
 
     //Temporary storage. Individual parts to be synced with the DMP when requested.
-    userDataService.scratch = DMP(0);
+    userDataService.scratch = {};
+
+    userDataService.scratch.dmp = angular.copy(userDataService.dmp);
 
     //A class for DMPs
     function DMP(id) {
@@ -525,6 +524,32 @@ app.service('userDataService', function($http, $log) {
         this.managementProcess = "";
     }
 
+    //Copy scratch to the actual data object. Can be provided with a particular
+    //field to copy, if not it will copy the whole thing.
+    //An index can be provided to only update one array element. If index is -1,
+    //a new array object will be created. If index is Infinity it will be ignored.
+    userDataService.scratchToDMP = function(field = '', index = Infinity) {
+        if (field === '') {
+            userDataService.dmp = angular.copy(userDataService.scratch.dmp);
+        } else {
+            if (index === Infinity) {
+                userDataService.dmp[field] = angular.copy(userDataService.scratch.dmp[field]);
+            } else if (index === -1) {
+                userDataService.dmp[field].push(angular.copy(userDataService.scratch.dmp[field][index]));
+            } else {
+                userDataService.dmp[field][index] = angular.copy(userDataService.scratch.dmp[field][index]);
+            }
+        }
+    };
+    //Other way around, cancels changes
+    userDataService.dmpToScratch = function(field = '') {
+        if (field === '') {
+            userDataService.scratch.dmp = angular.copy(userDataService.dmp);
+        } else {
+            userDataService.scratch.dmp[field] = angular.copy(userDataService.dmp[field]);
+        }
+    };
+
     //Saves DMP data to the server
     userDataService.save = function() {
         userDataService.dmp.project.lastUpdateDate = new Date();
@@ -555,6 +580,9 @@ app.service('userDataService', function($http, $log) {
                 }
                 //Set next contributor ID
                 userDataService.nextContributorID = userDataService.dmp.contributors.length;
+
+                //Copy to scratch
+                userDataService.scratch.dmp = angular.copy(userDataService.dmp);
             }, function myError(response) {
                 userDataService.getStatus = response.statusText;
             });
@@ -585,6 +613,7 @@ app.service('helpTextService', function($http, $log) {
     //Gets a reference to a help text field associated with a JSON string (e.g. 'project.title')
     helpTextService.getFieldRef = function(path) {
         //Remove references to userDataService.dmp if they exist.
+        path = path.replace(/^(userDataService\.scratch\.dmp\.)/, "");
         path = path.replace(/^(userDataService\.dmp\.)/, "");
         return deep_value(helpTextService.dmpHelpText, path);
     };
@@ -740,8 +769,10 @@ function addLeadingSpace(str) {
 
 //From stack exchange, gets nested fields from string
 //Also removes list indices.
-deep_value = function(obj, path) {
-    path = path.replace(/\[.+?\]/g, "");
+deep_value = function(obj, path, removeIndices = true) {
+    if (removeIndices) {
+        path = path.replace(/\[.+?\]/g, "");
+    }
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
 
 

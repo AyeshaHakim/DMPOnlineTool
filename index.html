@@ -59,9 +59,8 @@
 
 
         <h2 class="formTitle">Reference Documents</h2>
-        {{userDataService.dmp.referenceDocuments[0]}}<br>
-        {{cardVisibilityService.document.detailsCardVisible}}<br>
-        {{cardVisibilityService.document.detailsCardIndex}}<br>
+        ${{userDataService.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex]}}<br>
+        /{{userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex]}}<br>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
@@ -80,7 +79,7 @@
         </div> -->
 
 
-        <h2 class="formTitle">Funding</h2>
+        <!-- <h2 class="formTitle">Funding</h2>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="funder in userDataService.dmp.funding">
                 <dmp-card ng-model="funder" type="funder"></dmp-card>
@@ -94,7 +93,7 @@
                 <dmp-card ng-model="dataasset" type="dataasset"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" type="addnewdataasset"></dmp-card>
-        </div>
+        </div> -->
     </md-content>
 
 
