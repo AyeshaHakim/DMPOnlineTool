@@ -331,7 +331,9 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
                     cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
-                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex)">Save</md-button>' +
+                    // Update scrath and point to the new card
+                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex);' +
+                        'cardVisibilityService.document.detailsCardIndex=userDataService.getNewCardIndex(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex);">Save</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Cancel</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Delete</md-button>';
                     break;
@@ -535,7 +537,7 @@ app.service('userDataService', function($http, $log) {
             if (index === Infinity) {
                 userDataService.dmp[field] = angular.copy(userDataService.scratch.dmp[field]);
             } else if (index === -1) {
-                userDataService.dmp[field].push(angular.copy(userDataService.scratch.dmp[field][index]));
+                userDataService.dmp[field].push(angular.copy(userDataService.scratch.dmp[field]));
             } else {
                 userDataService.dmp[field][index] = angular.copy(userDataService.scratch.dmp[field][index]);
             }
@@ -549,6 +551,15 @@ app.service('userDataService', function($http, $log) {
             userDataService.scratch.dmp[field] = angular.copy(userDataService.dmp[field]);
         }
     };
+
+    userDataService.getNewCardIndex = function(field, index) {
+        if (index < 0) {
+            return -1;
+        } else {
+            return userDataService.dmp[field].length;
+        }
+    };
+
 
     //Saves DMP data to the server
     userDataService.save = function() {
