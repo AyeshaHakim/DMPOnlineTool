@@ -19,8 +19,19 @@
 .md-chips .md-chip-input-container md-autocomplete input {
     width: 600px;
 }
-.card {
+.detailscard {
     max-height: 800px;
+}
+.detailscard.ng-hide {
+    max-height: 0;
+}
+.minicard {
+    max-width: 400px;
+}
+.minicard.ng-hide {
+    max-width: 0;
+}
+.card {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     position: relative;
     border-radius: 4px;
@@ -30,7 +41,6 @@
     padding-bottom: 30px;
 }
 .card.ng-hide {
-    max-height: 0;
     -ms-transform: scale(0.5, 0.5);
     -webkit-transform: scale(0.5, 0.5);
     transform: scale(0.5, 0.5);
@@ -52,6 +62,12 @@
     -o-transition: 1s;
     -webkit-transition: 1s;
     transition: 1s;
+}
+.selectedcard {
+    box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
+    -ms-transform: scale(1.02, 1.02);
+    -webkit-transform: scale(1.02, 1.02);
+    transform: scale(1.02, 1.02);
 }
 .hoverable:hover {
     box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);

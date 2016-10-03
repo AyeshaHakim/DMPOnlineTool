@@ -54,21 +54,27 @@
             <dmp-input ng-model="userDataService.dmp.projectDetails.endDate" inputtype="md-datepicker" inputtags="md-placeholder='Ongoing' ng-required='false'"></dmp-input>
         </div>
         <dmp-input ng-model="userDataService.dmp.ethicsRequired" inputtype="md-checkbox"></dmp-input>
-        <dmp-input ng-model="userDataService.dmp.culturalConsultationRequired" inputtype="md-checkbox"></dmp-input>
+        <dmp-input ng-model="userDataService.dmp.iwiConsultationRequired" inputtype="md-checkbox"></dmp-input>
         <br>
 
 
         <h2 class="formTitle">Reference Documents</h2>
         <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
         <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
-        ({{cardVisibilityService.document.detailsCardIndex}}<br>
+        vis={{cardVisibilityService.document.detailsCardVisible}}<br>
+        ind={{cardVisibilityService.document.detailsCardIndex}}<br>
+        len={{userDataService.scratch.dmp.document.length}}<br>
+        {{cardVisibilityService.document.detailsCardIndex===userDataService.scratch.dmp[field].length-1}}<br>
+        {{cardVisibilityService.document}}<br>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.document">
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.scratch.dmp.document">
                 <dmp-card ng-model="document" cardindex="{{$index}}" type="document"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
         </div>
+
+
 
         <!-- <h2 class="formTitle">Contributors</h2>
         <dmp-details-card type="contributors"></dmp-details-card>

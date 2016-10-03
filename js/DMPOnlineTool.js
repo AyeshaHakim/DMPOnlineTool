@@ -16,10 +16,16 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     $scope.helpTextService = helpTextService;
     $scope.helpTextService.loadHelpText();
 
+
     $scope.toggleDetailsDocuments = function() {
-        $scope.cardVisibilityService.document.detailsCardVisible = !$scope.cardVisibilityService.document.detailsCardVisible;
+        $log.debug('hi');
+        // $scope.cardVisibilityService.document.detailsCardVisible = !$scope.cardVisibilityService.document.detailsCardVisible;
     };
 
+    $scope.newScratchCard = function(field) {
+        $log.debug('hi');
+        userDataService.newScratchCard(field);
+    };
 
     //ev is the dom click event to control the animation.
     $scope.helpBox = function(ev, title, helpBoxText) {
@@ -123,10 +129,10 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
 
 //A directive to display a bit of the DMP as a card.
 //Also allows display of a "Add new" card.
-app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
+app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDataService) {
 
     return {
-        restrict: 'EA',
+        restrict: 'E',
 
         require: "?ngModel",
 
@@ -139,6 +145,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
         link: function(scope, element, attrs, ngModel) {
 
             scope.cardVisibilityService = cardVisibilityService;
+            scope.userDataService = userDataService;
 
             var type = attrs.type || 'contributor';
 
@@ -146,7 +153,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 
             var htmlText = "";
             //Bits of the card
-            var cardTags = "class='hoverable card'";
+            var cardTags = "class='hoverable card minicard'";
             var heading = "";
             var subheading = "";
             var contentTags = "";
@@ -155,6 +162,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             var ngclick = "";
             var ngshow = "";
             var nghide = "";
+            var ngclass = "";
 
             switch (type) {
                 case "contributor":
@@ -175,15 +183,16 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
                     cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
                         "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    // ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");";
+                    ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");cardVisibilityService."+type+".addCardVisible=true;userDataService.dmpToScratch(\'"+type+"\');";
                     // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
+                    ngclass = '{selectedcard: (cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==' + cardIndex + ')}';
                     break;
                 case 'addnewdocument':
                     heading = "<div class='smaller-text80'>Add new document...</div>";
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    // ngclick = "cardVisibilityService.switchCardToNum('document',-1);";
-                    // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==-1";
+                    ngclick = "cardVisibilityService.switchCardToNum('document', userDataService.newScratchCard('document'));cardVisibilityService.document.addCardVisible=false;";
+                    ngshow = "cardVisibilityService.document.addCardVisible;";
                     break;
                 case "funder":
                     heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
@@ -242,10 +251,11 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
             ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
             ngshow = (ngshow !== "") ? ("ng-show=\"" + ngshow + "\"") : "";
             nghide = (nghide !== "") ? ("ng-hide=\"" + nghide + "\"") : "";
+            ngclass = (ngclass !== "") ? ("ng-class=\"" + ngclass + "\"") : "";
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(nghide) + addLeadingSpace(ngclick) + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(nghide) + addLeadingSpace(ngclick) + addLeadingSpace(ngclass) + ">" +
                 "<md-card-title>" +
                 "<md-card-title-text>" +
                 "<span class='md-headline'>" +
@@ -285,15 +295,18 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
 app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) {
 
     return {
+        require: "?ngModel",
 
         scope: true,
 
+
         link: function(scope, element, attrs, ngModel) {
+
             var type = attrs.type || 'contributor';
 
             var htmlText = "";
             //Bits of the card
-            var cardTags = "class='card'";
+            var cardTags = "class='card detailscard'";
             var heading = "";
             var icon = "";
             var subheading = "";
@@ -304,38 +317,47 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
             var ngshow = "";
 
             switch (type) {
-                case "contributor":
-                    ngshow = "cardVisibilityService[type].detailsCardVisible";
-                    heading = "Add new contributor...";
-                    icon = '<md-icon md-svg-icon="account"></md-icon>';
-                    subheading = "{{helpTextService.dmpHelpText.contributors.cardsubheading}}";
-                    cardContent = '<div layout="row">' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].firstname" flex="50"></dmp-input>' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].lastname" flex="50"></dmp-input><br>' +
-                        '</div>' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].role"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].affiliation"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].email"></dmp-input><br>' +
-                        '<div layout="row">' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].username" flex="40"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].orcid" flex="60"></dmp-input>' +
-                        '</div>';
-                    buttons = '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Save</md-button>' +
-                        '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
-                    break;
+                // case "contributor":
+                //     ngshow = "cardVisibilityService[type].detailsCardVisible";
+                //     heading = "Add new contributor...";
+                //     icon = '<md-icon md-svg-icon="account"></md-icon>';
+                //     subheading = "{{helpTextService.dmpHelpText.contributors.cardsubheading}}";
+                //     cardContent = '<div layout="row">' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].firstname" flex="50"></dmp-input>' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].lastname" flex="50"></dmp-input><br>' +
+                //         '</div>' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].role"></dmp-input><br>' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].affiliation"></dmp-input><br>' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].email"></dmp-input><br>' +
+                //         '<div layout="row">' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].username" flex="40"></dmp-input><br>' +
+                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].orcid" flex="60"></dmp-input>' +
+                //         '</div>';
+                //     buttons = '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Save</md-button>' +
+                //         '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
+                //     break;
                 case "document":
-                    // ngshow = "cardVisibilityService.document.detailsCardVisible";
-                    heading = "Add new document...";
+                    ngshow = "cardVisibilityService['"+type+"'].detailsCardVisible";
+                    heading = "Add new document...{{ctrl.scratchData}}";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
-                    subheading = "{{helpTextService.dmpHelpText.document.cardsubheading}}";
+                    subheading = "{{helpTextService.dmpHelpText['"+type+"'].cardsubheading}}";
                     cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
                     // Update scrath and point to the new card
-                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'document\',cardVisibilityService.document.detailsCardIndex);' +
-                        'cardVisibilityService.document.detailsCardIndex=userDataService.getNewCardIndex(\'document\',cardVisibilityService.document.detailsCardIndex);">Save</md-button>' +
-                        '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Cancel</md-button>' +
-                        '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Delete</md-button>';
+                    buttons = '<md-button ng-click="' +
+                        'toggleDetailsDocuments();' +
+                        'userDataService.scratchToDMP(\''+type+'\');' +
+                        'cardVisibilityService.'+type+'.detailsCardIndex=userDataService.getNewCardIndex(\''+type+'\',cardVisibilityService.'+type+'.detailsCardIndex);' +
+                        'cardVisibilityService.'+type+'.addCardVisible=true;">Save</md-button>' +
+                        '<md-button ng-click="' +
+                        'userDataService.dmpToScratch(\''+type+'\');' +
+                        'cardVisibilityService.'+type+'.addCardVisible=true;' +
+                        'cardVisibilityService.'+type+'.detailsCardVisible=false;">Close</md-button>' +
+                        '<md-button ng-click=' +
+                        '"userDataService.deleteScratchCard(\''+type+'\',cardVisibilityService.'+type+'.detailsCardIndex);' +
+                        'userDataService.scratchToDMP(\''+type+'\');' +
+                        'cardVisibilityService.'+type+'.detailsCardVisible=false;">Delete</md-button>';
                     break;
             }
 
@@ -553,11 +575,21 @@ app.service('userDataService', function($http, $log) {
     };
 
     userDataService.getNewCardIndex = function(field, index) {
-        if (index < 0) {
-            return -1;
+        $log.debug(index);
+        if (index >= 0 || index < userDataService.dmp[field].length) {
+            return index;
         } else {
-            return userDataService.dmp[field].length;
+            return userDataService.dmp[field].length-1;
         }
+    };
+
+    userDataService.newScratchCard = function(field) {
+        userDataService.scratch.dmp[field].push({});
+        return userDataService.scratch.dmp[field].length - 1;
+    };
+
+    userDataService.deleteScratchCard = function(field, index) {
+        userDataService.scratch.dmp[field].splice(index,1);
     };
 
 
@@ -638,13 +670,21 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
 
     cardVisibilityService.document = {
         detailsCardVisible: false,
-        detailsCardIndex: -1
+        addCardVisible: true,
+        detailsCardIndex: 0
     };
 
     cardVisibilityService.contributor = {
         detailsCardVisible: false,
-        detailsCardIndex: -1
+        detailsCardIndex: 0
     };
+
+    function CardInit() {
+        this.detailsCardVisible= false;
+        this.addCardVisible= true;
+        this.detailsCardIndex= 0;
+
+    }
 
     //Switch to a details card, allowing time for short transition if another
     //details card is being displayed.
@@ -752,8 +792,10 @@ app.service('fieldOfResearchService', function($http) {
 
 });
 
-app.filter('prettyJSON', function () {
-    return function(json) { return angular.toJson(json, true); }
+app.filter('prettyJSON', function() {
+    return function(json) {
+        return angular.toJson(json, true);
+    }
 });
 
 
