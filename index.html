@@ -59,12 +59,12 @@
 
 
         <h2 class="formTitle">Reference Documents</h2>
-        ${{userDataService.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex]}}<br>
-        /{{userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex]}}<br>
+        <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
+        <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
         ({{cardVisibilityService.document.detailsCardIndex}}<br>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.referenceDocuments">
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.document">
                 <dmp-card ng-model="document" cardindex="{{$index}}" type="document"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>

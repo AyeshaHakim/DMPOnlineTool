@@ -14,7 +14,7 @@
         "endDate": ""
     },
 
-    "contributors": [{
+    "contributor": [{
         "id": "0",
         "firstname": "Joanne",
         "lastname": "One",
@@ -46,9 +46,9 @@
     }],
 
     "ethicsRequired": true,
-    "culturalConsultationRequired": true,
+    "iwiConsultationRequired": true,
 
-    "referenceDocuments": [{
+    "document": [{
         "id": "0",
         "shortname": "Ethics committee approval",
         "summary": "The ethics committee has allowed me to test on humans and publish their data, as long as they provide informed consent.",
@@ -60,7 +60,7 @@
         "link": "link.to/consent/form"
     }],
 
-    "dataAssets": [{
+    "dataAsset": [{
         "id": "0",
         "shortname": "EEG data",
         "description": "Lots of EEG data from people in raw format.",

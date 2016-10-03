@@ -38,14 +38,14 @@
             "helpBoxText": "Do you need to obtain ethical consent for this project?",
             "tooltip": ""
         },
-        "culturalConsultationRequired": {
-            "label": "Cultural consideration required",
+        "iwiConsultationRequired": {
+            "label": "Iwi consideration required",
             "placeholder": "",
             "helpBoxText": "Do you need consultation in order to maintain cultural sensitivity?",
             "tooltip": ""
 
         },
-        "referenceDocuments": {
+        "document": {
             "cardsubheading": "Attach and summarise any documents that you feel will be useful in understanding your data management plan. This might include ethical approval, iwi consultation, metadata standards, or anything really.",
             "shortname": {
                 "label": "Short name",
@@ -66,7 +66,7 @@
                 "tooltip": ""
             }
         },
-        "contributors": {
+        "contributor": {
             "cardsubheading": "Add the details of people who contribute to the project. This might include University of Auckland staff, students, or external collaborators.",
             "firstname": {
                 "label": "Given name(s)",

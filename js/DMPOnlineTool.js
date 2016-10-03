@@ -17,7 +17,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     $scope.helpTextService.loadHelpText();
 
     $scope.toggleDetailsDocuments = function() {
-        $scope.cardVisibilityService.documents.detailsCardVisible = !$scope.cardVisibilityService.documents.detailsCardVisible;
+        $scope.cardVisibilityService.document.detailsCardVisible = !$scope.cardVisibilityService.document.detailsCardVisible;
     };
 
 
@@ -175,15 +175,15 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                     heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
                     cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
                         "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");";
-                    nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
+                    // ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");";
+                    // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
                     break;
                 case 'addnewdocument':
                     heading = "<div class='smaller-text80'>Add new document...</div>";
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    ngclick = "cardVisibilityService.switchCardToNum('document',-1);";
-                    nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==-1";
+                    // ngclick = "cardVisibilityService.switchCardToNum('document',-1);";
+                    // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==-1";
                     break;
                 case "funder":
                     heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
@@ -324,16 +324,16 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
                         '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
                     break;
                 case "document":
-                    ngshow = "cardVisibilityService.document.detailsCardVisible";
+                    // ngshow = "cardVisibilityService.document.detailsCardVisible";
                     heading = "Add new document...";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
-                    subheading = "{{helpTextService.dmpHelpText.referenceDocuments.cardsubheading}}";
-                    cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.scratch.dmp.referenceDocuments[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
+                    subheading = "{{helpTextService.dmpHelpText.document.cardsubheading}}";
+                    cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
                     // Update scrath and point to the new card
-                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex);' +
-                        'cardVisibilityService.document.detailsCardIndex=userDataService.getNewCardIndex(\'referenceDocuments\',cardVisibilityService.document.detailsCardIndex);">Save</md-button>' +
+                    buttons = '<md-button ng-click="userDataService.scratchToDMP(\'document\',cardVisibilityService.document.detailsCardIndex);' +
+                        'cardVisibilityService.document.detailsCardIndex=userDataService.getNewCardIndex(\'document\',cardVisibilityService.document.detailsCardIndex);">Save</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Cancel</md-button>' +
                         '<md-button ng-click="cardVisibilityService.document.detailsCardVisible=false">Delete</md-button>';
                     break;
@@ -447,7 +447,7 @@ app.service('userDataService', function($http, $log) {
         this.ethicsRequired = false;
         this.culturalConsultationRequired = false;
 
-        this.referenceDocuments = [];
+        this.document = [];
 
         this.dataAssets = [];
     }
@@ -589,9 +589,6 @@ app.service('userDataService', function($http, $log) {
                 if ((userDataService.dmp.projectDetails.endDate !== '') && (userDataService.dmp.projectDetails.endDate !== null)) {
                     userDataService.dmp.projectDetails.endDate = new Date(userDataService.dmp.projectDetails.endDate);
                 }
-                //Set next contributor ID
-                userDataService.nextContributorID = userDataService.dmp.contributors.length;
-
                 //Copy to scratch
                 userDataService.scratch.dmp = angular.copy(userDataService.dmp);
             }, function myError(response) {
@@ -753,6 +750,10 @@ app.service('fieldOfResearchService', function($http) {
 
     return fieldOfResearchService;
 
+});
+
+app.filter('prettyJSON', function () {
+    return function(json) { return angular.toJson(json, true); }
 });
 
 
