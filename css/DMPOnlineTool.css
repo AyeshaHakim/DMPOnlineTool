@@ -26,10 +26,15 @@
     max-height: 0;
 }
 .minicard {
-    max-width: 400px;
+    max-width: 1000px;
+    user-select: none;
+    cursor: pointer;
 }
 .minicard.ng-hide {
     max-width: 0;
+}
+.dialog-minicard {
+  box-shadow: 0 0 20px rgba(41, 17, 17, 0.4) !important;
 }
 .card {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -50,41 +55,41 @@
     opacity: 0;
 }
 .card.ng-hide-add {
-    -moz-transition: 1s;
-    -ms-transition: 1s;
-    -o-transition: 1s;
-    -webkit-transition: 1s;
-    transition: 1s;
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
 }
 .card.ng-hide-remove {
-    -moz-transition: 1s;
-    -ms-transition: 1s;
-    -o-transition: 1s;
-    -webkit-transition: 1s;
-    transition: 1s;
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
 }
 .selectedcard {
-    box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
-    -ms-transform: scale(1.02, 1.02);
-    -webkit-transform: scale(1.02, 1.02);
-    transform: scale(1.02, 1.02);
-}
-.hoverable:hover {
     box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
     -ms-transform: scale(1.05, 1.05);
     -webkit-transform: scale(1.05, 1.05);
     transform: scale(1.05, 1.05);
-    -ms-transition: -ms-transform 1s;
-    -webkit-transition: -webkit-transform 1s;
-    transition: transform 1s;
+}
+.hoverable:hover {
+    box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
+    -ms-transform: scale(1.02, 1.02);
+    -webkit-transform: scale(1.02, 1.02);
+    transform: scale(1.02, 1.02);
+    -ms-transition: -ms-transform .25s;
+    -webkit-transition: -webkit-transform .25s;
+    transition: transform .25s;
 }
 .hoverable:active {
     -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
-    -ms-transition: -ms-transform 1s;
-    -webkit-transition: -webkit-transform 1s;
-    transition: transform 1s;
+    -ms-transition: -ms-transform .25s;
+    -webkit-transition: -webkit-transform .25s;
+    transition: transform .25s;
 }
 .elevated {
     z-index: 1;
@@ -145,11 +150,26 @@
     filter: FlipH;
     -ms-filter: "FlipH";
 }
-.padded-subheading {
-    padding: 20px 1px;
-    line-height: .5;
-    display: block;
+.card-subheading {
+    padding: 0 20px;
+    /*line-height: .5;*/
+    font-weight: 200;
+    font-size: 8px;
+    color: #8d8d8d;
 }
 .padded-heading {
     padding: 20px 0;
+}
+.dialog-header {
+  padding: 20px 80px;
+}
+.dialog-padding {
+  padding: 20px;
+}
+.md-card-header-text {
+    display: block;
+}
+.md-card.md-card-content {
+    border-style: solid;
+    border-width: 5px;
 }

@@ -16,16 +16,69 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     $scope.helpTextService = helpTextService;
     $scope.helpTextService.loadHelpText();
 
+    $scope.items = [0, 1, 2, 3];
 
-    $scope.toggleDetailsDocuments = function() {
-        $log.debug('hi');
-        // $scope.cardVisibilityService.document.detailsCardVisible = !$scope.cardVisibilityService.document.detailsCardVisible;
+    $scope.confirmDeleteScratchCard = function(ev, field, index) {
+
+        $mdDialog.show({
+                controller: DialogController,
+                template: '<md-dialog aria-label="List dialog">' +
+                    '  <md-toolbar class="dialog-header">' +
+                    'Do you want to delete this ' + $scope.helpTextService.getFieldRef(field).label.toLowerCase() + '?' +
+                    '  </md-toolbar>' +
+                    '  <md-dialog-content class="dialog-padding">' +
+                    '    <dmp-card readonly=true ng-model="userDataService.scratch.dmp.' + field + '[cardVisibilityService.' + field + '.detailsCardIndex]" type="' + field + '"></dmp-card>' +
+                    '  </md-dialog-content>' +
+                    '<md-dialog-actions layout="row">' +
+                    '<md-button ng-click="confirm()">' +
+                    'Confirm' +
+                    '</md-button>' +
+                    '<md-button ng-click="cancel()" md-autofocus>' +
+                    'Cancel' +
+                    '</md-button>' +
+                    '</md-dialog-actions>' +
+                    '</form>' +
+                    '</md-dialog>',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: true,
+            })
+            .then(function(confirm) {
+                $scope.deleteScratchCard(field, index);
+            }, function() {});
     };
+
+
+    function DialogController($scope, $mdDialog, userDataService, cardVisibilityService) {
+        $scope.cardVisibilityService = cardVisibilityService;
+        $scope.userDataService = userDataService;
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        $scope.confirm = function(confirm) {
+            $mdDialog.hide(confirm);
+        };
+    }
 
     $scope.newScratchCard = function(field) {
-        $log.debug('hi');
         userDataService.newScratchCard(field);
     };
+
+
+    //Delete a card from a first level field.
+    $scope.deleteScratchCard = function(field, index) {
+        $log.debug('there');
+        userDataService.deleteScratchCard(field, index);
+        userDataService.scratchToDMP(field);
+        cardVisibilityService[field].detailsCardVisible = false;
+    };
+
+
 
     //ev is the dom click event to control the animation.
     $scope.helpBox = function(ev, title, helpBoxText) {
@@ -44,8 +97,8 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
             .targetEvent(ev)
         );
     };
-});
 
+});
 
 
 //A directive to make input areas, and hopefully automagically get helper text from json
@@ -88,6 +141,7 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                     var helpBox = (scope.helpFields.hasOwnProperty('helpBoxText') && scope.helpFields.helpBoxText !== "") ? ("ng-dblclick=\"helpBox($event,'" + label + "','" + escapeRegExp(scope.helpFields.helpBoxText) + "')\" ") : "";
                     var placeholder = (scope.helpFields.hasOwnProperty('placeholder') && scope.helpFields.placeholder !== "") ? ("placeholder='" + escapeRegExp(scope.helpFields.placeholder) + "'") : "";
                     var tooltip = (scope.helpFields.hasOwnProperty('tooltip') && scope.helpFields.tooltip !== "") ? ("<md-tooltip>" + escapeRegExp(scope.helpFields.tooltip) + "</md-tooltip>") : "";
+                    var required = (scope.helpFields.hasOwnProperty('required') && scope.helpFields.required) ? ('ng-required="true"') : "";
 
                     //Label is placed where input content should be for checkboxes.
                     if (inputType === "md-checkbox") {
@@ -103,7 +157,7 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                     //Create input HTML
                     var template = '<md-input-container layout="row"' + addLeadingSpace(containerTags) + addLeadingSpace(helpBox) + '>' +
                         labelTags +
-                        '<' + inputType + addLeadingSpace(placeholder) + " ng-model='value' ng-change='onChange()'" + addLeadingSpace(inputTags) + addLeadingSpace(labelAria) + ">" + inputContent + "</" + inputType + ">" +
+                        '<' + inputType + addLeadingSpace(placeholder) + addLeadingSpace(required) + " ng-model='value' ng-change='onChange()'" + addLeadingSpace(inputTags) + addLeadingSpace(labelAria) + ">" + inputContent + "</" + inputType + ">" +
                         tooltip +
                         '</md-input-container>';
 
@@ -152,8 +206,10 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
             var cardIndex = attrs.cardindex;
 
             var htmlText = "";
+            //If card is readonly, no hover animation
+            var cardTags = (attrs.readonly) ? "class='card dialog-minicard'" : "class='hoverable card minicard'";
+
             //Bits of the card
-            var cardTags = "class='hoverable card minicard'";
             var heading = "";
             var subheading = "";
             var contentTags = "";
@@ -183,7 +239,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
                     heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
                     cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
                         "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");cardVisibilityService."+type+".addCardVisible=true;userDataService.dmpToScratch(\'"+type+"\');";
+                    ngclick = "cardVisibilityService.switchCardToNum('document'," + cardIndex + ");cardVisibilityService." + type + ".addCardVisible=true;userDataService.dmpToScratch(\'" + type + "\');";
                     // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
                     ngclass = '{selectedcard: (cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==' + cardIndex + ')}';
                     break;
@@ -315,6 +371,10 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
             var buttons = "";
             var ngclick = "";
             var ngshow = "";
+            var nghide = "";
+
+            // var ngclass = '(cardVisibilityService.document.detailsCardVisible) ? "detailscard" : "detailscard-fullheight"';
+            var ngclass = '';
 
             switch (type) {
                 // case "contributor":
@@ -337,27 +397,26 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
                 //         '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
                 //     break;
                 case "document":
-                    ngshow = "cardVisibilityService['"+type+"'].detailsCardVisible";
-                    heading = "Add new document...{{ctrl.scratchData}}";
+                    ngshow = "cardVisibilityService['" + type + "'].detailsCardVisible";
+                    heading = "Add new document...";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
-                    subheading = "{{helpTextService.dmpHelpText['"+type+"'].cardsubheading}}";
+                    subheading = "{{helpTextService.dmpHelpText['" + type + "'].cardsubheading}}";
                     cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
+
                     // Update scrath and point to the new card
                     buttons = '<md-button ng-click="' +
-                        'toggleDetailsDocuments();' +
-                        'userDataService.scratchToDMP(\''+type+'\');' +
-                        'cardVisibilityService.'+type+'.detailsCardIndex=userDataService.getNewCardIndex(\''+type+'\',cardVisibilityService.'+type+'.detailsCardIndex);' +
-                        'cardVisibilityService.'+type+'.addCardVisible=true;">Save</md-button>' +
+                        'userDataService.scratchToDMP(\'' + type + '\');' +
+                        'cardVisibilityService.' + type + '.detailsCardIndex=userDataService.getNewCardIndex(\'' + type + '\',cardVisibilityService.' + type + '.detailsCardIndex);' +
+                        'cardVisibilityService.' + type + '.addCardVisible=true;">Save</md-button>' +
                         '<md-button ng-click="' +
-                        'userDataService.dmpToScratch(\''+type+'\');' +
-                        'cardVisibilityService.'+type+'.addCardVisible=true;' +
-                        'cardVisibilityService.'+type+'.detailsCardVisible=false;">Close</md-button>' +
-                        '<md-button ng-click=' +
-                        '"userDataService.deleteScratchCard(\''+type+'\',cardVisibilityService.'+type+'.detailsCardIndex);' +
-                        'userDataService.scratchToDMP(\''+type+'\');' +
-                        'cardVisibilityService.'+type+'.detailsCardVisible=false;">Delete</md-button>';
+                        'userDataService.dmpToScratch(\'' + type + '\');' +
+                        'cardVisibilityService.' + type + '.addCardVisible=true;' +
+                        'cardVisibilityService.' + type + '.detailsCardVisible=false;">Close</md-button>' +
+                        '<md-button ng-click="' +
+                        'confirmDeleteScratchCard($event,\'' + type + '\',cardVisibilityService.' + type + '.detailsCardIndex, userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex], \'' + type + '\')">Delete</md-button>';
+                    // 'confirmDeleteScratchCard2($event,\'' + type + '\',cardVisibilityService.' + type + '.detailsCardIndex);">Delete</md-button>';
                     break;
             }
 
@@ -366,25 +425,26 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
             subheading = (subheading !== "") ? ("<span class='md-subhead raised-subhead'>" + subheading + "</span>") : "";
             ngclick = (ngclick !== "") ? ("ng-click=\"" + ngclick + "\"") : "";
             ngshow = (ngshow !== "") ? ("ng-show=\"" + ngshow + "\"") : "";
+            nghide = (nghide !== "") ? ("ng-hide=\"" + nghide + "\"") : "";
             icon = (icon !== "") ? ('<md-card-avatar>' + icon + '</md-card-avatar>') : "";
-
+            ngclass = (ngclass !== "") ? ("ng-class=\"" + ngclass + "\"") : "";
 
             //Create card
             htmlText =
-                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(ngclick) + ">" +
+                "<md-card" + addLeadingSpace(cardTags) + addLeadingSpace(ngshow) + addLeadingSpace(nghide) + addLeadingSpace(ngclick) + addLeadingSpace(ngclass) + ">" +
                 '<div class="padded-heading">' +
                 '<md-card-header>' +
                 icon +
                 '<md-card-header-text class="md-headline">' +
                 heading +
-                "<div class='md-headline padded-subheading'>" +
-                subheading +
-                "</div>" +
                 '</md-card-header-text>' +
                 '</md-card-header>' +
                 "</div>" +
-                "<md-card-title-text>" +
-                "</md-card-title-text>" +
+                // "<md-card-title-text>" +
+                "<div class='card-subheading'>" +
+                subheading +
+                "</div>" +
+                // "</md-card-title-text>" +
                 "</md-card-title>" +
                 "<md-card-content" + addLeadingSpace(contentTags) + ">" +
                 "<form>" +
@@ -579,7 +639,7 @@ app.service('userDataService', function($http, $log) {
         if (index >= 0 || index < userDataService.dmp[field].length) {
             return index;
         } else {
-            return userDataService.dmp[field].length-1;
+            return userDataService.dmp[field].length - 1;
         }
     };
 
@@ -589,7 +649,8 @@ app.service('userDataService', function($http, $log) {
     };
 
     userDataService.deleteScratchCard = function(field, index) {
-        userDataService.scratch.dmp[field].splice(index,1);
+        $log.debug(field);
+        userDataService.scratch.dmp[field].splice(index, 1);
     };
 
 
@@ -680,26 +741,26 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
     };
 
     function CardInit() {
-        this.detailsCardVisible= false;
-        this.addCardVisible= true;
-        this.detailsCardIndex= 0;
+        this.detailsCardVisible = false;
+        this.addCardVisible = true;
+        this.detailsCardIndex = 0;
 
     }
 
     //Switch to a details card, allowing time for short transition if another
     //details card is being displayed.
     cardVisibilityService.switchCardToNum = function(categoryName, switchToNum) {
-        if (cardVisibilityService[categoryName].detailsCardVisible) {
-            cardVisibilityService[categoryName].detailsCardVisible = false;
-            cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
-            $timeout(function() {
-                cardVisibilityService[categoryName].detailsCardVisible = true;
-
-            }, 100);
-        } else {
-            cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
-            cardVisibilityService[categoryName].detailsCardVisible = true;
-        }
+        // if (cardVisibilityService[categoryName].detailsCardVisible) {
+        //     cardVisibilityService[categoryName].detailsCardVisible = false;
+        //     cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
+        //     $timeout(function() {
+        //         cardVisibilityService[categoryName].detailsCardVisible = true;
+        //
+        //     }, 100);
+        // } else {
+        cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
+        cardVisibilityService[categoryName].detailsCardVisible = true;
+        // }
     };
 
 
@@ -797,19 +858,6 @@ app.filter('prettyJSON', function() {
         return angular.toJson(json, true);
     }
 });
-
-
-function DialogController($scope, $mdDialog) {
-    $scope.hide = function() {
-        $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-        $mdDialog.cancel();
-    };
-    $scope.answer = function(answer) {
-        $mdDialog.hide(answer);
-    };
-}
 
 
 //http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex

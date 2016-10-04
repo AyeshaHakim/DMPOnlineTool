@@ -47,11 +47,13 @@
         },
         "document": {
             "cardsubheading": "Attach and summarise any documents that you feel will be useful in understanding your data management plan. This might include ethical approval, iwi consultation, metadata standards, or anything really.",
+            "label": "Document",
             "shortname": {
                 "label": "Short name",
                 "placeholder": "",
                 "helpBoxText": "Short description of this document.",
-                "tooltip": ""
+                "tooltip": "",
+                "required": true
             },
             "summary": {
                 "label": "Summary",
@@ -68,6 +70,7 @@
         },
         "contributor": {
             "cardsubheading": "Add the details of people who contribute to the project. This might include University of Auckland staff, students, or external collaborators.",
+            "label": "Contributor",
             "firstname": {
                 "label": "Given name(s)",
                 "placeholder": "",

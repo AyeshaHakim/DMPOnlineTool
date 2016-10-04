@@ -59,13 +59,6 @@
 
 
         <h2 class="formTitle">Reference Documents</h2>
-        <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
-        <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
-        vis={{cardVisibilityService.document.detailsCardVisible}}<br>
-        ind={{cardVisibilityService.document.detailsCardIndex}}<br>
-        len={{userDataService.scratch.dmp.document.length}}<br>
-        {{cardVisibilityService.document.detailsCardIndex===userDataService.scratch.dmp[field].length-1}}<br>
-        {{cardVisibilityService.document}}<br>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
             <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.scratch.dmp.document">
@@ -73,6 +66,13 @@
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
         </div>
+        <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
+        <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
+        vis={{cardVisibilityService.document.detailsCardVisible}}<br>
+        ind={{cardVisibilityService.document.detailsCardIndex}}<br>
+        len={{userDataService.scratch.dmp.document.length}}<br>
+        {{cardVisibilityService.document.detailsCardIndex===userDataService.scratch.dmp[field].length-1}}<br>
+        {{cardVisibilityService.document}}<br>
 
 
 
