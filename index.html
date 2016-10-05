@@ -61,18 +61,25 @@
         <h2 class="formTitle">Reference Documents</h2>
         <dmp-details-card type="document"></dmp-details-card>
         <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.scratch.dmp.document">
+            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="document in userDataService.dmp.document">
                 <dmp-card ng-model="document" cardindex="{{$index}}" type="document"></dmp-card>
             </div>
             <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewdocument"></dmp-card>
         </div>
+        userDataService.hasUnsavedChanges('document')={{userDataService.hasUnsavedChanges('document')}}<br>
+        userDataService.scratchEqualsDMP()={{userDataService.scratchEqualsDMP()}}<br>
+        userDataService.scratchDMPDifferenceIsEmptyCards('document')={{userDataService.scratchDMPDifferenceIsEmptyCards('document')}}<br>
+        userDataService.scratchHasExtraCard('document')={{userDataService.scratchHasExtraCard('document')}}<br>
         <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
         <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
         vis={{cardVisibilityService.document.detailsCardVisible}}<br>
         ind={{cardVisibilityService.document.detailsCardIndex}}<br>
         len={{userDataService.scratch.dmp.document.length}}<br>
-        {{cardVisibilityService.document.detailsCardIndex===userDataService.scratch.dmp[field].length-1}}<br>
-        {{cardVisibilityService.document}}<br>
+        userDataService.scratchEqualsDMP()={{userDataService.scratchEqualsDMP()}}<br>
+        userDataService.scratchEqualsDMP('document')={{userDataService.scratchEqualsDMP('document')}}<br>
+        userDataService.scratchHasExtraCard('document')={{userDataService.scratchHasExtraCard('document')}}<br>
+        userDataService.scratchDMPDifference('document')={{userDataService.scratchDMPDifference('document')}}<br>
+        userDataService.scratchDMPDifferenceIsEmptyCards('document')={{userDataService.scratchDMPDifferenceIsEmptyCards('document')}}<br>
 
 
 
