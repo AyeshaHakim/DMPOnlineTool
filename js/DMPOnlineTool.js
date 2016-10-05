@@ -20,21 +20,21 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     //if overwriting a card
     $scope.confirmSaveScratchChanges = function(ev, field, index) {
         //TODO: Check required fields here??????????
-        if (userDataService.hasUnsavedChanges(field)) {
+        if (!userDataService.scratchHasExtraCard(field) && userDataService.hasUnsavedChanges(field)) {
             $mdDialog.show({
                     controller: DialogController,
                     template: '<md-dialog aria-label="Confirm save">' +
                         '  <md-toolbar class="dialog-header">' +
-                        'Do you want to save changes to this ' + $scope.helpTextService.getFieldRef(field).label.toLowerCase() + '?' +
+                        'Do you want to overwrite this ' + $scope.helpTextService.getFieldRef(field).label.toLowerCase() + '?' +
                         '  </md-toolbar>' +
                         '  <md-dialog-content class="dialog-padding">' +
-                        '    <dmp-card readonly=true ng-model="userDataService.dmp.' + field + '[cardVisibilityService.' + field + '.detailsCardIndex]" type="' + field + '"></dmp-card>' +
+                        '    <dmp-card scratch=false readonly=true cardindex=' + cardVisibilityService[field].detailsCardIndex + ' type="' + field + '"></dmp-card>' +
                         '  </md-dialog-content>' +
                         '<md-dialog-actions layout="row">' +
                         '<md-button ng-click="confirm()">' +
                         'Confirm' +
                         '</md-button>' +
-                        '<md-button ng-click="cancel()" md-autofocus>' +
+                        '<md-button ng-click="cancel()">' +
                         'Cancel' +
                         '</md-button>' +
                         '</md-dialog-actions>' +
@@ -53,8 +53,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 
     //Asks for confirmation to close a card if it contains unsaved changes.
-    $scope.confirmCancelScratchChanges = function(ev, field, index, closeDetails=true) {
-        $log.debug(index);
+    $scope.confirmCancelScratchChanges = function(ev, field, switchToCardIndex = undefined) {
         if (userDataService.hasUnsavedChanges(field)) {
             $mdDialog.show({
                     controller: DialogController,
@@ -63,13 +62,13 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                         'Discard changes to this ' + $scope.helpTextService.getFieldRef(field).label.toLowerCase() + '?' +
                         '  </md-toolbar>' +
                         '  <md-dialog-content class="dialog-padding">' +
-                        '    <dmp-card readonly=true ng-model="userDataService.scratch.dmp.' + field + '[cardVisibilityService.' + field + '.detailsCardIndex]" type="' + field + '"></dmp-card>' +
+                        '    <dmp-card scratch=true readonly=true cardindex=' + cardVisibilityService[field].detailsCardIndex + ' type="' + field + '"></dmp-card>' +
                         '  </md-dialog-content>' +
                         '<md-dialog-actions layout="row">' +
                         '<md-button ng-click="confirm()">' +
                         'Confirm' +
                         '</md-button>' +
-                        '<md-button ng-click="cancel()" md-autofocus>' +
+                        '<md-button ng-click="cancel()">' +
                         'Cancel' +
                         '</md-button>' +
                         '</md-dialog-actions>' +
@@ -80,15 +79,15 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                     clickOutsideToClose: true,
                 })
                 .then(function(confirm) {
-                    $scope.cancelScratchChanges(field, closeDetails);
+                    $scope.cancelScratchChanges(field, switchToCardIndex);
                 }, function() {});
         } else {
-            $scope.cancelScratchChanges(field, closeDetails);
+            $scope.cancelScratchChanges(field, switchToCardIndex);
         }
     };
 
     //Confirmation dialog for deleting a card,
-    $scope.confirmDeleteScratchCard = function(ev, field, index) {
+    $scope.confirmDeleteScratchCard = function(ev, field, switchToCardIndex) {
         $mdDialog.show({
                 controller: DialogController,
                 template: '<md-dialog aria-label="Confirm delete">' +
@@ -96,13 +95,13 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                     'Do you want to delete this ' + $scope.helpTextService.getFieldRef(field).label.toLowerCase() + '?' +
                     '  </md-toolbar>' +
                     '  <md-dialog-content class="dialog-padding">' +
-                    '    <dmp-card readonly=true ng-model="userDataService.scratch.dmp.' + field + '[cardVisibilityService.' + field + '.detailsCardIndex]" type="' + field + '"></dmp-card>' +
+                    '    <dmp-card scratch=true readonly=true cardindex=' + cardVisibilityService[field].detailsCardIndex + ' type="' + field + '"></dmp-card>' +
                     '  </md-dialog-content>' +
                     '<md-dialog-actions layout="row">' +
                     '<md-button ng-click="confirm()">' +
                     'Confirm' +
                     '</md-button>' +
-                    '<md-button ng-click="cancel()" md-autofocus>' +
+                    '<md-button ng-click="cancel()">' +
                     'Cancel' +
                     '</md-button>' +
                     '</md-dialog-actions>' +
@@ -135,7 +134,8 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     }
 
     $scope.newScratchCard = function(field) {
-        userDataService.newScratchCard(field);
+        var n = userDataService.newScratchCard(field);
+        return n;
     };
 
     //Save a card, if index is omitted the whole field will be saved.
@@ -145,12 +145,14 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
         cardVisibilityService[field].addCardVisible = true;
     };
 
-    //Cancel all changes.
-    $scope.cancelScratchChanges = function(field, closeDetails = true) {
+    //Cancel all changes, can swtich to a card afterwards
+    $scope.cancelScratchChanges = function(field, switchToCardIndex=undefined) {
         userDataService.dmpToScratch(field);
         cardVisibilityService[field].addCardVisible = true;
-        if (closeDetails) {
+        if (switchToCardIndex===undefined) {
             cardVisibilityService[field].detailsCardVisible = false;
+        } else {
+          $scope.switchCardToIndex(field, switchToCardIndex);
         }
     };
 
@@ -162,11 +164,21 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 
     //Switch details card to another entry.
-    $scope.switchToCardNumber = function(field,index) {
-      confirmCancelScratchChanges([],field,index,false);
-      cardVisibilityService.switchCardToNum(field,index);
+    $scope.switchCardToIndex = function(field, index) {
+      if (userDataService.hasUnsavedChanges(field)){
+        $log.debug('here');
+        $scope.confirmCancelScratchChanges(null, field, index);
+      } else {
+        cardVisibilityService.switchCardToIndex(field, index);
+      }
     };
 
+    // //Create a new scratch card.
+    // $scope.newScratchCard = function(field, index) {
+    //     userDataService.deleteScratchCard(field, index);
+    //     userDataService.scratchToDMP(field);
+    //     cardVisibilityService[field].detailsCardVisible = false;
+    // };
 
     //ev is the dom click event to control the animation.
     $scope.helpBox = function(ev, title, helpBoxText) {
@@ -274,29 +286,27 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
 app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDataService) {
 
     return {
-        restrict: 'E',
-
         require: "?ngModel",
 
-        scope: {
-            ngModel: '=',
-            cardVisibilityService: '=?'
-
-        },
+        scope: true,
 
         link: function(scope, element, attrs, ngModel) {
-
-            scope.cardVisibilityService = cardVisibilityService;
-            scope.userDataService = userDataService;
-
             var type = attrs.type || 'contributor';
+
+            var scratch = attrs.scratch || "false";
+            scratch = (scratch == 'true');
+
+            if (scratch) {
+                scratchString = ".scratch";
+            } else {
+                scratchString = "";
+            }
 
             var cardIndex = attrs.cardindex;
 
             var htmlText = "";
             //If card is readonly, no hover animation
             var cardTags = (attrs.readonly) ? "class='card dialog-minicard'" : "class='hoverable card minicard'";
-
             //Bits of the card
             var heading = "";
             var subheading = "";
@@ -324,10 +334,10 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
                     ngshow = "!cardVisibilityService.contributors.detailsCardVisible";
                     break;
                 case "document":
-                    heading = "<span class='smaller-text80'>{{ngModel.shortname}}</span>";
-                    cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
+                    heading = "<span class='smaller-text80'>{{userDataService" + scratchString + ".dmp.document[" + cardIndex + "].shortname}}</span>";
+                    cardContent = "<div class='md-subhead'>{{userDataService" + scratchString + ".dmp.document[" + cardIndex + "].description}}</div>" +
                         "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    ngclick = "switchCardToNumber('document'," + cardIndex + ");cardVisibilityService." + type + ".addCardVisible=true;userDataService.dmpToScratch(\'" + type + "\');";
+                    ngclick = "switchCardToIndex('document'," + cardIndex + ");";
                     // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
                     ngclass = "(cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex + ") ? 'selectedcard' : 'hoverable'";
                     break;
@@ -335,7 +345,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
                     heading = "<div class='smaller-text80'>Add new document...</div>";
                     contentTags = "class='center'";
                     cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    ngclick = "switchCardToNum('document', userDataService.newScratchCard('document'));cardVisibilityService.document.addCardVisible=false;";
+                    ngclick = "switchCardToIndex('document',newScratchCard('document'));cardVisibilityService.document.addCardVisible=false;";
                     // ngshow = "cardVisibilityService.document.addCardVisible;";
                     ngclass = "(cardVisibilityService.document.addCardVisible) ? 'hoverable' : 'selectedcard'";
                     break;
@@ -444,7 +454,6 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
 
         scope: true,
 
-
         link: function(scope, element, attrs, ngModel) {
 
             var type = attrs.type || 'contributor';
@@ -540,7 +549,7 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
                 "</form>" +
                 "</md-card>";
 
-            $log.debug(htmlText);
+            // $log.debug(htmlText);
             var linkFn = $compile(htmlText);
             var content = linkFn(scope);
             element.append(content);
@@ -739,13 +748,12 @@ app.service('userDataService', function($http, $log) {
     //Checks whether a scratch field has more cards than the DMP, indicating that a
     //new card has been added.
     userDataService.scratchHasExtraCard = function(field) {
-        return (userDataService.scratch.dmp === undefined) ? false : (userDataService.scratch.dmp[field].length > userDataService.dmp[field].length);
+        return (userDataService.scratch.dmp === undefined || userDataService.scratch.dmp[field] === undefined) ? false : (userDataService.scratch.dmp[field].length > userDataService.dmp[field].length);
     };
 
     //Gets the index of a card that has just been added to a field, returning
     //the last index if the provided index does not exist.
     userDataService.getNewCardIndex = function(field, index) {
-        $log.debug(index);
         if (index >= 0 || index < userDataService.dmp[field].length) {
             return index;
         } else {
@@ -755,13 +763,17 @@ app.service('userDataService', function($http, $log) {
 
     //Gets the difference between scratch and DMP field
     userDataService.scratchDMPDifference = function(field) {
-        return (userDataService.scratch.dmp === undefined) ? [] : (userDataService.scratch.dmp[field].filter(i1 => !userDataService.dmp[field].some(i2 => i1.id === i2.id)));
+        // $log.debug(userDataService.scratch.dmp);
+        // return (userDataService.scratch.dmp === undefined) ? [] : (userDataService.scratch.dmp[field].filter(i1 => !userDataService.dmp[field].some(i2 => i1.id === i2.id)));
+        return (userDataService.scratch.dmp === undefined) ? [] : (_.filter(userDataService.scratch.dmp[field], function(obj) {
+            return !_.findWhere(userDataService.dmp[field], obj);
+        }));
     };
 
     //Checks whether the difference between DMP and scratch is an empty card, or there is no difference.
     userDataService.scratchDMPDifferenceIsEmptyCards = function(field) {
         var diff = userDataService.scratchDMPDifference(field);
-        if (diff == []) {
+        if (!diff) {
             return true;
         }
         var result = true;
@@ -769,19 +781,21 @@ app.service('userDataService', function($http, $log) {
         var noprops = false;
         var value = '';
         //Check whether cards have no fields
-        for (i = 0; i < diff.length; i++) {
+        for (var i = 0; i < diff.length; i++) {
             allkeys = Object.keys(diff[i]);
             noprops = (allkeys.length === 0);
+
             //Check whether fields are empty strings if they exist.
             if (!noprops) {
                 var allempty = true;
                 for (j = 0; j < allkeys.length; j++) {
                     value = diff[i][allkeys[j]];
-                    $log.debug(value);
                     allempty = allempty && (value === '' || value === undefined);
                 }
                 noprops = allempty;
+                // $log.debug(noprops);
             }
+
             result = result && noprops;
         }
         return result;
@@ -799,13 +813,15 @@ app.service('userDataService', function($http, $log) {
 
     //Puts a new card at the end of a field in the scratch array
     userDataService.newScratchCard = function(field) {
-        userDataService.scratch.dmp[field].push({});
+        //Only add a card if there's not an unsaved card
+        if (!userDataService.scratchHasExtraCard(field)) {
+            userDataService.scratch.dmp[field].push({});
+        }
         return userDataService.scratch.dmp[field].length - 1;
     };
 
     //Deletes a particular card from the scratch array
     userDataService.deleteScratchCard = function(field, index) {
-        $log.debug(field);
         userDataService.scratch.dmp[field].splice(index, 1);
     };
 
@@ -905,7 +921,7 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
 
     //Switch to a details card, allowing time for short transition if another
     //details card is being displayed.
-    cardVisibilityService.switchCardToNum = function(categoryName, switchToNum) {
+    cardVisibilityService.switchCardToIndex = function(categoryName, switchToNum) {
         // if (cardVisibilityService[categoryName].detailsCardVisible) {
         //     cardVisibilityService[categoryName].detailsCardVisible = false;
         //     cardVisibilityService[categoryName].detailsCardIndex = switchToNum;
@@ -1013,6 +1029,12 @@ app.filter('prettyJSON', function() {
     return function(json) {
         return angular.toJson(json, true);
     };
+});
+
+app.directive('focus', function () {
+  return function (scope, element, attrs) {
+           element.focus();
+  }
 });
 
 

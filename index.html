@@ -24,6 +24,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+
     <!-- Angular Material -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.js"></script>
 
@@ -70,8 +72,8 @@
         userDataService.scratchEqualsDMP()={{userDataService.scratchEqualsDMP()}}<br>
         userDataService.scratchDMPDifferenceIsEmptyCards('document')={{userDataService.scratchDMPDifferenceIsEmptyCards('document')}}<br>
         userDataService.scratchHasExtraCard('document')={{userDataService.scratchHasExtraCard('document')}}<br>
-        <pre>${{userDataService.dmp.document | prettyJSON}}<br></pre>
-        <pre>/{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
+        <pre>Saved:{{userDataService.dmp.document | prettyJSON}}<br></pre>
+        <pre>Scratch:{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
         vis={{cardVisibilityService.document.detailsCardVisible}}<br>
         ind={{cardVisibilityService.document.detailsCardIndex}}<br>
         len={{userDataService.scratch.dmp.document.length}}<br>
