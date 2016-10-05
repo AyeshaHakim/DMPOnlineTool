@@ -34,7 +34,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                         '<md-button ng-click="confirm()">' +
                         'Confirm' +
                         '</md-button>' +
-                        '<md-button ng-click="cancel()">' +
+                        '<md-button ng-click="cancel()" md-autofocus>' +
                         'Cancel' +
                         '</md-button>' +
                         '</md-dialog-actions>' +
@@ -68,7 +68,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                         '<md-button ng-click="confirm()">' +
                         'Confirm' +
                         '</md-button>' +
-                        '<md-button ng-click="cancel()">' +
+                        '<md-button ng-click="cancel()" md-autofocus>' +
                         'Cancel' +
                         '</md-button>' +
                         '</md-dialog-actions>' +
@@ -101,7 +101,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
                     '<md-button ng-click="confirm()">' +
                     'Confirm' +
                     '</md-button>' +
-                    '<md-button ng-click="cancel()">' +
+                    '<md-button ng-click="cancel()" md-autofocus>' +
                     'Cancel' +
                     '</md-button>' +
                     '</md-dialog-actions>' +
