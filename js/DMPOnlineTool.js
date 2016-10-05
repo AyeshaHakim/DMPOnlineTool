@@ -87,7 +87,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 
     //Confirmation dialog for deleting a card,
-    $scope.confirmDeleteScratchCard = function(ev, field, switchToCardIndex) {
+    $scope.confirmDeleteScratchCard = function(ev, field, index) {
         $mdDialog.show({
                 controller: DialogController,
                 template: '<md-dialog aria-label="Confirm delete">' +
