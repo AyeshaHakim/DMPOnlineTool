@@ -146,13 +146,13 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 
     //Cancel all changes, can swtich to a card afterwards
-    $scope.cancelScratchChanges = function(field, switchToCardIndex=undefined) {
+    $scope.cancelScratchChanges = function(field, switchToCardIndex = undefined) {
         userDataService.dmpToScratch(field);
         cardVisibilityService[field].addCardVisible = true;
-        if (switchToCardIndex===undefined) {
+        if (switchToCardIndex === undefined) {
             cardVisibilityService[field].detailsCardVisible = false;
         } else {
-          $scope.switchCardToIndex(field, switchToCardIndex);
+            $scope.switchCardToIndex(field, switchToCardIndex);
         }
     };
 
@@ -165,12 +165,12 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
 
     //Switch details card to another entry.
     $scope.switchCardToIndex = function(field, index) {
-      if (userDataService.hasUnsavedChanges(field)){
-        $log.debug('here');
-        $scope.confirmCancelScratchChanges(null, field, index);
-      } else {
-        cardVisibilityService.switchCardToIndex(field, index);
-      }
+        if (userDataService.hasUnsavedChanges(field)) {
+            $log.debug('here');
+            $scope.confirmCancelScratchChanges(null, field, index);
+        } else {
+            cardVisibilityService.switchCardToIndex(field, index);
+        }
     };
 
     // //Create a new scratch card.
@@ -293,14 +293,18 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
         link: function(scope, element, attrs, ngModel) {
             var type = attrs.type || 'contributor';
 
+            //Sets whether to display from scratch or saved data
             var scratch = attrs.scratch || "false";
             scratch = (scratch == 'true');
-
             if (scratch) {
                 scratchString = ".scratch";
             } else {
                 scratchString = "";
             }
+
+            //Sets whether the card is an addnew one, or a details one.
+            var addnew = attrs.addnew || "false";
+            addnew = (addnew == 'true');
 
             var cardIndex = attrs.cardindex;
 
@@ -318,38 +322,40 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
             var nghide = "";
             var ngclass = "";
 
+
+            var modelString = "userDataService" + scratchString + ".dmp." + type + "[" + cardIndex + "]";
+
             switch (type) {
                 case "contributor":
-                    heading = "{{ngModel.firstname}} {{ngModel.lastname}}";
-                    subheading = "{{ngModel.affiliation}}";
-                    cardContent = "<em>{{ngModel.role.join(', ')}}</em>" +
-                        "<div class='md-subhead'>{{ngModel.email}}</div>";
-                    ngclick = "cardVisibilityService.contributors.detailsCardIndex=" + cardIndex + "; cardVisibilityService.contributors.detailsCardVisible=true";
-                    break;
-                case "addnewcontributor":
-                    heading = "Add new contributor...";
-                    contentTags = "class='center'";
-                    cardContent = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
-                    ngclick = "cardVisibilityService.contributors.detailsCardVisible=true";
-                    ngshow = "!cardVisibilityService.contributors.detailsCardVisible";
+                    if (addnew) {
+                        heading = "Add new contributor...";
+                        contentTags = "class='center'";
+                        cardContent = "<md-icon md-svg-icon=\"account-plus\" class=\"icon-120px lift-icon flip-horizontal\"></md-icon>";
+
+                    } else {
+                        heading = "{{" + modelString + ".firstname}} {{" + modelString + ".lastname}}";
+                        subheading = "{{" + modelString + ".affiliation}}";
+                        cardContent = "<em>{{" + modelString + ".role.join(', ')}}</em>" +
+                            "<div class='md-subhead'>{{" + modelString + ".email}}</div>";
+                    }
                     break;
                 case "document":
-                    heading = "<span class='smaller-text80'>{{userDataService" + scratchString + ".dmp.document[" + cardIndex + "].shortname}}</span>";
-                    cardContent = "<div class='md-subhead'>{{userDataService" + scratchString + ".dmp.document[" + cardIndex + "].description}}</div>" +
-                        "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
-                    ngclick = "switchCardToIndex('document'," + cardIndex + ");";
-                    // nghide = "cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex;
-                    ngclass = "(cardVisibilityService.document.detailsCardVisible && cardVisibilityService.document.detailsCardIndex==" + cardIndex + ") ? 'selectedcard' : 'hoverable'";
-                    break;
-                case 'addnewdocument':
-                    heading = "<div class='smaller-text80'>Add new document...</div>";
-                    contentTags = "class='center'";
-                    cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
-                    ngclick = "switchCardToIndex('document',newScratchCard('document'));cardVisibilityService.document.addCardVisible=false;";
-                    // ngshow = "cardVisibilityService.document.addCardVisible;";
-                    ngclass = "(cardVisibilityService.document.addCardVisible) ? 'hoverable' : 'selectedcard'";
+                    if (addnew) {
+                        heading = "<div class='smaller-text80'>Add new document...</div>";
+                        contentTags = "class='center'";
+                        cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
+                    } else {
+                        heading = "<span class='smaller-text80'>{{userDataService" + scratchString + ".dmp." + type + "[" + cardIndex + "].shortname}}</span>";
+                        cardContent = "<div class='md-subhead'>{{userDataService" + scratchString + ".dmp." + type + "[" + cardIndex + "].description}}</div>" +
+                            "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
+                    }
                     break;
                 case "funder":
+                    if (addnew) {
+
+                    } else {
+
+                    }
                     heading = "<div class='smaller-text80'>{{ngModel.funder}}</div>";
                     subheading = "{{ngModel.affiliation}}";
                     cardContent = "<span class='md-subhead'>Reference numbers: </span>" +
@@ -363,6 +369,11 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
                         "<md-icon md-svg-icon=\"plus\" class=\"supplementary-plus lift-icon\"></md-icon></div>";
                     break;
                 case "dataasset":
+                    if (addnew) {
+
+                    } else {
+
+                    }
                     heading = "{{ngModel.shortname}}";
                     cardContent = "<div class='md-subhead'>{{ngModel.description}}</div>" +
                         "<div class='smaller-text80'>" +
@@ -391,13 +402,14 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
                     break;
             }
 
+            //Insert common parts that differ according to addnew
+            if (addnew) {
+                ngclick = "switchCardToIndex('" + type + "',newScratchCard('" + type + "'));cardVisibilityService." + type + ".addCardVisible=false;";
+                ngclass = "(cardVisibilityService." + type + ".addCardVisible) ? 'hoverable' : 'selectedcard'";
 
-            //Insert buttons if required.
-            if (!type.match(/^addnew/)) {
-                // buttons = "<md-button class=\"elevated\">Edit</md-button>" +
-                //     "<md-button class=\"elevated\">Remove</md-button>";
             } else {
-
+                ngclick = "switchCardToIndex('" + type + "'," + cardIndex + ");cardVisibilityService." + type + ".addCardVisible=true;";
+                ngclass = "(cardVisibilityService." + type + ".detailsCardVisible && cardVisibilityService." + type + ".detailsCardIndex==" + cardIndex + ") ? 'selectedcard' : 'hoverable'";
             }
 
             //Compile optional stuff
@@ -474,6 +486,8 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
             // var ngclass = '(cardVisibilityService.document.detailsCardVisible) ? "detailscard" : "detailscard-fullheight"';
             var ngclass = '';
 
+            var modelString = "userDataService.scratch.dmp." + type + "[cardVisibilityService." + type + ".detailsCardIndex]";
+
             switch (type) {
                 // case "contributor":
                 //     ngshow = "cardVisibilityService[type].detailsCardVisible";
@@ -499,9 +513,9 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
                     heading = "Add new document...";
                     icon = '<md-icon md-svg-icon="book"></md-icon>';
                     subheading = "{{helpTextService.dmpHelpText['" + type + "'].cardsubheading}}";
-                    cardContent = '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].shortname"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="userDataService.scratch.dmp.document[cardVisibilityService.document.detailsCardIndex].link"></dmp-input><br>';
+                    cardContent = '<dmp-input ng-model="' + modelString + '.shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.link"></dmp-input><br>';
                     break;
             }
 
@@ -1031,10 +1045,10 @@ app.filter('prettyJSON', function() {
     };
 });
 
-app.directive('focus', function () {
-  return function (scope, element, attrs) {
-           element.focus();
-  }
+app.directive('focus', function() {
+    return function(scope, element, attrs) {
+        element.focus();
+    }
 });
 
 
