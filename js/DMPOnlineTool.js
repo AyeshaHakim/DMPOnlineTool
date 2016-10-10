@@ -1026,8 +1026,6 @@ app.service('chipService', function($http) {
 
     var chipService = {};
 
-    var
-
     //Field of research search thingy.
     chipService.selectedItem = null;
     chipService.searchText = null;
