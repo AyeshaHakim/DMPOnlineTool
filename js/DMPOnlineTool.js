@@ -541,8 +541,7 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService, 
                         '<dmp-input ng-model="' + modelString + '.copyrightOwner"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.publicationProcess" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.license.name"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.archiving" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.license.name"></dmp-input><br>';
+                        '<dmp-input ng-model="' + modelString + '.archiving" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>';
                     break;
             }
 
@@ -1008,7 +1007,7 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
     };
 
 
-    //The prefix for a details card (to enable switching between add and edit)
+    //The prefix for a details card (to enable switching between add and edit in the title)
     // cardVisibilityService.editMode = 1;
     // cardVisibilityService.getDetailsCardPrefix = function() {
     //     if (cardVisibilityService.editMode) {
@@ -1019,6 +1018,93 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
     // };
 
     return cardVisibilityService;
+
+});
+
+//Loads field of research data from JSON
+app.service('chipService', function($http) {
+
+    var chipService = {};
+
+    var
+
+    //Field of research search thingy.
+    chipService.selectedItem = null;
+    chipService.searchText = null;
+    chipService.selectedFORs = [];
+
+
+    //Get text for autocomplete, placeholder should be provided.
+    chipService.getAutoCompleteInsert = function(placeholderText) {
+        return "<md-autocomplete " +
+            "md-selected-item=\"chipService.selectedItem\" " +
+            "md-search-text=\"chipService.searchText\" " +
+            "md-items=\"item in chipService.querySearch(chipService.searchText)\" " +
+            placeholderText +
+            "md-item-text=\"item.name\">" +
+            "<span md-highlight-text=\"chipService.searchText\">{{item.name}}</span></md-autocomplete>" +
+            "<md-chip-template>" +
+            "<span>" +
+            "<strong>{{$chip.name}} </strong>" +
+            "<em>({{$chip.code}})</em>" +
+            "</span>" +
+            "</md-chip-template>";
+    };
+
+
+    /**
+     * Return the proper object when the append is called.
+     */
+    chipService.transformChip = function(chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+            return chip;
+        }
+
+        // Otherwise, create a new one
+        return {
+            name: chip,
+            code: 'new'
+        };
+    };
+
+    /**
+     * Search for fieldOfResearchs.
+     */
+    chipService.querySearch = function(query) {
+        var results = query ? chipService.fieldOfResearchArray.filter(chipService.createFilterFor(query)) : [];
+        return results;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    chipService.createFilterFor = function(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(fieldOfResearch) {
+            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        };
+
+    };
+
+    //Load fields of research from json
+    chipService.loadFieldOfResearchArray = function() {
+        $http.get('text\\fieldOfResearch_flat.json')
+            .then(function mySuccess(response) {
+                chipService.fieldOfResearchArray = response.data;
+                chipService.fieldOfResearchArray.map(function(fieldOfResearch) {
+                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
+                    return fieldOfResearch;
+                });
+            }, function myError(response) {
+                chipService.fieldOfResearchArray = null;
+            });
+    };
+
+
+    return chipService;
 
 });
 
