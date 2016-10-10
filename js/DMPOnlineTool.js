@@ -166,7 +166,6 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     //Switch details card to another entry.
     $scope.switchCardToIndex = function(field, index) {
         if (userDataService.hasUnsavedChanges(field)) {
-            $log.debug('here');
             $scope.confirmCancelScratchChanges(null, field, index);
         } else {
             cardVisibilityService.switchCardToIndex(field, index);
@@ -322,7 +321,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
             var nghide = "";
             var ngclass = "";
 
-
+            //Construct string for querying model
             var modelString = "userDataService" + scratchString + ".dmp." + type + "[" + cardIndex + "]";
 
             switch (type) {
@@ -405,7 +404,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService, userDat
             //Insert common parts that differ according to addnew
             if (addnew) {
                 ngclick = "switchCardToIndex('" + type + "',newScratchCard('" + type + "'));cardVisibilityService." + type + ".addCardVisible=false;";
-                ngclass = "(cardVisibilityService." + type + ".addCardVisible) ? 'hoverable' : 'selectedcard'";
+                ngclass = "(cardVisibilityService." + type + ".detailsCardVisible && cardVisibilityService." + type + ".detailsCardIndex==userDataService.fieldSize('" + type + "')) ? 'selectedcard' : 'hoverable'";
 
             } else {
                 ngclick = "switchCardToIndex('" + type + "'," + cardIndex + ");cardVisibilityService." + type + ".addCardVisible=true;";
@@ -489,25 +488,23 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService) 
             var modelString = "userDataService.scratch.dmp." + type + "[cardVisibilityService." + type + ".detailsCardIndex]";
 
             switch (type) {
-                // case "contributor":
-                //     ngshow = "cardVisibilityService[type].detailsCardVisible";
-                //     heading = "Add new contributor...";
-                //     icon = '<md-icon md-svg-icon="account"></md-icon>';
-                //     subheading = "{{helpTextService.dmpHelpText.contributors.cardsubheading}}";
-                //     cardContent = '<div layout="row">' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].firstname" flex="50"></dmp-input>' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].lastname" flex="50"></dmp-input><br>' +
-                //         '</div>' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].role"></dmp-input><br>' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].affiliation"></dmp-input><br>' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].email"></dmp-input><br>' +
-                //         '<div layout="row">' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].username" flex="40"></dmp-input><br>' +
-                //         '<dmp-input ng-model="userDataService.dmp.contributors[cardVisibilityService.contributors.detailsCardIndex].orcid" flex="60"></dmp-input>' +
-                //         '</div>';
-                //     buttons = '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Save</md-button>' +
-                //         '<md-button ng-click="cardVisibilityService.contributors.detailsCardVisible=false">Cancel</md-button>';
-                //     break;
+                case "contributor":
+                    ngshow = "cardVisibilityService['" + type + "'].detailsCardVisible";
+                    heading = "Add new document...";
+                    icon = '<md-icon md-svg-icon="book"></md-icon>';
+                    subheading = "{{helpTextService.dmpHelpText['" + type + "'].cardsubheading}}";
+                    cardContent = '<div layout="row">' +
+                        '<dmp-input ng-model="' + modelString + '.firstname" flex="50"></dmp-input>' +
+                        '<dmp-input ng-model="' + modelString + '.lastname" flex="50"></dmp-input><br>' +
+                        '</div>' +
+                        '<dmp-input ng-model="' + modelString + '.role"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.affiliation"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.email"></dmp-input><br>' +
+                        '<div layout="row">' +
+                        '<dmp-input ng-model="' + modelString + '.username" flex="40"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.orcid" flex="60"></dmp-input>' +
+                        '</div>';
+                    break;
                 case "document":
                     ngshow = "cardVisibilityService['" + type + "'].detailsCardVisible";
                     heading = "Add new document...";
@@ -777,11 +774,32 @@ app.service('userDataService', function($http, $log) {
 
     //Gets the difference between scratch and DMP field
     userDataService.scratchDMPDifference = function(field) {
+        //Doesn't really work
         // $log.debug(userDataService.scratch.dmp);
         // return (userDataService.scratch.dmp === undefined) ? [] : (userDataService.scratch.dmp[field].filter(i1 => !userDataService.dmp[field].some(i2 => i1.id === i2.id)));
-        return (userDataService.scratch.dmp === undefined) ? [] : (_.filter(userDataService.scratch.dmp[field], function(obj) {
-            return !_.findWhere(userDataService.dmp[field], obj);
-        }));
+
+        //Doesn't work for nested arrays.
+        // return (userDataService.scratch.dmp === undefined) ? [] : (_.filter(userDataService.scratch.dmp[field], function(obj) {
+        //     return !_.findWhere(userDataService.dmp[field], obj);
+        // }));
+        result = [];
+        if (userDataService.scratch.dmp !== undefined) {
+            result = angular.copy(userDataService.scratch.dmp[field]);
+            compareTo = angular.copy(userDataService.dmp[field]);
+            //Iterate through scratch
+            for (var i = result.length - 1; i >= 0; i--) {
+                //Iterate through saved, see if it's in there.
+                for (var j = compareTo.length - 1; j >= 0; j--) {
+                    if (angular.equals(result[i], compareTo[j])) {
+                        result.splice(i, 1);
+                        compareTo.splice(j, 1);
+                    }
+                }
+            }
+        }
+        return result;
+
+
     };
 
     //Checks whether the difference between DMP and scratch is an empty card, or there is no difference.
@@ -839,6 +857,10 @@ app.service('userDataService', function($http, $log) {
         userDataService.scratch.dmp[field].splice(index, 1);
     };
 
+    //Gets the size of the array in a field
+    userDataService.fieldSize = function(field) {
+        return userDataService.scratch.dmp[field].length;
+    };
 
     //Saves DMP data to the server
     userDataService.save = function() {
@@ -923,6 +945,7 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
 
     cardVisibilityService.contributor = {
         detailsCardVisible: false,
+        addCardVisible: true,
         detailsCardIndex: 0
     };
 
@@ -1083,3 +1106,18 @@ deep_value = function(obj, path, removeIndices = true) {
 
     return obj;
 };
+
+// $(function() {
+//     $('a[href*="#"]:not([href="#"])').click(function() {
+//         if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+//             var target = $(this.hash);
+//             target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+//             if (target.length) {
+//                 $('html, body').animate({
+//                     scrollTop: target.offset().top
+//                 }, 1000);
+//                 return false;
+//             }
+//         }
+//     });
+// });

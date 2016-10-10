@@ -75,13 +75,15 @@
                 "label": "Given name(s)",
                 "placeholder": "",
                 "helpBoxText": "",
-                "tooltip": ""
+                "tooltip": "",
+                "required": true
             },
             "lastname": {
                 "label": "Family name",
                 "placeholder": "",
                 "helpBoxText": "",
-                "tooltip": ""
+                "tooltip": "",
+                "required": true
             },
             "role": {
                 "label": "Role",
