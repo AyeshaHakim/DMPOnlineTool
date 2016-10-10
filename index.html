@@ -61,7 +61,7 @@
                 </div>
                 <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="contributor" addnew="true"></dmp-card>
             </div>
-            userDataService.hasUnsavedChanges('contributor')={{userDataService.hasUnsavedChanges('contributor')}}<br>
+            <!-- userDataService.hasUnsavedChanges('contributor')={{userDataService.hasUnsavedChanges('contributor')}}<br>
             userDataService.scratchEqualsDMP()={{userDataService.scratchEqualsDMP()}}<br>
             userDataService.scratchHasExtraCard('contributor')={{userDataService.scratchHasExtraCard('contributor')}}<br>
             userDataService.scratchDMPDifferenceIsEmptyCards('contributor')={{userDataService.scratchDMPDifferenceIsEmptyCards('contributor')}}<br>
@@ -69,7 +69,7 @@
             cardVisibilityService.contributor.addCardVisible={{cardVisibilityService.contributor.addCardVisible}}<br>
             cardVisibilityService.contributor.detailsCardVisible={{cardVisibilityService.contributor.detailsCardVisible}}<br>
             <pre>Saved:{{userDataService.dmp.contributor | prettyJSON}}<br></pre>
-            <pre>Scratch:{{userDataService.scratch.dmp.contributor | prettyJSON}}<br></pre>
+            <pre>Scratch:{{userDataService.scratch.dmp.contributor | prettyJSON}}<br></pre> -->
 
             <h2 class="formTitle" href="#document">Reference Documents</h2>
             <dmp-details-card type="document"></dmp-details-card>
@@ -79,7 +79,7 @@
                 </div>
                 <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="document" addnew="true"></dmp-card>
             </div>
-            userDataService.hasUnsavedChanges('document')={{userDataService.hasUnsavedChanges('document')}}<br>
+            <!-- userDataService.hasUnsavedChanges('document')={{userDataService.hasUnsavedChanges('document')}}<br>
             userDataService.scratchEqualsDMP()={{userDataService.scratchEqualsDMP()}}<br>
             userDataService.scratchHasExtraCard('document')={{userDataService.scratchHasExtraCard('document')}}<br>
             userDataService.scratchDMPDifferenceIsEmptyCards('document')={{userDataService.scratchDMPDifferenceIsEmptyCards('document')}}<br>
@@ -87,23 +87,25 @@
             cardVisibilityService.document.addCardVisible={{cardVisibilityService.document.addCardVisible}}<br>
             cardVisibilityService.document.detailsCardVisible={{cardVisibilityService.document.detailsCardVisible}}<br>
             <pre>Saved:{{userDataService.dmp.document | prettyJSON}}<br></pre>
-            <pre>Scratch:{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre>
+            <pre>Scratch:{{userDataService.scratch.dmp.document | prettyJSON}}<br></pre> -->
 
-            <!-- <h2 class="formTitle">Funding</h2>
-        <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="funder in userDataService.dmp.funding">
-                <dmp-card ng-model="funder" type="funder"></dmp-card>
+            <h2 class="formTitle" href="#funding">Funding</h2>
+            <dmp-details-card type="funder"></dmp-details-card>
+            <div layout="row" layout-wrap>
+                <div flex="100" flex-gt-xs="50" flex-gt-sm="33" ng-repeat="funder in userDataService.dmp.funder">
+                    <dmp-card cardindex="{{$index}}" type="funder"></dmp-card>
+                </div>
+                <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="funder" addnew="true"></dmp-card>
             </div>
-            <dmp-card flex="100" flex-gt-xs="50" flex-gt-sm="33" type="addnewfunder"></dmp-card>
-        </div>
 
-        <h2 class="formTitle">Data Assets</h2>
-        <div layout="row" layout-wrap>
-            <div flex="100" flex-gt-xs="50" ng-repeat="dataasset in userDataService.dmp.dataAssets">
-                <dmp-card ng-model="dataasset" type="dataasset"></dmp-card>
+            <h2 class="formTitle" href="#dataAsset">Data Assets</h2>
+            <dmp-details-card type="dataAsset"></dmp-details-card>
+            <div layout="row" layout-wrap>
+                <div flex="100" flex-gt-xs="50" ng-repeat="dataAsset in userDataService.dmp.dataAsset">
+                    <dmp-card cardindex="{{$index}}" type="dataAsset"></dmp-card>
+                </div>
+                <dmp-card flex="100" flex-gt-xs="50" type="dataAsset" addnew="true"></dmp-card>
             </div>
-            <dmp-card flex="100" flex-gt-xs="50" type="addnewdataasset"></dmp-card>
-        </div> -->
         </md-content>
 
     </body>

@@ -15,7 +15,6 @@
     },
 
     "contributor": [{
-        "id": "0",
         "firstname": "Joanne",
         "lastname": "One",
         "role": [
@@ -27,7 +26,6 @@
         "username": "jone111",
         "orcid": ""
     }, {
-        "id": "1",
         "firstname": "Jim",
         "lastname": "Two",
         "role": [
@@ -39,8 +37,8 @@
         "orcid": ""
     }],
 
-    "funding": [{
-        "funder": "Royal Society of NZ",
+    "funder": [{
+        "name": "Royal Society of NZ",
         "funderID": "72935",
         "researchOfficeID": "9856A"
     }],
@@ -49,19 +47,16 @@
     "iwiConsultationRequired": true,
 
     "document": [{
-        "id": "0",
         "shortname": "Ethics committee approval",
         "summary": "The ethics committee has allowed me to test on humans and publish their data, as long as they provide informed consent.",
         "link": "link.to/ethics/approval"
     }, {
-        "id": "1",
         "shortname": "Informed consent form",
         "summary": "",
         "link": "link.to/consent/form"
     }],
 
     "dataAsset": [{
-        "id": "0",
         "shortname": "EEG data",
         "description": "Lots of EEG data from people in raw format.",
         "collectionProcess": "Collected from peoples' brains using a computer.",
@@ -88,22 +83,18 @@
         "dataContact": "2",
         "requiredResources": "I will need a VM with 20TB of RAM.",
         "issues": [{
-            "id": "0",
             "type": "cultural",
             "description": "Some cultures believe that EEG captures your soul.",
             "managementProcess": "Screen for such cultural beliefs, as indicated in page X of informed consent form."
         }],
         "policyRequirements": [{
-            "id": "0",
             "controllingBody": "Department of Brains",
             "relevantText": "4.1.1. The researcher is required to tell four friends about their research, and ask those friends to tell four friends."
         }, {
-            "id": "1",
             "controllingBody": "University of Auckland",
             "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
         }]
     }, {
-        "id": "1",
         "shortname": "Behavioural data",
         "description": "Behavioural data like reaction times and junk.",
         "collectionProcess": "People will push a button and I'll see how long it taes.",
@@ -130,18 +121,15 @@
         "dataContact": "2",
         "requiredResources": "Make me a relational database.",
         "issues": [{
-            "id": "0",
             "type": "privacy",
             "description": "People don't like others to know their reaction time because it might be embarassing.",
             "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
         }, {
-            "id": "1",
             "type": "ethical",
             "description": "People don't like others to know their reaction time because it might be embarassing.",
             "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
         }],
         "policyRequirements": [{
-            "id": "0",
             "controllingBody": "University of Auckland",
             "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
         }]

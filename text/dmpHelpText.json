@@ -116,6 +116,186 @@
                 "helpBoxText": "The contributor's ORCiD, can be found at ORCiD.com or something.",
                 "tooltip": ""
             }
+        },
+        "funder": {
+            "cardsubheading": "Add the details of funders for this project. Try to include both the funder's reference number, and the University's.",
+            "label": "Funder",
+            "name": {
+                "label": "Funding organisation name",
+                "placeholder": "",
+                "helpBoxText": "Please input the name of the funding organisation.",
+                "tooltip": "",
+                "required": true
+            },
+            "funderID": {
+                "label": "Funder's reference number",
+                "placeholder": "",
+                "helpBoxText": "Th funding organisation's reference to the transaction.",
+                "tooltip": ""
+            },
+            "researchOfficeID": {
+                "label": "Research office reference number",
+                "placeholder": "",
+                "helpBoxText": "The university research office's reference to the transaction.",
+                "tooltip": ""
+            }
+        },
+        "dataAsset": {
+                "shortname": {
+                    "label": "Name",
+                    "placeholder": "",
+                    "helpBoxText": "Please input a short name for the data asset.",
+                    "tooltip": "",
+                    "required": true
+                },
+                "description": {
+                    "label": "Description",
+                    "placeholder": "",
+                    "helpBoxText": "A more comprehensive description for the data asset.",
+                    "tooltip": ""
+                },
+                "collectionProcess": {
+                    "label": "Collection process",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "organisationProcess": {
+                    "label": "Organisation process",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "storageProcess": {
+                    "label": "Storage process",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "metadataRequirements": {
+                    "label": "Metadata requirements",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "copyrightOwner": {
+                    "label": "Copyright owner",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "accessControl": {
+                    "status": {
+                        "label": "Will access to the asset need to be restricted?",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "details": {
+                        "label": "What is the rationale for access restriction?",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "releaseDate": {
+                        "label": "When will the data be released (if ever)?",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "complianceProcess": {
+                        "label": "How will you ensure that access is thus restricted?",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    }
+                },
+                "retention": {
+                    "retentionType": {
+                        "label": "Select data type",
+                        "placeholder": "",
+                        "helpBoxText": "Select from one of these options.",
+                        "tooltip": ""
+                    },
+                    "retainUntil": {
+                        "label": "Retain data until",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    }
+                },
+                "publicationProcess": {
+                    "label": "Dissemination process",
+                    "placeholder": "",
+                    "helpBoxText": "How will the data be disseminated/published?",
+                    "tooltip": ""
+                },
+                "license": {
+                    "name": {
+                        "label": "License name",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "logo": {
+                        "label": "Logo (read-only)",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    }
+                },
+                "archiving": {
+                    "label": "Archiving required",
+                    "placeholder": "",
+                    "helpBoxText": "Are the data important enough to justify active archiving?",
+                    "tooltip": ""
+                },
+                "dataContact": {
+                    "label": "Data contact",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "requiredResources": {
+                    "label": "Required resources",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "issues": {
+                    "type": {
+                        "label": "Type (needs options)",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "description": {
+                        "label": "Description",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "managementProcess": {
+                        "label": "Management process",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    }
+                },
+                "policyRequirements": {
+                    "controllingBody": {
+                        "label": "Controlling body",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    },
+                    "relevantText": {
+                        "label": "Relevant text",
+                        "placeholder": "",
+                        "helpBoxText": "",
+                        "tooltip": ""
+                    }
+                }
+            }
         }
     }
-}
