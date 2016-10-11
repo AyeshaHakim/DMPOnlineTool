@@ -17,10 +17,11 @@
     "contributor": [{
         "firstname": "Joanne",
         "lastname": "One",
-        "role": [
-            "Supervisor",
-            "Data contact"
-        ],
+        "role": [{
+            "name": "Supervisor"
+        }, {
+            "name": "Data contact"
+        }],
         "affiliation": "University of Auckland",
         "email": "joanne.one@auckland.ac.nz",
         "username": "jone111",
@@ -28,9 +29,9 @@
     }, {
         "firstname": "Jim",
         "lastname": "Two",
-        "role": [
-            "Doctoral candidate"
-        ],
+        "role": [{
+            "name": "Doctoral candidate"
+        }],
         "affiliation": "University of Auckland",
         "email": "jim.two@auckland.ac.nz",
         "username": "jtwo222",

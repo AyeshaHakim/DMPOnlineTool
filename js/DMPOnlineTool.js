@@ -2,15 +2,15 @@
 
 var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
 
-app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService, cardVisibilityService) {
+app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, chipService, cardVisibilityService) {
 
     $scope.userDataService = userDataService;
     $scope.userDataService.load();
 
     $scope.cardVisibilityService = cardVisibilityService;
 
-    $scope.fieldOfResearchService = fieldOfResearchService;
-    fieldOfResearchService.loadFieldOfResearchArray();
+
+    $scope.chipService = chipService;
 
     $scope.helpTextService = helpTextService;
     $scope.helpTextService.loadHelpText();
@@ -207,7 +207,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
 
 //A directive to make input areas, and hopefully automagically get helper text from json
 //Leading and trailing spaces are automagically inserted
-app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResearchService) {
+app.directive("dmpInput", function($log, $compile, helpTextService, chipService) {
     return {
         require: "?ngModel",
 
@@ -252,10 +252,12 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                         inputContent = label;
                         labelTags = "";
                     } else if (inputType === "md-chips") {
-                        scope.fieldOfResearchService = fieldOfResearchService;
+                        // scope.fieldOfResearchService = fieldOfResearchService;
+                        // //Text to insert between input tags for autocomplete functionality.
+                        // inputContent = fieldOfResearchService.getAutoCompleteInsert(placeholder);
+                        chipService.addField(attrs.ngModel);
                         //Text to insert between input tags for autocomplete functionality.
-                        inputContent = fieldOfResearchService.getAutoCompleteInsert(placeholder);
-
+                        inputContent = chipService.getAutoCompleteInsert(placeholder, attrs.ngModel);
                     }
 
                     //Create input HTML
@@ -500,7 +502,9 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService, 
                         '<dmp-input ng-model="' + modelString + '.lastname" flex="50"></dmp-input><br>' +
                         '</div>' +
                         '<dmp-input ng-model="' + modelString + '.affiliation"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.role"></dmp-input><br>' +
+                        '<div layout="row">' +
+                        '<dmp-input ng-model="' + modelString + '.role" inputtype="md-chips" inputtags="flex=\'100\' md-autocomplete-snap=\'width\' md-transform-chip=\'chipService.transformChip($chip)\'"></dmp-input>' +
+                        '</div>' +
                         '<dmp-input ng-model="' + modelString + '.email"></dmp-input><br>' +
                         '<div layout="row">' +
                         '<dmp-input ng-model="' + modelString + '.username" flex="40"></dmp-input><br>' +
@@ -812,7 +816,6 @@ app.service('userDataService', function($http, $log) {
         //     return !_.findWhere(userDataService.dmp[field], obj);
         // }));
         result = [];
-        $log.debug(field);
         if (userDataService.scratch.dmp !== undefined) {
             result = angular.copy(userDataService.scratch.dmp[field]);
             compareTo = angular.copy(userDataService.dmp[field]);
@@ -951,10 +954,14 @@ app.service('helpTextService', function($http, $log) {
 
     //Gets a reference to a help text field associated with a JSON string (e.g. 'project.title')
     helpTextService.getFieldRef = function(path) {
+        return deep_value(helpTextService.dmpHelpText, helpTextService.scrubFieldRef(path));
+    };
+
+    helpTextService.scrubFieldRef = function(path) {
         //Remove references to userDataService.dmp if they exist.
         path = path.replace(/^(userDataService\.scratch\.dmp\.)/, "");
         path = path.replace(/^(userDataService\.dmp\.)/, "");
-        return deep_value(helpTextService.dmpHelpText, path);
+        return path;
     };
 
     return helpTextService;
@@ -1022,29 +1029,53 @@ app.service('cardVisibilityService', function($http, $log, $timeout) {
 });
 
 //Loads field of research data from JSON
-app.service('chipService', function($http) {
+app.service('chipService', function($http, $log) {
 
     var chipService = {};
 
     //Field of research search thingy.
-    chipService.selectedItem = null;
-    chipService.searchText = null;
-    chipService.selectedFORs = [];
+    chipService.addField = function(field) {
+        field = scrubFieldRef(field);
+        $log.debug(field);
+        deep_init(chipService, field);
+        var fieldRef = deep_value(chipService, field);
+        fieldRef.selectedItem = null;
+        fieldRef.searchText = null;
+        fieldRef.selectedFORs = [];
 
+        chipService.loadChipArray(field);
+    };
+
+    //Load fields of research from json
+    chipService.loadChipArray = function(field) {
+        field = scrubFieldRef(field);
+        var fieldRef = deep_value(chipService, field);
+        $http.get('text\\' + field + '.json')
+            .then(function mySuccess(response) {
+                fieldRef.chipArray = response.data;
+                fieldRef.chipArray.map(function(chip) {
+                    chip._lowername = chip.name.toLowerCase();
+                    return chip;
+                });
+            }, function myError(response) {
+                fieldRef.chipArray = null;
+            });
+    };
 
     //Get text for autocomplete, placeholder should be provided.
-    chipService.getAutoCompleteInsert = function(placeholderText) {
+    chipService.getAutoCompleteInsert = function(placeholderText, field) {
+        field = scrubFieldRef(field);
         return "<md-autocomplete " +
-            "md-selected-item=\"chipService.selectedItem\" " +
-            "md-search-text=\"chipService.searchText\" " +
-            "md-items=\"item in chipService.querySearch(chipService.searchText)\" " +
+            "md-selected-item=\"chipService." + field + ".selectedItem\" " +
+            "md-search-text=\"chipService." + field + ".searchText\" " +
+            "md-items=\"item in chipService.querySearch(chipService." + field + ".searchText, '" + field + "')\" " +
             placeholderText +
             "md-item-text=\"item.name\">" +
-            "<span md-highlight-text=\"chipService.searchText\">{{item.name}}</span></md-autocomplete>" +
+            "<span md-highlight-text=\"chipService." + field + ".searchText\">{{::item.name}}</span></md-autocomplete>" +
             "<md-chip-template>" +
             "<span>" +
-            "<strong>{{$chip.name}} </strong>" +
-            "<em>({{$chip.code}})</em>" +
+            "<strong>{{::$chip.name}} </strong>" +
+            "<em>({{::$chip.code}})</em>" +
             "</span>" +
             "</md-chip-template>";
     };
@@ -1056,6 +1087,7 @@ app.service('chipService', function($http) {
     chipService.transformChip = function(chip) {
         // If it is an object, it's already a known chip
         if (angular.isObject(chip)) {
+          $log.debug(chip);
             return chip;
         }
 
@@ -1067,10 +1099,11 @@ app.service('chipService', function($http) {
     };
 
     /**
-     * Search for fieldOfResearchs.
+     * Search for chip.
      */
-    chipService.querySearch = function(query) {
-        var results = query ? chipService.fieldOfResearchArray.filter(chipService.createFilterFor(query)) : [];
+    chipService.querySearch = function(query, field) {
+        var fieldRef = deep_value(chipService, scrubFieldRef(field));
+        var results = query ? fieldRef.chipArray.filter(chipService.createFilterFor(query)) : [];
         return results;
     };
 
@@ -1080,25 +1113,11 @@ app.service('chipService', function($http) {
     chipService.createFilterFor = function(query) {
         var lowercaseQuery = angular.lowercase(query);
 
-        return function filterFn(fieldOfResearch) {
-            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
-                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
+        return function filterFn(chip) {
+            return (chip._lowername.indexOf(lowercaseQuery) !== -1) ||
+                (chip.hasOwnProperty('code') && chip.code.indexOf(lowercaseQuery) !== -1);
         };
 
-    };
-
-    //Load fields of research from json
-    chipService.loadFieldOfResearchArray = function() {
-        $http.get('text\\fieldOfResearch_flat.json')
-            .then(function mySuccess(response) {
-                chipService.fieldOfResearchArray = response.data;
-                chipService.fieldOfResearchArray.map(function(fieldOfResearch) {
-                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
-                    return fieldOfResearch;
-                });
-            }, function myError(response) {
-                chipService.fieldOfResearchArray = null;
-            });
     };
 
 
@@ -1106,90 +1125,6 @@ app.service('chipService', function($http) {
 
 });
 
-//Loads field of research data from JSON
-app.service('fieldOfResearchService', function($http) {
-
-    var fieldOfResearchService = {};
-
-    //Field of research search thingy.
-    fieldOfResearchService.selectedItem = null;
-    fieldOfResearchService.searchText = null;
-    fieldOfResearchService.selectedFORs = [];
-
-
-    //Get text for autocomplete, placeholder should be provided.
-    fieldOfResearchService.getAutoCompleteInsert = function(placeholderText) {
-        return "<md-autocomplete " +
-            "md-selected-item=\"fieldOfResearchService.selectedItem\" " +
-            "md-search-text=\"fieldOfResearchService.searchText\" " +
-            "md-items=\"item in fieldOfResearchService.querySearch(fieldOfResearchService.searchText)\" " +
-            placeholderText +
-            "md-item-text=\"item.name\">" +
-            "<span md-highlight-text=\"fieldOfResearchService.searchText\">{{item.name}}</span></md-autocomplete>" +
-            "<md-chip-template>" +
-            "<span>" +
-            "<strong>{{$chip.name}} </strong>" +
-            "<em>({{$chip.code}})</em>" +
-            "</span>" +
-            "</md-chip-template>";
-    };
-
-
-    /**
-     * Return the proper object when the append is called.
-     */
-    fieldOfResearchService.transformChip = function(chip) {
-        // If it is an object, it's already a known chip
-        if (angular.isObject(chip)) {
-            return chip;
-        }
-
-        // Otherwise, create a new one
-        return {
-            name: chip,
-            code: 'new'
-        };
-    };
-
-    /**
-     * Search for fieldOfResearchs.
-     */
-    fieldOfResearchService.querySearch = function(query) {
-        var results = query ? fieldOfResearchService.fieldOfResearchArray.filter(fieldOfResearchService.createFilterFor(query)) : [];
-        return results;
-    };
-
-    /**
-     * Create filter function for a query string
-     */
-    fieldOfResearchService.createFilterFor = function(query) {
-        var lowercaseQuery = angular.lowercase(query);
-
-        return function filterFn(fieldOfResearch) {
-            return (fieldOfResearch._lowername.indexOf(lowercaseQuery) !== -1) ||
-                (fieldOfResearch.code.indexOf(lowercaseQuery) !== -1);
-        };
-
-    };
-
-    //Load fields of research from json
-    fieldOfResearchService.loadFieldOfResearchArray = function() {
-        $http.get('text\\fieldOfResearch_flat.json')
-            .then(function mySuccess(response) {
-                fieldOfResearchService.fieldOfResearchArray = response.data;
-                fieldOfResearchService.fieldOfResearchArray.map(function(fieldOfResearch) {
-                    fieldOfResearch._lowername = fieldOfResearch.name.toLowerCase();
-                    return fieldOfResearch;
-                });
-            }, function myError(response) {
-                fieldOfResearchService.fieldOfResearchArray = null;
-            });
-    };
-
-
-    return fieldOfResearchService;
-
-});
 
 app.filter('prettyJSON', function() {
     return function(json) {
@@ -1215,13 +1150,12 @@ function addLeadingSpace(str) {
 
 //From stack exchange, gets nested fields from string
 //Also removes list indices.
-deep_value = function(obj, path, removeIndices = true) {
+//Can initialise absent fields (to {})
+deep_value = function(obj, path, removeIndices = true, init_absent = false) {
     if (removeIndices) {
         path = path.replace(/\[.+?\]/g, "");
     }
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
-
-
         if (obj.hasOwnProperty(path[i]))
             obj = obj[path[i]];
         else {
@@ -1235,6 +1169,38 @@ deep_value = function(obj, path, removeIndices = true) {
 
     return obj;
 };
+
+deep_init = function(obj, path, removeIndices = true) {
+    if (removeIndices) {
+        path = path.replace(/\[.+?\]/g, "");
+    }
+    pathref = obj;
+    for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
+        if (pathref === undefined || !pathref.hasOwnProperty(path[i])) {
+            pathref[path[i]] = {};
+        }
+        pathref = pathref[path[i]];
+    }
+    return obj;
+};
+
+//REmoves things between square brackets.
+removeIndices = function(path) {
+    return path.replace(/\[.+?\]/g, "");
+}
+
+getFieldRef = function(path) {
+    return deep_value(helpTextService.dmpHelpText, helpTextService.scrubFieldRef(path));
+};
+
+scrubFieldRef = function(path) {
+    //Remove references to userDataService.dmp if they exist.
+    path = removeIndices(path);
+    path = path.replace(/^(userDataService\.scratch\.dmp\.)/, "");
+    path = path.replace(/^(userDataService\.dmp\.)/, "");
+    return path;
+};
+
 
 // $(function() {
 //     $('a[href*="#"]:not([href="#"])').click(function() {
