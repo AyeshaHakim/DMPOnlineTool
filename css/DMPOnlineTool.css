@@ -41,12 +41,16 @@
     position: relative;
     border-radius: 4px;
     -ms-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
     padding-bottom: 30px;
 }
 .card.ng-hide {
     -ms-transform: scale(0.5, 0.5);
+    -o-transform: scale(0.5, 0.5);
+    -moz-transform: scale(0.5, 0.5);
     -webkit-transform: scale(0.5, 0.5);
     transform: scale(0.5, 0.5);
     overflow: hidden;

@@ -87,16 +87,18 @@
             },
             "role": {
                 "label": "Role",
-                "placeholder": "",
+                "placeholder": "Enter role, and press enter",
                 "helpBoxText": "What does this person do in the project?",
-                "tooltip": ""
+                "tooltip": "",
+                "autocomplete": ["Supervisor","Data contact","Doctoral candidate","Masters student"]
             },
             "affiliation": {
                 "label": "Affiliation",
                 "placeholder": "",
                 "helpBoxText": "What organisation is this person affiliated with?",
                 "defaultValue": "University of Auckland",
-                "tooltip": ""
+                "tooltip": "",
+                "autocomplete": ["University of Auckland","University of Otago","University of Waikato","Victoria University"]
             },
             "email": {
                 "label": "Email address",

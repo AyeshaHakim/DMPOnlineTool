@@ -43,7 +43,7 @@
             <br>
             <dmp-input ng-model="userDataService.dmp.projectDetails.description" inputtype="textarea" inputtags="rows='3'"></dmp-input>
             <br>
-            <dmp-input ng-model="userDataService.dmp.projectDetails.fieldOfResearch" inputtype="md-chips" inputtags="flex='100' md-autocomplete-snap='width' md-transform-chip='chipService.transformChip($chip)'"></dmp-input>
+            <dmp-input ng-model="userDataService.dmp.projectDetails.fieldOfResearch" inputtype="md-chips" inputtags="flex='100' md-autocomplete-snap='width'"></dmp-input>
             <br>
             <div layout="row">
                 <dmp-input ng-model="userDataService.dmp.projectDetails.startDate" inputtype="md-datepicker"></dmp-input>
@@ -52,7 +52,7 @@
             <dmp-input ng-model="userDataService.dmp.ethicsRequired" inputtype="md-checkbox"></dmp-input>
             <dmp-input ng-model="userDataService.dmp.iwiConsultationRequired" inputtype="md-checkbox"></dmp-input>
             <br>
-
+            
             <h2 class="formTitle" href="#contributor">Contributors</h2>
             <dmp-details-card type="contributor"></dmp-details-card>
             <div layout="row" layout-wrap>
