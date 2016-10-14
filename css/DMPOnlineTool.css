@@ -2,7 +2,9 @@
     max-width: 1000px;
     margin: 20px auto;
     padding: 3px 8px;
+    overflow: hidden;
 }
+
 .formTitle {
     font-weight: 500;
     color: white;
@@ -16,26 +18,33 @@
     user-select: none;
     cursor: default;
 }
+
 .md-chips .md-chip-input-container md-autocomplete input {
     width: 600px;
 }
+
 .detailscard {
-    max-height: 1600px;
+    max-height: 2500px;
 }
+
 .detailscard.ng-hide {
     max-height: 0;
 }
+
 .minicard {
     max-width: 1000px;
     user-select: none;
     cursor: pointer;
 }
+
 .minicard.ng-hide {
     max-width: 0;
 }
+
 .dialog-minicard {
-  box-shadow: 0 0 20px rgba(41, 17, 17, 0.4) !important;
+    box-shadow: 0 0 20px rgba(41, 17, 17, 0.4) !important;
 }
+
 .card {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     position: relative;
@@ -47,6 +56,7 @@
     transform: scale(1, 1);
     padding-bottom: 30px;
 }
+
 .card.ng-hide {
     -ms-transform: scale(0.5, 0.5);
     -o-transform: scale(0.5, 0.5);
@@ -58,6 +68,7 @@
     margin: 0;
     opacity: 0;
 }
+
 .card.ng-hide-add {
     -moz-transition: .25s;
     -ms-transition: .25s;
@@ -65,6 +76,7 @@
     -webkit-transition: .25s;
     transition: .25s;
 }
+
 .card.ng-hide-remove {
     -moz-transition: .25s;
     -ms-transition: .25s;
@@ -72,12 +84,14 @@
     -webkit-transition: .25s;
     transition: .25s;
 }
+
 .selectedcard {
     box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
     -ms-transform: scale(1.05, 1.05);
     -webkit-transform: scale(1.05, 1.05);
     transform: scale(1.05, 1.05);
 }
+
 .hoverable:hover {
     box-shadow: 0 0 15px rgba(20, 68, 107, 0.4);
     -ms-transform: scale(1.02, 1.02);
@@ -87,6 +101,7 @@
     -webkit-transition: -webkit-transform .25s;
     transition: transform .25s;
 }
+
 .hoverable:active {
     -ms-transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
@@ -95,57 +110,71 @@
     -webkit-transition: -webkit-transform .25s;
     transition: transform .25s;
 }
+
 .elevated {
     z-index: 1;
 }
+
 .raised-subhead {
     position: relative;
     top: -18px;
 }
+
 .center {
     text-align: center;
 }
+
 .lift-icon {
     position: relative;
     top: -10px;
 }
+
 .icon-60px {
     width: 60px;
     height: 60px;
 }
+
 .icon-90px {
     width: 90px;
     height: 90px;
 }
+
 .icon-120px {
     width: 120px;
     height: 120px;
 }
+
 .icon-150px {
     width: 150px;
     height: 150px;
 }
+
 .icon-100pc {
     width: auto;
     height: 100%;
     display: block;
 }
+
 .supplementary-plus {
     width: 72px;
     height: 72px;
     position: relative;
     right: 24px;
 }
+
 .right-offset-icon {
     position: relative;
     right: -30px;
 }
+
 .smaller-text80 {
     font-size: 80%;
 }
+
 .smaller-text90 {
     font-size: 90%;
 }
+
 .flip-horizontal {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
@@ -154,6 +183,7 @@
     filter: FlipH;
     -ms-filter: "FlipH";
 }
+
 .card-subheading {
     padding: 0 20px;
     /*line-height: .5;*/
@@ -161,19 +191,33 @@
     font-size: 8px;
     color: #8d8d8d;
 }
+
 .padded-heading {
     padding: 20px 0;
 }
+
 .dialog-header {
-  padding: 20px 80px;
+    padding: 20px 80px;
 }
+
 .dialog-padding {
-  padding: 20px;
+    padding: 20px;
 }
+
 .md-card-header-text {
     display: block;
 }
+
 .md-card.md-card-content {
     border-style: solid;
     border-width: 5px;
+}
+
+.file-error {
+    font-size: 80%;
+    color: #F44336;
+}
+
+.helpBoxText {
+  line-height: 150%;
 }

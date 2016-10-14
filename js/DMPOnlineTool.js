@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages']);
+var app = angular.module('dmpOnlineTool', ['ngMaterial', 'ngMessages', 'ngFileUpload']);
 
 app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataService, helpTextService, fieldOfResearchService, autocompleteService, cardVisibilityService) {
 
@@ -119,9 +119,7 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     };
 
 
-    function DialogController($scope, $mdDialog, userDataService, cardVisibilityService) {
-        $scope.cardVisibilityService = cardVisibilityService;
-        $scope.userDataService = userDataService;
+    function DialogController($scope, $mdDialog) {
         $scope.hide = function() {
             $mdDialog.hide();
         };
@@ -148,18 +146,22 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
     //Save a card, if index is omitted the whole field will be saved.
     $scope.saveScratchChanges = function(field) {
         userDataService.scratchToDMP(field);
-        cardVisibilityService[field].detailsCardIndex = userDataService.getNewCardIndex(field, cardVisibilityService[field].detailsCardIndex);
-        cardVisibilityService[field].addCardVisible = true;
+        if (cardVisibilityService[field] !== undefined) {
+            cardVisibilityService[field].detailsCardIndex = userDataService.getNewCardIndex(field, cardVisibilityService[field].detailsCardIndex);
+            cardVisibilityService[field].addCardVisible = true;
+        }
     };
 
     //Cancel all changes, can swtich to a card afterwards
     $scope.cancelScratchChanges = function(field, switchToCardIndex = undefined) {
         userDataService.dmpToScratch(field);
-        cardVisibilityService[field].addCardVisible = true;
-        if (switchToCardIndex === undefined) {
-            cardVisibilityService[field].detailsCardVisible = false;
-        } else {
-            $scope.switchCardToIndex(field, switchToCardIndex);
+        if (cardVisibilityService[field] !== undefined) {
+            cardVisibilityService[field].addCardVisible = true;
+            if (switchToCardIndex === undefined) {
+                cardVisibilityService[field].detailsCardVisible = false;
+            } else {
+                $scope.switchCardToIndex(field, switchToCardIndex);
+            }
         }
     };
 
@@ -192,19 +194,80 @@ app.controller('formCtrl', function($log, $scope, $mdDialog, $timeout, userDataS
         // Modal dialogs should fully cover application
         // to prevent interaction outside of dialog
         $timeout.cancel($scope.hide);
-        $mdDialog.show(
-            $mdDialog.alert()
-            .parent(angular.element(document.querySelector('#popupContainer')))
-            .clickOutsideToClose(true)
-            .title(title)
-            .textContent(helpBoxText)
-            .ariaLabel('Help box')
-            .ok('Got it!')
-            .targetEvent(ev)
-        );
+        helpDialog = $mdDialog.alert({
+            parent: angular.element(document.querySelector('#popupContainer')),
+            controller: DialogController,
+            template: '<md-dialog aria-label="Help box" flex layout-padding>' +
+                '<md-toolbar layout="row" layout-align="center center">' +
+                '<div>' +
+                title +
+                '</div>' +
+                '</md-toolbar>' +
+                '  <md-dialog-content class="helpBoxText">' +
+                helpBoxText +
+                '  </md-dialog-content>' +
+                '  <md-dialog-actions>' +
+                '    <md-button ng-click="cancel()" class="md-primary">' +
+                '      Close' +
+                '    </md-button>' +
+                '  </md-dialog-actions>' +
+                '</md-dialog>',
+            clickOutsideToClose: true,
+            title: title,
+            targetEvent: ev
+        });
+        $mdDialog.show(helpDialog);
+
+        // function HelpController($scope, $mdDialog, items) {
+        //     $scope.items = items;
+        //     $scope.closeDialog = function() {
+        //         $mdDialog.hide();
+        //     }
+        // }
+        //
+        //
+        // $mdDialog.alert()
+        // .parent(angular.element(document.querySelector('#popupContainer')))
+        // .clickOutsideToClose(true)
+        // .title(title)
+        // .textContent(helpBoxText)
+        // .ariaLabel('Help box')
+        // .ok('Got it!')
+        // .targetEvent(ev)
+        // );
     };
 
 });
+
+app.controller('fileUploadCtrl', ['$scope', 'Upload', '$timeout', function($scope, Upload, $timeout) {
+    $scope.uploadFiles = function(file, errFiles) {
+        $scope.f = file;
+        $scope.errFile = errFiles && errFiles[0];
+        if (file) {
+            file.upload = Upload.upload({
+                url: 'php/receiver0.php',
+                data: {
+                    file: file
+                }
+            });
+
+            file.upload.then(function(response) {
+                $timeout(function() {
+                    file.result = response.data;
+                });
+            }, function(response) {
+                if (response.status > 0)
+                    $scope.errorMsg = response.status + ': ' + response.data;
+            }, function(evt) {
+                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+            });
+        }
+    };
+
+
+}]);
+
+
 
 
 //A directive to make input areas, and hopefully automagically get helper text from json
@@ -225,7 +288,7 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                     scope.helpFields = scope.helpTextService.getFieldRef(attrs.ngModel);
 
                     //Format tags from html
-                    var inputType = attrs.hasOwnProperty('inputtype') ? (attrs.inputtype) : "input ";
+                    var inputType = attrs.hasOwnProperty('inputtype') ? (attrs.inputtype) : "input";
 
                     //Only do this if help fields are defined in the JSON
                     if (scope.helpFields === undefined) {
@@ -251,7 +314,7 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                     var autocomplete = (scope.helpFields.hasOwnProperty('autocomplete') && scope.helpFields.autocomplete !== []) ? (autocomplete = scope.helpFields.autocomplete) : (autocomplete = []);
 
                     //Label is placed where input content should be for checkboxes.
-                    autoCompleteContent=undefined;
+                    autoCompleteContent = undefined;
                     if (inputType === "md-checkbox") {
                         inputContent = label;
                         labelTags = "";
@@ -261,17 +324,25 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                             //Text to insert between input tags for autocomplete functionality.
                             inputContent = fieldOfResearchService.getAutoCompleteInsert(placeholder);
                         } else {
-                            if (autocomplete.length!==0) {
+                            if (autocomplete.length !== 0) {
                                 autocompleteService.loadItems(attrs.ngModel, autocomplete)
                                 inputContent = autocompleteService.getAutoCompleteInsert(attrs.ngModel, placeholder);
                             }
                             inputTags = inputTags + ' md-autocomplete-snap="width" md-search-text-change="null" md-selected-item-change="null"';
                         }
-                    //Autocomplete is defined, do a normal text box
-                  } else if (autocomplete.length!==0) {
-                      autocompleteService.loadItems(attrs.ngModel, autocomplete);
-                      autoCompleteContent = autocompleteService.getAutoCompleteField(attrs.ngModel, placeholder, label);
-                  }
+                        //Autocomplete is defined, do a normal text box
+                    } else if (autocomplete.length !== 0) {
+                        autocompleteService.loadItems(attrs.ngModel, autocomplete);
+                        if (inputType !== "md-select") {
+                            autoCompleteContent = autocompleteService.getAutoCompleteField(attrs.ngModel, placeholder, label);
+                        }
+                    }
+
+                    //Insert options for dropdown (select) box
+                    if (inputType === 'md-select') {
+                        inputContent = '<md-option>Unknown</md-option><md-option ng-repeat="option in autocompleteService[\'' + scrubFieldRef(attrs.ngModel,true) + '\'].items" ng-value="option">{{option}}</md-option>';
+                        containerTags = 'flex style="margin-right: 10px;"';
+                    }
 
                     //Create input HTML
                     var template = '<md-input-container layout="row"' + addLeadingSpace(containerTags) + addLeadingSpace(helpBox) + '>' +
@@ -280,9 +351,16 @@ app.directive("dmpInput", function($log, $compile, helpTextService, fieldOfResea
                         tooltip +
                         '</md-input-container>';
 
+                    //Just replace the entire thing if you want an autocomplete field.
+                    //Pretty messy, but the root cause is a limitation of Angular.
                     if (autoCompleteContent !== undefined) {
-                      template = autoCompleteContent;
+                        template = autoCompleteContent;
                     }
+
+                    if (inputType === 'md-select') {
+                        $log.debug(template);
+                    }
+
 
                     //Compile to HTML, and add to DOM
                     var linkFn = $compile(template);
@@ -314,6 +392,7 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
         scope: true,
 
         link: function(scope, element, attrs, ngModel) {
+
             var type = attrs.type || 'contributor';
 
             //Sets whether to display from scratch or saved data
@@ -369,8 +448,9 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                         cardContent = "<md-icon md-svg-icon=\"book-plus\" class=\"icon-90px\"></md-icon>";
                     } else {
                         heading = "<span class='smaller-text80'>{{" + modelString + ".shortname}}</span>";
+                        contentTags = "class='center'";
                         cardContent = "<div class='md-subhead'>{{" + modelString + ".description}}</div>" +
-                            "<div class='center'><md-button class=\"md-raised md-primary elevated\"><md-icon md-svg-icon=\"book\"></md-icon>  View Document</md-button></div>";
+                            "<md-icon class=\"icon-90px\" md-svg-icon=\"file-document-box\"></md-icon>";
                     }
                     break;
                 case "funder":
@@ -428,8 +508,6 @@ app.directive("dmpCard", function($log, $compile, cardVisibilityService) {
                 ngclick = "switchCardToIndex('" + type + "'," + cardIndex + ");cardVisibilityService." + type + ".addCardVisible=true;";
                 ngclass = "(cardVisibilityService." + type + ".detailsCardVisible && cardVisibilityService." + type + ".detailsCardIndex==" + cardIndex + ") ? 'selectedcard' : 'hoverable'";
             }
-
-
 
             //Compile optional stuff
             buttons = (buttons !== "") ? ("<md-card-actions layout=\"row\" layout-align=\"end center\">" + buttons + "</md-card-actions>") : "";
@@ -533,6 +611,8 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService, 
                     subheading = "{{helpTextService.dmpHelpText['" + type + "'].cardsubheading}}";
                     cardContent = '<dmp-input ng-model="' + modelString + '.shortname"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.summary" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input inputtype="fileupload"></dmp-input><br>' +
+                        '<dmp-input inputtype="filedownload"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.link"></dmp-input><br>';
                     break;
                 case "funder":
@@ -552,16 +632,21 @@ app.directive("dmpDetailsCard", function($log, $compile, cardVisibilityService, 
                     icon = '<md-icon md-svg-icon="database"></md-icon>';
                     subheading = "{{helpTextService.dmpHelpText['" + type + "'].cardsubheading}}";
                     cardContent = '<dmp-input ng-model="' + modelString + '.shortname"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.dataContact"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.description" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.collectionProcess" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.organisationProcess" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.storageProcess" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.metadataRequirements" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.copyrightOwner"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.accessControl" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.retention" inputtype="md-select" inputtags="flex"></dmp-input><br>' +
                         '<dmp-input ng-model="' + modelString + '.publicationProcess" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.license.name"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.archiving" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
-                        '<dmp-input ng-model="' + modelString + '.license.name"></dmp-input><br>';
+                        '<dmp-input ng-model="' + modelString + '.license"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.requiredResources" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.issues" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.policyRequirements" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>' +
+                        '<dmp-input ng-model="' + modelString + '.archiving" inputtype="textarea" inputtags="rows=\'3\'"></dmp-input><br>';
                     break;
             }
 
@@ -652,7 +737,7 @@ app.config(function($mdIconProvider) {
 });
 
 //Passes user data around the place
-app.service('userDataService', function($http, $log) {
+app.service('userDataService', function($http, $log, $timeout, Upload) {
 
     var userDataService = {};
 
@@ -874,13 +959,13 @@ app.service('userDataService', function($http, $log) {
                     allempty = allempty && (value === '' || value === undefined);
                 }
                 noprops = allempty;
-                // $log.debug(noprops);
             }
 
             result = result && noprops;
         }
         return result;
     };
+
 
     //Check for unsaved changes
     userDataService.hasUnsavedChanges = function(field) {
@@ -1060,7 +1145,7 @@ app.service('autocompleteService', function($http) {
         };
     };
 
-    autocompleteService.loadItems = function(field, items = ['Broccoli', 'Cabbage', 'Carrot', 'Lettuce', 'Spinach']) {
+    autocompleteService.loadItems = function(field, items) {
         field = scrubFieldRef(field, true);
         autocompleteService[field] = {};
         autocompleteService[field].items = items;
@@ -1080,7 +1165,7 @@ app.service('autocompleteService', function($http) {
     //Returns a dmp-input with autocomplete. Pretty messy, sorry.
     autocompleteService.getAutoCompleteField = function(field, placeholderText, label, ngmodel) {
         field = scrubFieldRef(field, true);
-        return '<md-autocomplete ng-model=\'value\' ng-change=\'onChange()\' md-floating-label=\'' + label + '\' md-search-text="autocompleteService[\'' + field + '\'].searchText" ' +
+        return '<md-autocomplete md-selected-item=\'value\' md-selected-item-change=\'onChange()\' md-floating-label=\'' + label + '\' md-search-text="autocompleteService[\'' + field + '\'].searchText" ' +
             'md-items="item in autocompleteService.querySearch(\'' + field + '\',autocompleteService[\'' + field + '\'].searchText)" ' +
             'md-item-text="item" ' + placeholderText + '>' +
             '<span md-highlight-text="autocompleteService[\'' + field + '\'].searchText">{{item}}</span>' +

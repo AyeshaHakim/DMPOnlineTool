@@ -10,7 +10,7 @@
             "description": {
                 "label": "Description",
                 "placeholder": "",
-                "helpBoxText": "Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.",
+                "helpBoxText": "<p>Briefly summarise the type of study (or studies), the research questions being addressed and the purpose of any data being collected or created to help others understand the purposes for which the data are being collected or created.</p>",
                 "tooltip": ""
             },
             "fieldOfResearch": {
@@ -22,13 +22,13 @@
             "startDate": {
                 "label": "Start date",
                 "placeholder": "",
-                "helpBoxText": "Does this work?",
+                "helpBoxText": "When did/will the project begin?",
                 "tooltip": ""
             },
             "endDate": {
                 "label": "End date",
                 "placeholder": "Ongoing",
-                "helpBoxText": "",
+                "helpBoxText": "<p>When did/will the project end?</p><p>Leave blank to indicate an ongoing project.</p>",
                 "tooltip": ""
             }
         },
@@ -87,10 +87,10 @@
             },
             "role": {
                 "label": "Role",
-                "placeholder": "Enter role, and press enter",
+                "placeholder": "Input role, and press enter",
                 "helpBoxText": "What does this person do in the project?",
                 "tooltip": "",
-                "autocomplete": ["Supervisor","Data contact","Doctoral candidate","Masters student"]
+                "autocomplete": ["Supervisor", "Data contact", "Doctoral candidate", "Masters student"]
             },
             "affiliation": {
                 "label": "Affiliation",
@@ -98,7 +98,7 @@
                 "helpBoxText": "What organisation is this person affiliated with?",
                 "defaultValue": "University of Auckland",
                 "tooltip": "",
-                "autocomplete": ["University of Auckland","University of Otago","University of Waikato","Victoria University"]
+                "autocomplete": ["University of Auckland", "University of Otago", "University of Waikato", "Victoria University"]
             },
             "email": {
                 "label": "Email address",
@@ -143,161 +143,192 @@
             }
         },
         "dataAsset": {
-                "shortname": {
-                    "label": "Name",
+            "shortname": {
+                "label": "Name",
+                "placeholder": "",
+                "helpBoxText": "Please input a short name for the data asset.",
+                "tooltip": "",
+                "required": true
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "",
+                "helpBoxText": "<p>What type, format and volume of data? Do your chosen formats and software enable sharing and long-term access to the data? - Are there any existing data that you can reuse?</p> Give a brief description of the data, including any existing data or third-party sources that will be used, in each case noting its content, type and coverage. Outline and justify your choice of format and consider the implications of data format and data volumes in terms of storage, backup and access.",
+                "tooltip":
+                        ""
+            },
+            "collectionProcess": {
+                "label": "Collection process",
+                "placeholder": "",
+                "helpBoxText": "<p>What standards or methodologies will you use? What quality assurance processes will you adopt?</p>Outline how the data will be collected/created and which community data standards (if any) will be used. This may include processes such as calibration, repeat samples or measurements, standardised data capture or recording, data entry validation, peer review of data or representation with controlled vocabularies.",
+                "tooltip": ""
+            },
+            "organisationProcess": {
+                "label": "Organisation process",
+                "placeholder": "",
+                "helpBoxText": "Consider how the data will be organised during the project, mentioning for example file and folder naming conventions, version control, folder structures, use of database – schema, tables and relationships.",
+                "tooltip": ""
+            },
+            "storageProcess": {
+                "label": "Storage process",
+                "placeholder": "",
+                "helpBoxText": "<p>Do you have sufficient storage or will you need to request additional services? Where do you intend to store your data? How will the data be backed up? Who will be responsible for backup and recovery? How will the data be recovered in the event of an incident?</p>Describe the primary location of your data. State how often the data will be backed up and to which locations. How many copies are being made? Storing data on laptops, computer hard drives or external storage devices alone is very risky. The use of robust, managed storage provided by the University is preferable. Similarly, it is normally better to use automatic backup services provided by ITS Services than rely on manual processes. If you choose to use a third-party service, you should ensure that this does not conflict with any funder, institutional, departmental or group policies, for example in terms of the legal jurisdiction in which data are held or the protection of sensitive data.",
+                "tooltip": ""
+            },
+            "metadataRequirements": {
+                "label": "Metadata requirements",
+                "placeholder": "",
+                "helpBoxText": "<p>What information is needed for the data to be to be read and interpreted in the future? How will you capture / create this documentation and metadata? What metadata standards will you use and why? </p><p>Describe the types of documentation that will accompany the data to help secondary users to understand and reuse it. This should at least include basic details that will help people to find the data, including who created or contributed to the data, its title, date of creation and under what conditions it can be accessed.</p><p>Documentation may also include details on the methodology used, analytical and procedural information, definitions of variables, vocabularies, units of measurement, any assumptions made, and the format and file type of the data. Consider how you will capture this information and where it will be recorded. Wherever possible you should identify and use existing community standards. </p>",
+                "tooltip": ""
+            },
+            "copyrightOwner": {
+                "label": "Copyright owner",
+                "placeholder": "",
+                "helpBoxText": "<p>The copyright for data generated by staff is generally owned by the University.</p><p>The copyright for data generated solely by a student is generally his/her own.</p>",
+                "tooltip": ""
+            },
+            "accessControl": {
+                "label": "How will you manage access and security?",
+                "placeholder": "",
+                "helpBoxText": "<p>Consider whether you are the only person that will have access to the active, unpublished data, or data will be shared internally (specify with who) /externally (specify with who)? What are the risks to data security and how will these be managed? How will you control access to keep the data secure? How will you ensure that collaborators can access your data securely? If creating or collecting data in the field how will you ensure its safe transfer into your main secured systems? </p><p>If your data is confidential (e.g. personal data not already in the public domain, confidential information or trade secrets), you should outline any appropriate security measures and note any formal standards that you will comply with e.g. ISO 27001.</p>",
+                "tooltip": "",
+                "status": {
+                    "label": "Will access to the asset need to be restricted?",
                     "placeholder": "",
-                    "helpBoxText": "Please input a short name for the data asset.",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "details": {
+                    "label": "What is the rationale for access restriction?",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "releaseDate": {
+                    "label": "When will the data be released (if ever)?",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                },
+                "complianceProcess": {
+                    "label": "How will you ensure that access is thus restricted?",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                }
+            },
+            "retention": {
+                "label": "Select data type for retention",
+                "placeholder": "",
+                "helpBoxText": "Select from one of these options.",
+                "tooltip": "",
+                "autocomplete": ["6 years (standard minimum retention after last publication based on data)",
+                  "10 years (for medical research involving clinical trials from the end of the trial)",
+                  "Until patient reaches 26 years of age, and at least 10 after last treatment (for clinical research involving children)",
+                  "21 years from the date of filing a patent related to this research"
+                ],
+                "retentionType": {
+                    "label": "Select data type",
+                    "placeholder": "",
+                    "helpBoxText": "Select from one of these options.",
                     "tooltip": "",
-                    "required": true
+                    "autocomplete": ["6 years (standard minimum retention after last publication based on data)",
+                      "10 years (for medical research involving clinical trials from the end of the trial)",
+                      "Until patient reaches 26 years of age, and at least 10 after last treatment (for clinical research involving children)",
+                      "21 years from the date of filing a patent related to this research"
+                    ]
+                },
+                "retainUntil": {
+                    "label": "Retain data until",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                }
+            },
+            "publicationProcess": {
+                "label": "Dissemination process",
+                "placeholder": "",
+                "helpBoxText": "<p>How will potential users find out about your data? With whom will you share the data, and under what conditions? Will you share data via the <a href='https://www.library.auckland.ac.nz/databases/record/index.asp?record=DatPubandDisSer' target='_blank'>University Data Publishing and Discovery Service<a> or a <a href='http://service.re3data.org/search target='_blank'>disciplinary data repository<a>? Will you publish a metadata only file with the institutional repository? Will you handle requests directly or use another mechanism? When will you make the data available? Will you pursue getting a persistent identifier for your data?</p><p>The methods used to share data will be dependent on a number of factors such as the type, size, complexity and sensitivity of data. If possible, mention earlier examples to show a track record of effective data sharing.</p>",
+                "tooltip": ""
+            },
+            "license": {
+                "label": "License",
+                "placeholder": "",
+                "helpBoxText": "<p>State licence(s) under which you plan to make the data publically accessible.</p> Be as open as possible, see <a href='http://creativecommons.org.nz/licences/licences-explained/' target='_blank'>Creative Commons Aotearoa New Zealand – Licences explained</a>",
+                "tooltip": "",
+                "name": {
+                    "label": "License name",
+                    "placeholder": "",
+                    "helpBoxText": "<p>State licence(s) under which you plan to make the data publically accessible.</p> Be as open as possible, see <a href='http://creativecommons.org.nz/licences/licences-explained/' target='_blank'>Creative Commons Aotearoa New Zealand – Licences explained</a>",
+                    "tooltip": ""
+                },
+                "logo": {
+                    "label": "Logo (read-only)",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                }
+            },
+            "archiving": {
+                "label": "Archiving process (if applicable)",
+                "placeholder": "",
+                "helpBoxText": "<p>Publishing with DOI should offer persistent access over years, not necessarily decades. Nor does a DOI actively address any needs to transform or migrate data from obsolete formats over time. </p><p>Consider: Does your data offer something irreplaceable (actually or practically) that is of value to society over decades to come? If unsure, please contact the Library. </p><p>Provide information or guidance on how datasets that have long-term value will be preserved and curated beyond the lifetime of the project. Indicate likely areas of risk (i.e. proprietary formats). If you do not propose to use an established repository, the data management plan should demonstrate that resources and systems will be in place to enable the data to be curated effectively beyond the lifetime of the project. Document any discussion of long–term archive with academic units or other relevant staff.</p>",
+                "tooltip": ""
+            },
+            "dataContact": {
+                "label": "Data contact",
+                "placeholder": "",
+                "helpBoxText": "<p>If your project has several contributors and/or institutions, and/or the ownership is complex, consider: Who is responsible for implementing the DMP, and ensuring it is reviewed and revised? Who will be responsible for each data management activity? How will responsibilities be split across partner sites in collaborative research projects? Will data ownership and responsibilities for research data management be part of any consortium agreement or contract agreed between partners? </p><p>Outline the roles and responsibilities for all activities e.g. data capture, metadata production, data quality, storage and backup, data archiving & data sharing. Consider who will be responsible for ensuring relevant policies are respected. Individuals should be named where possible.</p>",
+                "tooltip": ""
+            },
+            "requiredResources": {
+                "label": "Required resources",
+                "placeholder": "",
+                "helpBoxText": "<p>Consider contacting the Centre for eResearch. Is additional specialist expertise (or training for existing staff) required? Do you require hardware or software which is additional or exceptional to existing institutional provision? Will charges be applied by data repositories?</p><p>Carefully consider any resources needed to deliver the plan, e.g. software, hardware, technical expertise, etc. Where dedicated resources are needed, these should be outlined and justified.</p>",
+                "tooltip": ""
+            },
+            "issues": {
+                "label": "How will you manage any ethical/privacy issues?",
+                "placeholder": "",
+                "helpBoxText": "<p>Have you gained consent for data preservation and sharing/publishing? How will you protect the identity of participants if required? How will sensitive data be handled to ensure it is stored and transferred securely?</p><p>Ethical issues affect how you store data, who can see/use it, how it can be used and how long it is kept. Managing ethical concerns may include: anonymisation of data; referral to departmental or institutional ethics committees; and formal consent agreements. You should show that you are aware of any issues and have planned accordingly. If you are carrying out research involving human participants, you must also ensure that consent is requested to allow data to be shared and reused in as broad a terms as possible.</p><p>Describe any data privacy/ security measures that need to be implemented related to the project data e.g. de-identifying (data cleansing), encryption on disk, encrypted communication links, disconnected from the internet, secure physical storage, no copies permitted. Consider: What are the risks to data security and how they will be managed? How will access be controlled? Are there formal standards to comply with?</p>",
+                "tooltip": "",
+                "type": {
+                    "label": "Type (needs options)",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
                 },
                 "description": {
                     "label": "Description",
                     "placeholder": "",
-                    "helpBoxText": "A more comprehensive description for the data asset.",
+                    "helpBoxText": "",
                     "tooltip": ""
                 },
-                "collectionProcess": {
-                    "label": "Collection process",
+                "managementProcess": {
+                    "label": "Management process",
+                    "placeholder": "",
+                    "helpBoxText": "",
+                    "tooltip": ""
+                }
+            },
+            "policyRequirements": {
+                "label": "Relevant policies",
+                "placeholder": "",
+                "helpBoxText": "<p>Be aware of the University <a href='https://www.auckland.ac.nz/en/about/the-university/how-university-works/policy-and-administration/research/conduct/code-of-conduct-policy.html' target='_blank'>Researcher Code of Conduct</a>, specifically '4.5 Research Findings: Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations.' as you produce your DMP.</p><p>List any other relevant funder, institutional University (<a href='https://www.auckland.ac.nz/en/about/the-university/how-university-works/policy-and-administration.html' target='_blank'>Policy Hub<a>, <a href='https://www.auckland.ac.nz/en/about/research.html' target='_blank'>Research<a> <a href='http://www.library.auckland.ac.nz/guides/open-access' target='_blank'>Open Access<a>), departmental or group policies on data management, data sharing and data security. Some of the information you give in the remainder of the DMP will be determined by the content of other policies. If so, point/link to them here.</p>",
+                "tooltip": "",
+                "controllingBody": {
+                    "label": "Controlling body",
                     "placeholder": "",
                     "helpBoxText": "",
                     "tooltip": ""
                 },
-                "organisationProcess": {
-                    "label": "Organisation process",
+                "relevantText": {
+                    "label": "Relevant text",
                     "placeholder": "",
                     "helpBoxText": "",
                     "tooltip": ""
-                },
-                "storageProcess": {
-                    "label": "Storage process",
-                    "placeholder": "",
-                    "helpBoxText": "",
-                    "tooltip": ""
-                },
-                "metadataRequirements": {
-                    "label": "Metadata requirements",
-                    "placeholder": "",
-                    "helpBoxText": "",
-                    "tooltip": ""
-                },
-                "copyrightOwner": {
-                    "label": "Copyright owner",
-                    "placeholder": "",
-                    "helpBoxText": "",
-                    "tooltip": ""
-                },
-                "accessControl": {
-                    "status": {
-                        "label": "Will access to the asset need to be restricted?",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "details": {
-                        "label": "What is the rationale for access restriction?",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "releaseDate": {
-                        "label": "When will the data be released (if ever)?",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "complianceProcess": {
-                        "label": "How will you ensure that access is thus restricted?",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    }
-                },
-                "retention": {
-                    "retentionType": {
-                        "label": "Select data type",
-                        "placeholder": "",
-                        "helpBoxText": "Select from one of these options.",
-                        "tooltip": ""
-                    },
-                    "retainUntil": {
-                        "label": "Retain data until",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    }
-                },
-                "publicationProcess": {
-                    "label": "Dissemination process",
-                    "placeholder": "",
-                    "helpBoxText": "How will the data be disseminated/published?",
-                    "tooltip": ""
-                },
-                "license": {
-                    "name": {
-                        "label": "License name",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "logo": {
-                        "label": "Logo (read-only)",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    }
-                },
-                "archiving": {
-                    "label": "Archiving required",
-                    "placeholder": "",
-                    "helpBoxText": "Are the data important enough to justify active archiving?",
-                    "tooltip": ""
-                },
-                "dataContact": {
-                    "label": "Data contact",
-                    "placeholder": "",
-                    "helpBoxText": "",
-                    "tooltip": ""
-                },
-                "requiredResources": {
-                    "label": "Required resources",
-                    "placeholder": "",
-                    "helpBoxText": "",
-                    "tooltip": ""
-                },
-                "issues": {
-                    "type": {
-                        "label": "Type (needs options)",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "description": {
-                        "label": "Description",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "managementProcess": {
-                        "label": "Management process",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    }
-                },
-                "policyRequirements": {
-                    "controllingBody": {
-                        "label": "Controlling body",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    },
-                    "relevantText": {
-                        "label": "Relevant text",
-                        "placeholder": "",
-                        "helpBoxText": "",
-                        "tooltip": ""
-                    }
                 }
             }
         }
     }
+}

@@ -41,16 +41,6 @@
     "ethicsRequired": true,
     "iwiConsultationRequired": true,
 
-    "document": [{
-        "shortname": "Ethics committee approval",
-        "summary": "The ethics committee has allowed me to test on humans and publish their data, as long as they provide informed consent.",
-        "link": "link.to/ethics/approval"
-    }, {
-        "shortname": "Informed consent form",
-        "summary": "",
-        "link": "link.to/consent/form"
-    }],
-
     "dataAsset": [{
         "shortname": "EEG data",
         "description": "Lots of EEG data from people in raw format.",
@@ -59,36 +49,16 @@
         "storageProcess": "Store it on my laptop, might put it on a USB.",
         "metadataRequirements": "I will write what the data are about in my lab book.",
         "copyrightOwner": "University of Auckland",
-        "accessControl": {
-            "status": "restricted",
-            "details": "Restricted because of reasons.",
-            "releaseDate": "2016-09-14T21:44:42.782Z",
-            "complianceProcess": "I will keep it on a USB in my pocket."
-        },
-        "retention": {
-            "retentionType": "medical",
-            "retainUntil": "2016-09-14T21:44:42.782Z"
-        },
+        "accessControl": "Access will be restricted for some reason until the year 2525. To maintain this restriction, I will keep it on a USB in my pocket.",
+        "retention": "6 years (standard minimum retention after last publication based on data)",
         "publicationProcess": "I will publish it on a discipline-specific repository.",
-        "license": {
-            "name": "CC-0",
-            "logo": "link.to/logo"
-        },
+        "license": "CC-0",
         "archiving": "This data should be stored forever because it's super important.",
-        "dataContact": "2",
+        "dataContact": "Jim Two",
         "requiredResources": "I will need a VM with 20TB of RAM.",
-        "issues": [{
-            "type": "cultural",
-            "description": "Some cultures believe that EEG captures your soul.",
-            "managementProcess": "Screen for such cultural beliefs, as indicated in page X of informed consent form."
-        }],
-        "policyRequirements": [{
-            "controllingBody": "Department of Brains",
-            "relevantText": "4.1.1. The researcher is required to tell four friends about their research, and ask those friends to tell four friends."
-        }, {
-            "controllingBody": "University of Auckland",
-            "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
-        }]
+        "issues": "Some cultures believe that EEG captures your soul. I will screen for such cultural beliefs, as indicated in page X of informed consent form.",
+        "policyRequirements": "4.1.1. The researcher is required to tell four friends about their research, and ask those friends to tell four friends. \n4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
+
     }, {
         "shortname": "Behavioural data",
         "description": "Behavioural data like reaction times and junk.",
@@ -97,36 +67,14 @@
         "storageProcess": "Store it on my laptop, might put it on a USB.",
         "metadataRequirements": "I think I'll remember what the files are, I'm not an idiot.",
         "copyrightOwner": "University of Auckland",
-        "accessControl": {
-            "status": "unrestricted",
-            "details": "",
-            "releaseDate": "",
-            "complianceProcess": ""
-        },
-        "retention": {
-            "retentionType": "medical",
-            "retainUntil": "2016-09-14T21:44:42.782Z"
-        },
+        "accessControl": "Not applicable",
+        "retention": "6 years (standard minimum retention after last publication based on data)",
         "publicationProcess": "I will publish it on my personal website.",
-        "license": {
-            "name": "MIT",
-            "logo": "link.to/logo"
-        },
+        "license": "MIT",
         "archiving": "",
-        "dataContact": "2",
+        "dataContact": "Jim Two",
         "requiredResources": "Make me a relational database.",
-        "issues": [{
-            "type": "privacy",
-            "description": "People don't like others to know their reaction time because it might be embarassing.",
-            "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
-        }, {
-            "type": "ethical",
-            "description": "People don't like others to know their reaction time because it might be embarassing.",
-            "managementProcess": "Store securely in my pocket, as indicated by page Y of the ethics consent."
-        }],
-        "policyRequirements": [{
-            "controllingBody": "University of Auckland",
-            "relevantText": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
-        }]
+        "issues": "People don't like others to know their reaction time because it might be embarassing, so I will store securely in my pocket, as indicated by page Y of the ethics consent.",
+        "policyRequirements": "4.5. Research Findings:  Researchers should share data and findings openly and as promptly as possible, as soon as they have had an opportunity to establish priority and ownership claims and subject to any intellectual property requirements and contractual obligations."
     }]
 }
